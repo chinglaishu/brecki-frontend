@@ -60,16 +60,13 @@ export const Auth: FC<AuthProps> = ({navigation, setUser}) => {
       changeStatusModal(STATUS_TYPE.CLOSE);
 
       if (currentRouteName !== AUTH_SCREEN.FORGET_PASSWORD) {
-        const token = (result as any)?.data?.data?.token;
+        const {token, user} = (result as any).data.data;
         setStoreData(STORE_KEY.ACCESS_TOKEN, token);
         setAxiosAuthorization(token);
+        setUser(user);
       }
 
-      if (currentRouteName === AUTH_SCREEN.LOGIN) {
-        const user = (result as any)?.data?.data?.user;
-        if (!user) {return; }
-        setUser(user);
-      } else {
+      if (currentRouteName !== AUTH_SCREEN.LOGIN) {
         const param = getLastScreenNavigationParam(currentRouteName);
         param.phone = getPhone(inputObj.phoneRegionCode.content, inputObj.phoneNumber.content);
         navigation.navigate(AUTH_SCREEN.VERIFY_PHONE, param);
@@ -94,7 +91,6 @@ export const Auth: FC<AuthProps> = ({navigation, setUser}) => {
               <Reminder style={{marginBottom: hp(2)}}>{"Please enter username and phone to verify"}</Reminder>
             </>
           }
-
 
           <Form formObjList={formObjList} submitFunction={onPressButton} buttonText={buttonText}
             buttonStyle={{marginTop: hp(2)}} />

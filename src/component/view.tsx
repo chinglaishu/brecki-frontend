@@ -10,6 +10,7 @@ import { ContextObj } from "../type/common";
 import { PlainTouchable, SimpleTouchable } from "./touchable";
 import imageLoader from "../utils/imageLoader";
 import { DrawerHeaderProps } from "@react-navigation/drawer/lib/typescript/src/types";
+import { getCurrentRouteName, getDisplayNameByRouteName } from "../utils/utilFunction";
 
 export const ContainerView = styled.View.attrs(props => {
   return {
@@ -82,14 +83,14 @@ export const ThreePartRow = (props: ThreePartRowProps) => {
   const {height, Left, Body, Right} = props;
 
   return (
-    <RowView style={{height, flexDirection: "row"}}>
-      <View style={{marginHorizontal: 10, height: "100%", justifyContent: "center"}}>
+    <RowView style={{height, flexDirection: "row", marginHorizontal: wp(5)}}>
+      <View style={{height: "100%", justifyContent: "center", marginRight: wp(5)}}>
         {Left}
       </View>
       <View style={{flex: 1, flexDirection: "row", alignItems: "center"}}>
         {Body}
       </View>
-      <View style={{marginHorizontal: 10, flexDirection: "row"}}>
+      <View style={{flexDirection: "row", marginLeft: wp(5)}}>
         {Right}
       </View>
     </RowView>
@@ -101,18 +102,20 @@ type HeaderProps = {
 };
 
 export const Header: FC<HeaderProps> = ({headerProps}) => {
+  const currentRoute = getCurrentRouteName(headerProps.navigation);
   const getContent = (contextObj: ContextObj) => {
+    const title = getDisplayNameByRouteName(currentRoute, contextObj.user.language);
     return (
-      <ThreePartRow height={50}
+      <ThreePartRow height={hp(10)}
         Left={
           <PlainTouchable onPress={() => headerProps.navigation.openDrawer()}>
-            <Image source={imageLoader.icon} style={{width: 30, height: 30}} />
+            <Image source={imageLoader.icon} style={{width: hp(6), height: hp(6)}} />
           </PlainTouchable>
         }
-        Body={<Text>{1}</Text>}
+        Body={<Text>{title}</Text>}
         Right={
           <PlainTouchable style={{}}>
-            <Image source={imageLoader.icon} style={{width: 30, height: 30}} />
+            <Image source={imageLoader.icon} style={{width: hp(6), height: hp(6)}} />
           </PlainTouchable>
         }
       />

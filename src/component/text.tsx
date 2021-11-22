@@ -9,6 +9,16 @@ type LineTextLineProps = {
   extraStyle?: any,
 }
 
+export const DrawerItemText = styled.Text.attrs(props => {
+  return {
+  };
+})`
+  color: ${props => props.theme.subTitle};
+  font-size: ${wp(5)};
+  font-family: ${FONT_NORMAL};
+  font-weight: 600;
+`;
+
 export const Title = styled.Text.attrs(props => {
   return {
   }

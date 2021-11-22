@@ -34,6 +34,8 @@ export type User = {
   displayName: string,
   personalInfo: PersonalInfo,
   target: Target,
+  firebaseEmail: string,
+  firebasePassword: string,
 };
 
 export type ContextObj = {

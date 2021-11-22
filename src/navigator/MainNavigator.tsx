@@ -48,7 +48,7 @@ export const MainNavigator: FC<MainNavigatorProps> = ({initialRoute}: MainNaviga
         return getContent(contextObj);
       }}
     </ContextConsumer>
-  )
+  );
 };
 
 const Stack = createStackNavigator();

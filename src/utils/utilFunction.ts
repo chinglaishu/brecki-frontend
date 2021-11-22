@@ -2,11 +2,12 @@ import { NavigationProp } from "@react-navigation/core";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Platform } from "react-native";
-import { InputObjItem, CommonResponse, Route, InputObj } from "../type/common";
+import { InputObjItem, CommonResponse, Route, InputObj, Language } from "../type/common";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LAST_SCREEN_PARAM_KEY } from "../constant/constant";
+import { LAST_SCREEN_PARAM_KEY, SCREEN } from "../constant/constant";
 import { AxiosResponse } from "axios";
 import {FormObj} from "../component/form";
+import { T } from "./translate";
 
 export const checkIfRequestError = (result: CommonResponse<any> | any) => {
   console.log(result);
@@ -104,4 +105,15 @@ export const getFormInputObj = (formObjList: FormObj[]) => {
     }
   }
   return formInputObj;
+};
+
+export const getDisplayNameByRouteName = (routeName: string, language: Language) => {
+  if (routeName === SCREEN.HOME) {
+    return T.SCREEN_HOME[language];
+  } else if (routeName === SCREEN.PERSONAL_INFO) {
+    return T.SCREEN_PERSONAL_INFO[language];
+  } else if (routeName === SCREEN.SETTING) {
+    return T.SCREEN_SETTING[language];
+  }
+  return null;
 };

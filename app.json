@@ -19,6 +19,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.waiying.brecki",
+      "buildNumber": "1.0.0",
       "config": {
         "googleSignIn": {
           "reservedClientId": "com.googleusercontent.apps.549401078361-i71620ipt8nljerc5r40lq2u2dmp4mlb"
@@ -31,6 +32,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.waiying.brecki",
+      "versionCode": 1,
       "softwareKeyboardLayoutMode": "pan"
     },
     "web": {

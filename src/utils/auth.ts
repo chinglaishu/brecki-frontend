@@ -1,4 +1,5 @@
 import * as GoogleSignIn from "expo-google-sign-in"; 
+import * as Facebook from 'expo-facebook';
 import { InputObj, InputObjKey, Language } from "../type/common";
 import { T } from "./translate";
 
@@ -69,7 +70,7 @@ const checkPhoneNumberFormatError = (phoneNumber: string, langauge: Language, ph
 export const GoogleAuth = {
   async init() {
     await GoogleSignIn.initAsync({
-      clientId: "",
+      clientId: "549401078361-i71620ipt8nljerc5r40lq2u2dmp4mlb.apps.googleusercontent.com",
     });
   },
   async login() {
@@ -84,7 +85,34 @@ export const GoogleAuth = {
       console.log(err);
     }
   },
-  async signOut() {
+  async logout() {
     await GoogleSignIn.signOutAsync();
+  },
+};
+
+export const FacebookAuth = {
+  async login() {
+    try {
+      await Facebook.initializeAsync({
+        appId: '<APP_ID>',
+      });
+      const result: any = await Facebook.logInWithReadPermissionsAsync({
+        permissions: ['public_profile'],
+      });
+      console.log(result);
+      const {type, token} = result;
+      if (type === 'success') {
+        // Get the user's name using Facebook's Graph API
+        const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
+        console.log(response);
+      } else {
+        // type === 'cancel'
+      }
+    } catch ({ message }) {
+      alert(`Facebook Login Error: ${message}`);
+    }
+  },
+  async logOut() {
+
   },
 };

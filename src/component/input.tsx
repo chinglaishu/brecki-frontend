@@ -21,7 +21,7 @@ type NormalInputProps = {
   useRef: any,
   nextInputRef: any,
   checkFormatError: any,
-}
+};
 
 type PhoneInputProps = NormalInputProps & {
   phoneRegionCodeValue: any,
