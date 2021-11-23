@@ -8,21 +8,31 @@ export const LANGUAGE_HEADER = "Accept-Language";
 export const STORE_KEY = {
   ACCESS_TOKEN: "a",
   REFRESH_TOKEN: "b",
+  LANGUAGE: "c",
 };
 
-export type STATUS_TYPE = "close" | "loading" | "success" | "error" | "info";
+export type STATUS_TYPE = "loading" | "success" | "error" | "info";
 export const STATUS_TYPE: {
-  CLOSE: STATUS_TYPE,
   LOADING: STATUS_TYPE,
   SUCCESS: STATUS_TYPE,
   ERROR: STATUS_TYPE,
   INFO: STATUS_TYPE,
 } = {
-  CLOSE: "close",
   LOADING: "loading",
   SUCCESS: "success",
   ERROR: "error",
   INFO: "info",
+};
+
+export type MODAL_HANDLE_TYPE = 1 | 4 | 0;
+export const MODAL_HANDLE_TYPE: {
+  SHORT_CLOSE: MODAL_HANDLE_TYPE,
+  LONG_CLOSE: MODAL_HANDLE_TYPE,
+  USER_HANDLE: MODAL_HANDLE_TYPE,
+} = {
+  SHORT_CLOSE: 1,
+  LONG_CLOSE: 4,
+  USER_HANDLE: 0,
 };
 
 export type AUTH_SCREEN = "Login" | "Signup" | "ForgetPassword" | "VerifyPhone" | "ResetPassword";

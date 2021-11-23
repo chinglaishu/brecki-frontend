@@ -3,6 +3,7 @@ import { ParamListBase } from "@react-navigation/routers";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AxiosResponse } from "axios";
 import { DefaultTheme } from "styled-components";
+import { StatusModalProps } from "../component/modal";
 import { AGE_RANGE_NUM, SEX_NUM, STATUS_TYPE } from "../constant/constant";
 
 export type Location = {
@@ -29,19 +30,23 @@ export type User = {
   username: string,
   language: Language,
   phone?: string,
+  displayName?: string,
+  personalInfo?: PersonalInfo,
+  target?: Target,
+  firebaseEmail?: string,
+  firebasePassword?: string,
+
   isGuest?: boolean,
   isLoading?: boolean,
-  displayName: string,
-  personalInfo: PersonalInfo,
-  target: Target,
-  firebaseEmail: string,
-  firebasePassword: string,
 };
 
 export type ContextObj = {
   user: User,
+  setUser: (user: User) => any,
   theme: DefaultTheme,
-  changeStatusModal: (statusType: STATUS_TYPE, message?: string, title?: string) => any,
+  setTheme: (theme: DefaultTheme) => any,
+  changeStatusModal: (obj: StatusModalProps) => any,
+  logout: () => any,
 };
 
 export type PageProps = {

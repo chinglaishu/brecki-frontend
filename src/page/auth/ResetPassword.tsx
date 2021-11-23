@@ -44,11 +44,11 @@ export const ResetPassword: FC<AuthProps> = ({navigation}) => {
         : await forgetPassword(user.username, phone, code, newPassword.content);
 
       if (checkIfRequestError(result)) {
-        changeStatusModal(STATUS_TYPE.ERROR, result?.data?.message);
+        changeStatusModal({statusType: STATUS_TYPE.ERROR, message: result?.data?.message});
         return;
       }
 
-      changeStatusModal(STATUS_TYPE.SUCCESS, RM.RESET_PASSWORD_SUCCESS[language]);
+      changeStatusModal({statusType: STATUS_TYPE.SUCCESS, message: result?.data?.message});
       
       if (lastScreen === SCREEN.SETTING) {
         navigation.navigate(SCREEN.SETTING);

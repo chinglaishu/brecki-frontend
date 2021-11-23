@@ -16,7 +16,7 @@ type CustomDrawerProps = {
 export const CustomDrawer: FC<CustomDrawerProps> = ({drawerContentProps}) => {
   
   const getContent = (contextObj: ContextObj) => {
-    const {user} = contextObj;
+    const {user, logout} = contextObj;
     const {language} = user;
     return (
       <DrawerContentScrollView>
@@ -39,6 +39,12 @@ export const CustomDrawer: FC<CustomDrawerProps> = ({drawerContentProps}) => {
           label={"Personal Info"}
           onPress={() => {
             drawerContentProps.navigation.navigate(SCREEN.PERSONAL_INFO)
+          }}
+        />
+        <DrawerItem 
+          label={"Log out"}
+          onPress={() => {
+            logout();
           }}
         />
       </DrawerContentScrollView>

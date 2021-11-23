@@ -4,6 +4,8 @@ type RM_Translate = {
   REQUEST_FAIL: MultiLanguage,
   LOGIN_SUCCESS: MultiLanguage,
   RESET_PASSWORD_SUCCESS: MultiLanguage,
+  VERIFICATION_SUCCESS: MultiLanguage,
+  SIGNUP_SUCCESS: MultiLanguage,
 }
 
 export const RM: RM_Translate = {
@@ -19,4 +21,13 @@ export const RM: RM_Translate = {
     en: "Reset Password Success",
     zh: "Reset Password Success",
   },
+  VERIFICATION_SUCCESS: {
+    en: "Verification Success",
+    zh: "Verification Success",
+  },
+  SIGNUP_SUCCESS: {
+    en: "Signup Success",
+    zh: "Signup Success",
+  },
+
 };

@@ -2,4 +2,6 @@
 1. request - > loading -> tick / cross
 2. save 
 3. drawer, header style
-4. icon of drawer
+
+
+git clean --force && git reset --hard

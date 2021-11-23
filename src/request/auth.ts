@@ -27,8 +27,8 @@ export type LoginResponse = {
   refreshToken: string,
 };
 
-export const signup = async (username: string, password: string, phone: string): R<LoginResponse> => {
-  return await instance.post("/auth/signup", {username, password, phone});
+export const signup = async (username: string, password: string, phone: string, code: string): R<LoginResponse> => {
+  return await instance.post("/auth/signup", {username, password, phone, code});
 }
 
 export const login = async (username: string, password: string): R<LoginResponse> => {
@@ -53,4 +53,8 @@ export type RefreshTokenResponse = {
 };
 export const refreshTokenRequest = async (refreshToken: string): R<RefreshTokenResponse> => {
   return await instance.post("/auth/refresh-token", {refreshToken});
+};
+
+export const checkUsernameAvailable = async (username: string): R<Boolean> => {
+  return await instance.get(`/auth/check-username-available/${username}`);
 };

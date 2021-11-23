@@ -1,13 +1,14 @@
 import { Ref } from "react";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { FormObj } from "../../component/form";
-import { AUTH_SCREEN, SCREEN } from "../../constant/constant";
-import { forgetPassword, forgetPasswordTokenRequest, login, signup } from "../../request/auth";
-import { InputObj, InputObjKey, Language } from "../../type/common";
+import { AUTH_SCREEN, SCREEN, STORE_KEY } from "../../constant/constant";
+import { checkUsernameAvailable, forgetPassword, forgetPasswordTokenRequest, login, LoginResponse, requestToken, signup } from "../../request/auth";
+import { setAxiosAuthorization } from "../../request/config";
+import { InputObj, InputObjKey, Language, User } from "../../type/common";
 import imageLoader from "../../utils/imageLoader";
 import { TITLE_IMAGE_HEIGHT } from "../../utils/size";
 import { T } from "../../utils/translate";
-import { getPhone } from "../../utils/utilFunction";
+import { getPhone, setStoreData } from "../../utils/utilFunction";
 
 type AuthContent = {
   titleImageSource: any,
@@ -186,13 +187,13 @@ export const makeRequestByAuthScreen = async (screen: AUTH_SCREEN, inputObj: Inp
 
   const phone = getPhone(phoneRegionCode?.content, phoneNumber?.content);
   
-  const result = (screen === "Login")
-    ? await login(username.content, password.content)
-    : (screen === "Signup")
-      ? await signup(username.content, password.content, phone)
-      : await forgetPasswordTokenRequest(username.content, phone);
-
-  return result;
+  if (screen === AUTH_SCREEN.LOGIN) {
+    return await login(username.content, password.content);
+  } else if (screen === AUTH_SCREEN.SIGN_UP) {
+    await requestToken(phone, true);
+    return await checkUsernameAvailable(username.content);
+  }
+  return await forgetPasswordTokenRequest(username.content, phone);
 };
 
 export const requestTokenForSignupOrForgetPassword = async (screen: AUTH_SCREEN, inputObj: InputObj) => {
@@ -204,3 +205,10 @@ export const checkHaveFormatError = (formatError: any) => {
   if (formatError.length === 0) {return false; }
   return true;
 }
+
+export const loginAction = async (data: LoginResponse, setUser: (user: User) => any) => {
+  const {token, user} = data;
+  await setStoreData(STORE_KEY.ACCESS_TOKEN, token);
+  setAxiosAuthorization(token);
+  setUser(user);
+};

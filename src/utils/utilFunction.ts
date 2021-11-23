@@ -10,7 +10,6 @@ import {FormObj} from "../component/form";
 import { T } from "./translate";
 
 export const checkIfRequestError = (result: CommonResponse<any> | any) => {
-  console.log(result);
   if (!result) {return true; }
   if (!result.data) {return true; }
   if (!result.data.isSuccess) {return true;}
@@ -27,7 +26,7 @@ export const getCurrentRouteName = (navigation: StackNavigationProp<any> | Drawe
 
 export const getParamFromNavigation = (navigation: StackNavigationProp<any> | DrawerNavigationProp<any>, paramKey: string) => {
   const {routes, index} = navigation.getState();  
-  return (routes as any)[index][paramKey];
+  return (routes as any)[index]["params"][paramKey];
 };
 
 export const getLastScreenNavigationParam = (value: string) => {

@@ -31,6 +31,13 @@ export const getAxiosHeader = (key: string) => {
   return value;
 };
 
+export const initAxiosHeader = async () => {
+  const token: any = await getStoreData(STORE_KEY.ACCESS_TOKEN);
+  const lang: any = await getStoreData(STORE_KEY.LANGUAGE);
+  setAxiosAuthorization(token);
+  setAxiosLanguage(lang);
+};
+
 let refreshingToken = false;
 let pendingRequests: {
   resolve: (value: unknown) => void;
@@ -47,13 +54,17 @@ const processPending = (error: Error | null, token: string | null) => {
 instance.interceptors.response.use(
   (response) => response,
   async (error) => {
-
+    const auth = getAxiosHeader(AUTHORIZATION_HEADER);
     const lang = getAxiosHeader(LANGUAGE_HEADER);
+    console.log("auth");
+    console.log(auth);
     // if ((error.code === undefined && error.message === 'Network Error') || error.code === 'ECONNABORTED') {
     //   throw new Error(lang === 'zht' ? '請檢查你的網絡連線' : 'Please check your network connection');
     // }
 
     const { response } = error;
+
+    console.log(response);
 
     if (response?.status === 403 && response?.data?.message === 'Forbidden resource' && response?.data?.info === 'F') {
       const request = error.config;
@@ -102,5 +113,6 @@ instance.interceptors.response.use(
       // throw new Error(error.response.data.message);
     }
     // throw error;
+    return response
   },
 );

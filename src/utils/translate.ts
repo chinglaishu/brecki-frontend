@@ -4,7 +4,9 @@ type Translate = {
   SCREEN_HOME: MultiLanguage,
   SCREEN_PERSONAL_INFO: MultiLanguage,
   SCREEN_SETTING: MultiLanguage,
+  LOADING: MultiLanguage,
   REQUEST_FAIL: MultiLanguage,
+  SUCCESS: MultiLanguage,
   AUTH_USERNAME_LENGTH: MultiLanguage,
   AUTH_USERNAME_CONTAIN_CHARACTER: MultiLanguage,
   AUTH_PASSWORD_LENGTH: MultiLanguage,
@@ -28,6 +30,7 @@ type Translate = {
   REGISTER: MultiLanguage,
   GO_LOGIN: MultiLanguage,
   GO_REGISTER: MultiLanguage,
+  TOKEN_EXPIRE: MultiLanguage,
 }
 
 export const T: Translate = {
@@ -45,6 +48,14 @@ export const T: Translate = {
   },
   REQUEST_FAIL: {
     en: "Request Fail",
+    zh: "種植種植種植種植種植",
+  },
+  LOADING: {
+    en: "Loading...",
+    zh: "Loading..."
+  },
+  SUCCESS: {
+    en: "Request Success",
     zh: "種植種植種植種植種植",
   },
   AUTH_USERNAME_LENGTH: {
@@ -139,4 +150,8 @@ export const T: Translate = {
     en: "Not yet have account?",
     zh: "Not yet have account?",
   },
+  TOKEN_EXPIRE: {
+    en: "Token expired, please login again",
+    zh: "Token expired, please login again"
+  }
 };

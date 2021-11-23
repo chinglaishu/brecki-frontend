@@ -22,6 +22,10 @@ const imageLoader = {
   lottie_success: require("../../assets/lottie/success.json"),
   lottie_fail: require("../../assets/lottie/fail.json"),
 
+  lottie_loading_circle: require("../../assets/lottie/loading_circle.json"),
+  lottie_success_drawing: require("../../assets/lottie/success_drawing.json"),
+  lottie_fail_drawing: require("../../assets/lottie/fail_drawing.json"),
+
   cat: require("../../assets/example/cat.png"),
   dog: require("../../assets/example/dog.png"),
 

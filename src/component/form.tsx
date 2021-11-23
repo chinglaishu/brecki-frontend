@@ -6,7 +6,7 @@ import { checkAuthFormatError } from "../utils/auth";
 import { ContextConsumer } from "../utils/context";
 import { getFormInputObj } from "../utils/utilFunction";
 import { NormalInput, PhoneInput } from "./input";
-import { NormalModal } from "./modal";
+import { SelectModal } from "./modal";
 import { ButtonText } from "./text";
 import { ButtonTouchable } from "./touchable";
 
@@ -31,6 +31,10 @@ type FormProps = {
 export const Form: FC<FormProps> = ({formObjList, buttonText, buttonStyle, submitFunction}) => {
   const [formInputObj, setFormInputObj] = useState(getFormInputObj(formObjList));
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  }
 
   const getContent = (contextObj: ContextObj) => {
     const {theme, user} = contextObj;
@@ -95,7 +99,7 @@ export const Form: FC<FormProps> = ({formObjList, buttonText, buttonStyle, submi
             return (
               <PhoneInput useRef={useRef} extraStyle={{...extraStyle}} iconSource={iconSource} placeHolder={placeHolder}
                 theme={theme} useKey={useKey} onChangeEvent={changeInputObjValue}
-                phoneRegionCodeValue={formInputObj.phoneRegionCode.content} setIsModalVisible={setIsModalVisible} nextInputRef={null}
+                phoneRegionCodeValue={formInputObj?.phoneRegionCode?.content} setIsModalVisible={setIsModalVisible} nextInputRef={null}
                 checkFormatError={checkFormatError} inputObj={formInputObj} />
             );
           }
@@ -112,8 +116,17 @@ export const Form: FC<FormProps> = ({formObjList, buttonText, buttonStyle, submi
           <ButtonText>{buttonText}</ButtonText>
         </ButtonTouchable>
 
-        <NormalModal isVisible={isModalVisible} onPressEvent={() => console.log("press")}
-          setIsModalVisible={setIsModalVisible} />
+        <SelectModal isVisible={isModalVisible} onPressEvent={() => console.log("press")}
+          closeModal={closeModal} initialValue={"+852"}
+          selectContentList={[{
+            text: "+852",
+            value: "+852",
+            description: "Hong Kong",
+          }, {
+            text: "+86",
+            value: "+86",
+            description: "Macau",
+          }]} />
       </View>
     );
   };

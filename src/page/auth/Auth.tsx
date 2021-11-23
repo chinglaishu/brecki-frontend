@@ -12,8 +12,7 @@ import { T } from "../../utils/translate";
 import { GoogleAuth, checkAuthFormatError } from "../../utils/auth";
 import { AUTH_SCREEN, STATUS_TYPE, STORE_KEY } from "../../constant/constant";
 import { checkIfRequestError, getCurrentRouteName, getLastScreenNavigationParam, getPhone, setStoreData } from "../../utils/utilFunction";
-import { NormalModal } from "../../component/modal";
-import { checkHaveFormatError, getAuthContent, getAuthFormObjList, makeRequestByAuthScreen } from "./helper";
+import { checkHaveFormatError, getAuthContent, getAuthFormObjList, loginAction, makeRequestByAuthScreen } from "./helper";
 import { setAxiosAuthorization } from "../../request/config";
 import { requestToken, verifyPhone } from "../../request/auth";
 import { TITLE_IMAGE_HEIGHT } from "../../utils/size";
@@ -24,7 +23,7 @@ const { UIManager } = NativeModules;
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
-export const Auth: FC<AuthProps> = ({navigation, setUser}) => {
+export const Auth: FC<AuthProps> = ({navigation}) => {
 
   useEffect(() => {
     // GoogleAuth.init();
@@ -35,11 +34,13 @@ export const Auth: FC<AuthProps> = ({navigation, setUser}) => {
   const confirmPasswordInputRef = useRef();
   const phoneNumberInputRef = useRef();
 
-  const currentRouteName = getCurrentRouteName(navigation) as AUTH_SCREEN;
-
   const getContent = (contextObj: ContextObj) => {
-    const {user, theme, changeStatusModal} = contextObj;
+    const {user, theme, changeStatusModal, setUser} = contextObj;
     const {language} = user;
+
+    const currentRouteName = getCurrentRouteName(navigation) as AUTH_SCREEN;
+
+    console.log(`current route: ${currentRouteName}`)
 
     const useContent = getAuthContent(currentRouteName, language);
     const {titleImageSource, titleWidth, buttonText,
@@ -51,25 +52,30 @@ export const Auth: FC<AuthProps> = ({navigation, setUser}) => {
 
     const onPressButton = async (inputObj: InputObj) => {
 
-      changeStatusModal(STATUS_TYPE.LOADING);
+      changeStatusModal({statusType: STATUS_TYPE.LOADING});
       const result = await makeRequestByAuthScreen(currentRouteName, inputObj);
       if (checkIfRequestError(result)) {
-        changeStatusModal(STATUS_TYPE.ERROR, result?.data?.message);
+        console.log("is error");
+        changeStatusModal({statusType: STATUS_TYPE.ERROR, message: result?.data?.message});
         return;
-      }
-      changeStatusModal(STATUS_TYPE.CLOSE);
-
-      if (currentRouteName !== AUTH_SCREEN.FORGET_PASSWORD) {
-        const {token, user} = (result as any).data.data;
-        setStoreData(STORE_KEY.ACCESS_TOKEN, token);
-        setAxiosAuthorization(token);
-        setUser(user);
+      } else {
+        console.log("skip");
+        changeStatusModal({statusType: STATUS_TYPE.SUCCESS, message: result?.data?.message});
+        // changeStatusModal(STATUS_TYPE.CLOSE);
       }
 
-      if (currentRouteName !== AUTH_SCREEN.LOGIN) {
+      console.log(`current route: ${currentRouteName}`);
+
+      if (currentRouteName === AUTH_SCREEN.LOGIN) {
+        await loginAction(result.data.data as any, setUser);
+      } else {
         const param = getLastScreenNavigationParam(currentRouteName);
-        param.phone = getPhone(inputObj.phoneRegionCode.content, inputObj.phoneNumber.content);
-        navigation.navigate(AUTH_SCREEN.VERIFY_PHONE, param);
+        param.phone = getPhone(inputObj?.phoneRegionCode?.content, inputObj?.phoneNumber?.content);
+        if (currentRouteName === AUTH_SCREEN.SIGN_UP) {
+          param.username = inputObj?.username?.content;
+          param.password = inputObj?.password?.content;
+        }
+        navigation.navigate(AUTH_SCREEN.VERIFY_PHONE, param); 
       }
     };
 
@@ -100,7 +106,7 @@ export const Auth: FC<AuthProps> = ({navigation, setUser}) => {
               onPress={() => navigation.navigate(AUTH_SCREEN.FORGET_PASSWORD)}>
               {T.FORGET_PASSWORD[language]}
             </SubTitle>
-          } 
+          }
         </ContainerView>
 
         {!isHideSocial &&

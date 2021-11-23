@@ -59,6 +59,11 @@ export const BorderLeftTouchbale = styled.TouchableOpacity.attrs(props => {
 
 export const NormalInput = ({iconSource, maxLength, extraStyle, placeHolder, theme, useKey, inputObj,
   onChangeEvent, useRef, nextInputRef, checkFormatError}: NormalInputProps) => {
+  if (!inputObj) {return null; }
+  if (!inputObj[useKey]) {
+    console.log(inputObj); 
+    return null;
+  }
   const {content, formatError} = inputObj[useKey];
 
   maxLength = maxLength || 10;
@@ -81,6 +86,11 @@ export const NormalInput = ({iconSource, maxLength, extraStyle, placeHolder, the
 
 export const PhoneInput = ({iconSource, maxLength, extraStyle, placeHolder, theme, useKey, inputObj, onChangeEvent, useRef, nextInputRef, checkFormatError,
   phoneRegionCodeValue, setIsModalVisible}: PhoneInputProps) => {
+    if (!inputObj) {return null; }
+    if (!inputObj[useKey]) {
+      console.log(inputObj); 
+      return null;
+    }
   maxLength = maxLength || 10;
   const {content, formatError} = inputObj[useKey];
   return (

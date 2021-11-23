@@ -12,7 +12,7 @@ import { PersonalInfo } from '../page/personalInfo/PersonalInfo';
 import { ContextConsumer } from "../utils/context";
 import { ContextObj } from "../type/common";
 import { T } from "../utils/translate";
-import { Header } from "../component/view";
+import { Header } from "../component/header";
 import { CustomDrawer } from "./CustomDrawer";
 
 type MainNavigatorProps = {
