@@ -8,9 +8,11 @@ declare module "styled-components" {
     buttonBackground: string;
     primary: string;
     lightPrimary: string;
+    opacityPrimary: string;
     onPrimary: string;
     secondary: string;
     lightSecondary: string;
+    opacitySecondary: string;
     onSecondary: string;
     subTitle: string;
     subText: string;
@@ -19,6 +21,9 @@ declare module "styled-components" {
     border: string;
     buttonBorder: string;
     warning: string;
+    empty: string;
+    activeEmpty: string;
+    questionBlockBackground: string;
   }
 }
 
@@ -29,9 +34,11 @@ export const getLightTheme = (language: Language) => {
     buttonBackground: "#FFFFFF",
     primary: "#FFC85A",
     lightPrimary: "#FFC85A",
+    opacityPrimary: "#FFC85A60",
     onPrimary: "#FFFFFF",
-    secondary: "#09A99F",
+    secondary: "#75CDCA",
     lightSecondary: "#15CDC1",
+    opacitySecondary: "#75DCDA60",
     onSecondary: "#FFFFFF",
     subTitle: "#464646",
     subText: "#B2B2B2",
@@ -40,6 +47,9 @@ export const getLightTheme = (language: Language) => {
     border: "#D6D6D6",
     buttonBorder: "#FFFFFF",
     warning: "#F25353",
+    empty: "#D6D6D6",
+    activeEmpty: "#E0E0E0",
+    questionBlockBackground: "#00000050",
   };
   return lightTheme;
 }
@@ -52,8 +62,10 @@ export const getDarkTheme = (language: Language) => {
     primary: "#00000040",
     lightPrimary: "#00000020",
     onPrimary: "#FFFFFF",
+    opacityPrimary: "#FFC85A60",
     secondary: "#00000050",
     lightSecondary: "#00000050",
+    opacitySecondary: "#75DCDA60",
     onSecondary: "#FFFFFF",
     subTitle: "#00000070",
     subText: "#00000040",
@@ -62,6 +74,9 @@ export const getDarkTheme = (language: Language) => {
     border: "#00000020",
     buttonBorder: "#FFFFFF",
     warning: "#F43737",
+    empty: "#D6D6D6",
+    activeEmpty: "#E0E0E0",
+    questionBlockBackground: "#00000050",
   }
   return darkTheme;
 };

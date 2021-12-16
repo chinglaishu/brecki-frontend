@@ -1,7 +1,7 @@
 import React, {BaseSyntheticEvent, FC, Ref, useState} from "react";
 import { Image, Text, TextInput, View } from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { BORDER_RADIUS } from "../utils/size";
+import { BORDER_RADIUS, COMMON_ELEVATION } from "../utils/size";
 import { InputAndErrorContainer, InputContainer } from "./view";
 import styled, { DefaultTheme } from "styled-components/native";
 import { FONT_NORMAL } from "../constant/constant";
@@ -113,3 +113,38 @@ export const PhoneInput = ({iconSource, maxLength, extraStyle, placeHolder, them
     </InputAndErrorContainer>
   );
 };
+
+export const ButtonLikeTextInput = styled.TextInput.attrs(props => {
+  return {
+  }
+})`
+  color: ${props => props.theme.primary};
+  
+  width: ${wp(40)};
+  height: ${hp(5)};
+  font-size: ${hp(2)};
+  font-family: ${FONT_NORMAL};
+  padding: ${hp(1)}px;
+
+  background-color: ${props => props.theme.buttonBackground};
+
+  border-top-right-radius: ${BORDER_RADIUS};
+  border-bottom-left-radius: ${BORDER_RADIUS};
+
+  elevation: ${COMMON_ELEVATION};
+`;
+
+
+export const RoundInput = styled.TextInput.attrs(props => {
+  return {
+  }
+})`
+  color: ${props => props.theme.text};
+  
+  font-size: ${hp(2)};
+  font-family: ${FONT_NORMAL};
+  padding-top: ${hp(1)}px;
+  padding-bottom: ${hp(1)}px;
+  padding-left: ${wp(4)}px;
+  padding-right: ${wp(4)}px;
+`;

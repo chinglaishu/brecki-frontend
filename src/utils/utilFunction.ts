@@ -2,12 +2,13 @@ import { NavigationProp } from "@react-navigation/core";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Platform } from "react-native";
-import { InputObjItem, CommonResponse, Route, InputObj, Language } from "../type/common";
+import { InputObjItem, CommonResponse, Route, InputObj, Language, R } from "../type/common";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LAST_SCREEN_PARAM_KEY, SCREEN } from "../constant/constant";
+import { LAST_SCREEN_PARAM_KEY, MODAL_HANDLE_TYPE, SCREEN, STATUS_TYPE } from "../constant/constant";
 import { AxiosResponse } from "axios";
 import {FormObj} from "../component/form";
 import { T } from "./translate";
+import { StatusModalProps } from "../component/modal";
 
 export const checkIfRequestError = (result: CommonResponse<any> | any) => {
   if (!result) {return true; }
@@ -25,8 +26,8 @@ export const getCurrentRouteName = (navigation: StackNavigationProp<any> | Drawe
 };
 
 export const getParamFromNavigation = (navigation: StackNavigationProp<any> | DrawerNavigationProp<any>, paramKey: string) => {
-  const {routes, index} = navigation.getState();  
-  return (routes as any)[index]["params"][paramKey];
+  const {routes, index} = navigation.getState();
+  return (routes as any)?.[index]?.["params"]?.[paramKey];
 };
 
 export const getLastScreenNavigationParam = (value: string) => {
@@ -113,6 +114,48 @@ export const getDisplayNameByRouteName = (routeName: string, language: Language)
     return T.SCREEN_PERSONAL_INFO[language];
   } else if (routeName === SCREEN.SETTING) {
     return T.SCREEN_SETTING[language];
+  } else if (routeName === SCREEN.QUESTION || routeName === SCREEN.QUESTION_END) {
+    return T.SCREEN_QUESTION[language];
+  } else if (routeName === SCREEN.LIKE_ZONE) {
+    return T.SCREEN_LIKE_ZONE[language];
+  } else if (routeName === SCREEN.CHAT) {
+    return T.SCREEN_CHAT[language];
   }
   return null;
+};
+
+export const getDefaultHandleTypeByStatus = (status: STATUS_TYPE) => {
+  if (status === STATUS_TYPE.SUCCESS) {
+    return MODAL_HANDLE_TYPE.SHORT_CLOSE;
+  }
+  return MODAL_HANDLE_TYPE.USER_HANDLE;
+};
+
+export const getNumListByNum = (num: number) => {
+  let useList: number[] = [];
+  for (let i = 0 ; i <= num ; i++) {
+    useList.push(i);
+  }
+  return useList;
+};
+
+export const makeRequestWithStatus = async <T>(request: any, changeStatusModal: (obj: StatusModalProps) => any, showSuccess: boolean): R<T> => {
+  changeStatusModal({statusType: STATUS_TYPE.LOADING});
+  const result = await request();
+  if (checkIfRequestError(result)) {
+    changeStatusModal({statusType: STATUS_TYPE.ERROR, message: result.data.message});
+    return null as any;
+  }
+  if (showSuccess) {
+    changeStatusModal({statusType: STATUS_TYPE.SUCCESS});
+  } else {
+    changeStatusModal({statusType: STATUS_TYPE.LOADING, isVisible: false});
+  }
+  return result;
+};
+
+export const checkIsSwipe = (state: any) => {
+  const {vx, vy} = state;
+  const isSwipe = Math.abs(vx) > 0.5 || Math.abs(vy) > 0.5;
+  return isSwipe;
 };

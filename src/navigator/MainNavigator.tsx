@@ -10,10 +10,15 @@ import { VerifyPhone } from '../page/auth/VerifyPhone';
 import { ResetPassword } from '../page/auth/ResetPassword';
 import { PersonalInfo } from '../page/personalInfo/PersonalInfo';
 import { ContextConsumer } from "../utils/context";
-import { ContextObj } from "../type/common";
+import { ContextObj, User } from "../type/common";
 import { T } from "../utils/translate";
 import { Header } from "../component/header";
 import { CustomDrawer } from "./CustomDrawer";
+import { LikeZoneTab } from "./LikeZoneTab";
+import { QuestionPage } from "../page/question/Question";
+import { LikeZone } from "../page/likeZone/ManualLikeZone";
+import { Chat } from "../page/chat/Chat";
+import { QuestionEnd } from "../page/question/QuestionEnd";
 
 type MainNavigatorProps = {
   initialRoute: SCREEN,
@@ -35,8 +40,12 @@ export const MainNavigator: FC<MainNavigatorProps> = ({initialRoute}: MainNaviga
         <Drawer.Navigator initialRouteName={initialRoute} screenOptions={{header: (props) => <Header headerProps={props} /> }}
           drawerContent={(props) => <CustomDrawer drawerContentProps={props} />}>
           <Drawer.Screen name={SCREEN.HOME} component={Home} options={{title: T.SCREEN_HOME[language]}} />
+          <Drawer.Screen name={SCREEN.QUESTION} component={QuestionPage} options={{title: T.SCREEN_QUESTION[language]}} />
+          <Drawer.Screen name={SCREEN.LIKE_ZONE} component={LikeZoneTab} options={{title: T.SCREEN_LIKE_ZONE[language]}} />
+          <Drawer.Screen name={SCREEN.CHAT} component={Chat} options={{title: T.SCREEN_CHAT[language]}} />
           <Drawer.Screen name={SCREEN.PERSONAL_INFO} component={PersonalInfo} options={{title: T.SCREEN_PERSONAL_INFO[language]}} />
           <Drawer.Screen name={SCREEN.SETTING} component={Setting} options={{title: T.SCREEN_SETTING[language]}} />
+          <Drawer.Screen name={SCREEN.QUESTION_END} component={QuestionEnd} options={{title: T.SCREEN_QUESTION[language]}} />
         </Drawer.Navigator>
       </NavigationContainer>
     );

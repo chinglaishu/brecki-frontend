@@ -6,7 +6,7 @@ import { DefaultTheme } from "styled-components";
 import { StatusModalProps } from "../component/modal";
 import { AGE_RANGE_NUM, SEX_NUM, STATUS_TYPE } from "../constant/constant";
 
-export type Location = {
+export type PersonalInfoLocation = {
   placeId: string,
   name: MultiLanguage,
 };
@@ -14,19 +14,37 @@ export type Location = {
 export type Target = {
   targetSexs: SEX_NUM[];
   targetAgeRanges: AGE_RANGE_NUM[];
-  targetLocations: Location[];
+  targetLocations: PersonalInfoLocation[];
+};
+
+export type PERSONAL_INFO_KEY = "name" | "sex" | "ageRange" | "location" | "profilePicOneUrl"
+  | "profilePicTwoUrl" | "targetSex" | "targetAgeRange" | "targetLocation" | "profilePicOneFileType"
+  | "profilePicTwoFileType";
+
+export type ProfilePicTwoUrl = {
+  blurMore: string,
+  blurLess: string,
+  clear: string,
 };
 
 export type PersonalInfo = {
+  name: string,
   sex: SEX_NUM,
   ageRange: AGE_RANGE_NUM,
-  country: Location,
-  city: Location,
+  location: PersonalInfoLocation,
   profilePicOneUrl: string,
-  profilePicTwoUrl: string,
-}
+  profilePicTwoUrl: ProfilePicTwoUrl,
+
+  profilePicOneFileType?: string,
+  profilePicTwoFileType?: string;
+
+  targetSex: SEX_NUM;
+  targetAgeRange: AGE_RANGE_NUM;
+  targetLocation: PersonalInfoLocation;
+};
 
 export type User = {
+  id: string,
   username: string,
   language: Language,
   phone?: string,
@@ -35,18 +53,23 @@ export type User = {
   target?: Target,
   firebaseEmail?: string,
   firebasePassword?: string,
-
+  notificationTokens?: string[],
+  isEdited?: boolean,
   isGuest?: boolean,
   isLoading?: boolean,
 };
 
+export type SetUserFunction = (user: User) => any;
+
 export type ContextObj = {
   user: User,
-  setUser: (user: User) => any,
+  setUser: SetUserFunction,
   theme: DefaultTheme,
   setTheme: (theme: DefaultTheme) => any,
   changeStatusModal: (obj: StatusModalProps) => any,
   logout: () => any,
+  overlayColor: string,
+  setOverlayColor: (color: string) => any,
 };
 
 export type PageProps = {
@@ -94,3 +117,5 @@ export type CommonResponse<T> = {
 }
 
 export type R<T> = Promise<AxiosResponse<CommonResponse<T>>>;
+
+export type GoogleRequest<T> = Promise<AxiosResponse<T>>;

@@ -4,7 +4,7 @@ import "firebase/database";
 import "firebase/firestore";
 import "firebase/functions";
 import "firebase/storage";
-import uuid from "uuid";
+import * as uuid from "uuid";
 import { User } from '../type/common';
 
 const config = {

@@ -2,6 +2,15 @@ import { MultiLanguage } from "../type/common";
 
 type Translate = {
   SCREEN_HOME: MultiLanguage,
+  SCREEN_QUESTION: MultiLanguage,
+  SCREEN_QUESTION_DESCRIPTION_1: MultiLanguage,
+  SCREEN_QUESTION_DESCRIPTION_2: MultiLanguage,
+  SCREEN_LIKE_ZONE: MultiLanguage,
+  SCREEN_LIKE_ZONE_DESCRIPTION_1: MultiLanguage,
+  SCREEN_LIKE_ZONE_DESCRIPTION_2: MultiLanguage,
+  SCREEN_CHAT: MultiLanguage,
+  SCREEN_CHAT_DESCRIPTION_1: MultiLanguage,
+  SCREEN_CHAT_DESCRIPTION_2: MultiLanguage,
   SCREEN_PERSONAL_INFO: MultiLanguage,
   SCREEN_SETTING: MultiLanguage,
   LOADING: MultiLanguage,
@@ -26,17 +35,77 @@ type Translate = {
   LOGIN_WITH: MultiLanguage,
   CONTINUE_WITH_GOOGLE: MultiLanguage,
   CONTINUE_WITH_FACEBOOK: MultiLanguage,
+  LOGOUT: MultiLanguage,
   LOGIN: MultiLanguage,
   REGISTER: MultiLanguage,
   GO_LOGIN: MultiLanguage,
   GO_REGISTER: MultiLanguage,
   TOKEN_EXPIRE: MultiLanguage,
+  TARGET_PREFERENCE: MultiLanguage,
+  SUBMIT: MultiLanguage,
+  SAVE: MultiLanguage,
+  NO_PREFERENCE: MultiLanguage,
+  AGE: MultiLanguage,
+  SEX: MultiLanguage,
+  LOCATION: MultiLanguage,
+  SEARCH_LOCATION: MultiLanguage,
+  USE_CURRENT_LOCATION: MultiLanguage,
+  NO_RESULT: MultiLanguage,
+  ANY_IMAGE: MultiLanguage,
+  REAL_FACE: MultiLanguage,
+  CHOOSE_QUESTION_NUM: MultiLanguage,
+  CHOOSE_QUESTION_NUM_DESCIPRION: any,
+  CHOOSE_SCORE_USER: MultiLanguage,
+  CHOOSE_SCORE_USER_DESCRIPTION: MultiLanguage,
+  START: MultiLanguage,
+  NEXT: MultiLanguage,
+  OPEN_OPTION_PLACEHOLDER: MultiLanguage,
+  CAN_NOT_EMPTY: MultiLanguage,
+  QUESTION_END: MultiLanguage,
+  BACK_TO_HOME: MultiLanguage,
+  CANCEL: MultiLanguage,
 }
 
 export const T: Translate = {
   SCREEN_HOME: {
     en: "Home",
     zh: "Home",
+  },
+  SCREEN_QUESTION: {
+    en: "Question",
+    zh: "Question",
+  },
+  SCREEN_QUESTION_DESCRIPTION_1: {
+    en: "Use question to yourself",
+    zh: "Use question to yourself",
+  },
+  SCREEN_QUESTION_DESCRIPTION_2: {
+    en: "Start Answer Question",
+    zh: "Start Answer Question",
+  },
+  SCREEN_LIKE_ZONE: {
+    en: "Like Zone",
+    zh: "Like Zone",
+  },
+  SCREEN_LIKE_ZONE_DESCRIPTION_1: {
+    en: "See any user interested",
+    zh: "See any user interested",
+  },
+  SCREEN_LIKE_ZONE_DESCRIPTION_2: {
+    en: "Meet your new user",
+    zh: "Meet your new user",
+  },
+  SCREEN_CHAT: {
+    en: "Chat",
+    zh: "Chat",
+  },
+  SCREEN_CHAT_DESCRIPTION_1: {
+    en: "Add more information to user",
+    zh: "Add more information to user",
+  },
+  SCREEN_CHAT_DESCRIPTION_2: {
+    en: "Start chating",
+    zh: "Start chating",
   },
   SCREEN_PERSONAL_INFO: {
     en: "Personal Info",
@@ -138,6 +207,10 @@ export const T: Translate = {
     en: "REGISTER",
     zh: "REGISTER",
   },
+  LOGOUT: {
+    en: "Logout",
+    zh: "Logout",
+  },
   LOGIN: {
     en: "LOGIN",
     zh: "LOGIN",
@@ -153,5 +226,111 @@ export const T: Translate = {
   TOKEN_EXPIRE: {
     en: "Token expired, please login again",
     zh: "Token expired, please login again"
-  }
+  },
+  TARGET_PREFERENCE: {
+    en: "Target Preferecne",
+    zh: "TARGET_PREFERENCE",
+  },
+  SUBMIT: {
+    en: "Submit",
+    zh: "Submit",
+  },
+  SAVE: {
+    en: "Save",
+    zh: "Save",
+  },
+  NO_PREFERENCE: {
+    en: "No Preference",
+    zh: "No Preference",
+  },
+  AGE: {
+    en: "Age...",
+    zh: "Age...",
+  },
+  SEX: {
+    en: "Sex...",
+    zh: "Sex...",
+  },
+  LOCATION: {
+    en: "Location...",
+    zh: "Location...",
+  },
+  SEARCH_LOCATION: {
+    en: "Search...",
+    zh: "Search...",
+  },
+  USE_CURRENT_LOCATION: {
+    en: "Get Current Location",
+    zh: "Get Current Location",
+  },
+  NO_RESULT: {
+    en: "No Related Result",
+    zh: "No Related Result",
+  },
+  ANY_IMAGE: {
+    en: "Any Image",
+    zh: "Any Image",
+  },
+  REAL_FACE: {
+    en: "Real Face",
+    zh: "Real Face",
+  },
+  CHOOSE_QUESTION_NUM: {
+    en: "Choose Question Number",
+    zh: "Choose Question Number"
+  },
+  CHOOSE_QUESTION_NUM_DESCIPRION: {
+    5: {
+      en: "Minimal question number, may not accurate, can select more",
+      zh: "Minimal question number, may not accurate, can select more",
+    },
+    8: {
+      en: "More question number, may be more accurate",
+      zh: "More question number, may be more accurate",
+    },
+    12: {
+      en: "Much more question number, more understand on you",
+      zh: "Much more question number, more understand on you",
+    },
+    15: {
+      en: "Much more question number, more understand on you",
+      zh: "Much more question number, more understand on you",
+    },
+  },
+  CHOOSE_SCORE_USER: {
+    en: "Choose Score User",
+    zh: "Choose Score User",
+  },
+  CHOOSE_SCORE_USER_DESCRIPTION: {
+    en: "Select which user to score and choose like that user or not",
+    zh: "Select which user to score and choose like that user or not"
+  },
+  START: {
+    en: "Start",
+    zh: "Start",
+  },
+  NEXT: {
+    en: "Next",
+    zh: "Next",
+  },
+  OPEN_OPTION_PLACEHOLDER: {
+    en: "Open Option...",
+    zh: "Open Option....",
+  },
+  CAN_NOT_EMPTY: {
+    en: "Can not empty",
+    zh: "Can not empty",
+  },
+  QUESTION_END: {
+    en: "Congrats! answered all questions, others will rate you",
+    zh: "Congrats, answered all questions, others will rate you",
+  },
+  BACK_TO_HOME: {
+    en: "BACK TO HOME",
+    zh: "BACK TO HOME",
+  },
+  CANCEL: {
+    en: "Cancel",
+    zh: "Cancel",
+  },
 };

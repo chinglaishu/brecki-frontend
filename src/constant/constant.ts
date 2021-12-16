@@ -50,13 +50,21 @@ export const AUTH_SCREEN: {
   RESET_PASSWORD: "ResetPassword",
 };
 
-export type SCREEN = "Home" | "PersonalInfo" | "Setting";
+export type SCREEN = "Home" | "Question" | "QuesetionEnd" | "LikeZone" | "Chat" | "PersonalInfo" | "Setting";
 export const SCREEN: {
   HOME: SCREEN,
+  QUESTION: SCREEN,
+  QUESTION_END: SCREEN,
+  LIKE_ZONE: SCREEN,
+  CHAT: SCREEN,
   PERSONAL_INFO: SCREEN,
   SETTING: SCREEN,
 } = {
   HOME: "Home",
+  QUESTION: "Question",
+  QUESTION_END: "QuesetionEnd",
+  LIKE_ZONE: "LikeZone",
+  CHAT: "Chat",
   PERSONAL_INFO: "PersonalInfo",
   SETTING: "Setting",
 };
@@ -94,9 +102,16 @@ export const SEX_NUM: {
 };
 
 export const SEX_NUM_REF = {
-  0: "Male",
-  1: "Female",
-  2: "Other",
+  en: {
+    0: "Male",
+    1: "Female",
+    2: "Other",
+  },
+  zh: {
+    0: "Male",
+    1: "Female",
+    2: "Other",
+  },
 };
 
 export type WEEK_DAY_NUM = 0 | 1 | 2 | 3 | 4 | 5 | 6;
@@ -137,25 +152,48 @@ export type AGE_RANGE_NUM = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 export const AGE_RANGE_NUM: {
 
   "below20": AGE_RANGE_NUM,
-  "20to25": AGE_RANGE_NUM,
+  "20to24": AGE_RANGE_NUM,
   "25to29": AGE_RANGE_NUM,
-  "30to35": AGE_RANGE_NUM,
+  "30to34": AGE_RANGE_NUM,
   "35to39": AGE_RANGE_NUM,
-  "40to45": AGE_RANGE_NUM,
-  "45to50": AGE_RANGE_NUM,
+  "40to44": AGE_RANGE_NUM,
+  "45to49": AGE_RANGE_NUM,
   "over50": AGE_RANGE_NUM,
 
 } = {
 
   "below20": 0,
-  "20to25": 1,
+  "20to24": 1,
   "25to29": 2,
-  "30to35": 3,
+  "30to34": 3,
   "35to39": 4,
-  "40to45": 5,
-  "45to50": 6,
+  "40to44": 5,
+  "45to49": 6,
   "over50": 7,
 
+};
+
+export const AGE_RANGE_REF = {
+  en: {
+    0: "below 20",
+    1: "20 - 24",
+    2: "25 - 29",
+    3: "30 - 34",
+    4: "35 - 39",
+    5: "40 - 44",
+    6: "45 - 49",
+    7: "over 50",
+  },
+  zh: {
+    0: "below 20",
+    1: "20 - 24",
+    2: "25 - 29",
+    3: "30 - 34",
+    4: "35 - 39",
+    5: "40 - 44",
+    6: "45 - 49",
+    7: "over 50",
+  },
 };
 
 export type FRIEND_STATUS_NUM = -1 | 0;
@@ -187,4 +225,11 @@ export const MATCH_METHOD_NUM: {
 } = {
   SYSTEM: 0,
   MANUAL: 1,
+};
+
+export type IMAGE_S3_DIRECTORY = "question-drawing"
+export const IMAGE_S3_DIRECTORY: {
+  QUESTION_DRAWING: IMAGE_S3_DIRECTORY,
+} = {
+  QUESTION_DRAWING: "question-drawing",
 };

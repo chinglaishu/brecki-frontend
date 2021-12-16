@@ -4,11 +4,13 @@ import { FormObj } from "../../component/form";
 import { AUTH_SCREEN, SCREEN, STORE_KEY } from "../../constant/constant";
 import { checkUsernameAvailable, forgetPassword, forgetPasswordTokenRequest, login, LoginResponse, requestToken, signup } from "../../request/auth";
 import { setAxiosAuthorization } from "../../request/config";
+import { addNotificationToken } from "../../request/user";
 import { InputObj, InputObjKey, Language, User } from "../../type/common";
 import imageLoader from "../../utils/imageLoader";
+import { getTokenForPushNotificationsAsync } from "../../utils/notification";
 import { TITLE_IMAGE_HEIGHT } from "../../utils/size";
 import { T } from "../../utils/translate";
-import { getPhone, setStoreData } from "../../utils/utilFunction";
+import { checkIfRequestError, getPhone, setStoreData } from "../../utils/utilFunction";
 
 type AuthContent = {
   titleImageSource: any,
@@ -208,7 +210,18 @@ export const checkHaveFormatError = (formatError: any) => {
 
 export const loginAction = async (data: LoginResponse, setUser: (user: User) => any) => {
   const {token, user} = data;
+  const useUser = await requestAddNotificationToken(user);
   await setStoreData(STORE_KEY.ACCESS_TOKEN, token);
   setAxiosAuthorization(token);
-  setUser(user);
+  setUser(useUser);
+};
+
+export const requestAddNotificationToken = async (user: User) => {
+  const {notificationTokens} = user;
+  const token = await getTokenForPushNotificationsAsync();
+  if (!token) {return user; }
+  if (notificationTokens?.includes(token)) {return user; }
+  const result = await addNotificationToken(token);
+  if (checkIfRequestError(result)) {return user; }
+  return result.data.data;
 };

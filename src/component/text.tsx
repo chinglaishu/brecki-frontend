@@ -7,6 +7,8 @@ import { FONT_BUTTON, FONT_NORMAL } from "../constant/constant";
 type LineTextLineProps = {
   text: string,
   extraStyle?: any,
+  textStyle?: any,
+  lineStyle?: any,
 }
 
 export const DrawerItemText = styled.Text.attrs(props => {
@@ -14,7 +16,7 @@ export const DrawerItemText = styled.Text.attrs(props => {
   };
 })`
   color: ${props => props.theme.subTitle};
-  font-size: ${wp(5)};
+  font-size: ${hp(1.75)};
   font-family: ${FONT_NORMAL};
   font-weight: 600;
 `;
@@ -26,6 +28,7 @@ export const Title = styled.Text.attrs(props => {
   color: ${props => props.theme.secondary};
   font-size: ${wp(3.5)};
   font-family: ${FONT_NORMAL};
+  font-weight: 600;
 `;
 
 export const SubTitle = styled.Text.attrs(props => {
@@ -89,22 +92,46 @@ export const InputError = styled.Text.attrs(props => {
   font-weight: 400;
 `;
 
-const Line = () => {
+export const SlideTitle = styled.Text.attrs(props => {
+  return {
+  }
+})`
+  color: ${props => props.theme.secondary};
+  font-size: ${hp(3)};
+  font-family: ${FONT_BUTTON};
+  font-weight: 400;
+`;
+
+export const SlideText = styled.Text.attrs(props => {
+  return {
+  }
+})`
+  color: ${props => props.theme.onSecondary};
+  font-size: ${hp(2)};
+  font-family: ${FONT_NORMAL};
+  font-weight: 400;
+`;
+
+type LineProps = {
+  lineStyle?: any,
+};
+
+const Line = ({lineStyle}: LineProps) => {
   return (
     <View style={{flex: 1, alignItems: "center", paddingHorizontal: wp(4)}}>
-      <DivideLine />
+      <DivideLine style={{...lineStyle}} />
     </View>
   );
 };
 
-export const LineTextLine = ({text, extraStyle}: LineTextLineProps) => {
+export const LineTextLine = ({text, extraStyle, textStyle, lineStyle}: LineTextLineProps) => {
   return (
     <View style={{flexDirection: "row", paddingHorizontal: wp(8), width: "100%", height: hp(1.5), ...extraStyle}}>
-      <Line />
+      <Line lineStyle={{...lineStyle}} />
       <View>
-        <SubTitle>{text}</SubTitle>
+        <SubTitle style={{...textStyle}}>{text}</SubTitle>
       </View>
-      <Line />
+      <Line lineStyle={{...lineStyle}} />
     </View>
   );
 };

@@ -5,3 +5,10 @@
 
 
 git clean --force && git reset --hard
+
+try skeleton style modal on personal info select
+
+
+
+key board avoiding view 
+style={{flex: 1}} behaviour="padding" ---> the view will not when keyboard showsup

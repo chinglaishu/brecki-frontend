@@ -2,6 +2,7 @@ import React from "react";
 import { getLightTheme } from "../style/theme";
 import { ContextObj } from "../type/common";
 import { guest } from "./data";
+import { TRANSPARENT } from "./size";
 
 const defaultFn: any = () => {console.log("default function")};
 const contextObj: ContextObj = {
@@ -11,6 +12,8 @@ const contextObj: ContextObj = {
   setTheme: defaultFn,
   changeStatusModal: defaultFn,
   logout: defaultFn,
+  overlayColor: TRANSPARENT,
+  setOverlayColor: defaultFn,
 };
 
 const Context = React.createContext(contextObj);
