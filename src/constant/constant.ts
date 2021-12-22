@@ -50,11 +50,12 @@ export const AUTH_SCREEN: {
   RESET_PASSWORD: "ResetPassword",
 };
 
-export type SCREEN = "Home" | "Question" | "QuesetionEnd" | "LikeZone" | "Chat" | "PersonalInfo" | "Setting";
+export type SCREEN = "Home" | "Question" | "QuesetionEnd" | "SubmitQuestionEnd" | "LikeZone" | "Chat" | "PersonalInfo" | "Setting";
 export const SCREEN: {
   HOME: SCREEN,
   QUESTION: SCREEN,
   QUESTION_END: SCREEN,
+  SUBMIT_QUESTION_END: SCREEN,
   LIKE_ZONE: SCREEN,
   CHAT: SCREEN,
   PERSONAL_INFO: SCREEN,
@@ -63,6 +64,7 @@ export const SCREEN: {
   HOME: "Home",
   QUESTION: "Question",
   QUESTION_END: "QuesetionEnd",
+  SUBMIT_QUESTION_END: "SubmitQuestionEnd",
   LIKE_ZONE: "LikeZone",
   CHAT: "Chat",
   PERSONAL_INFO: "PersonalInfo",
@@ -207,14 +209,20 @@ export const FRIEND_STATUS_NUM: {
   normal: 0,
 };
 
-export type MATCH_STATUS_NUM = -1 | 0 | 1;
+export type MATCH_STATUS_NUM = -4 | -3 | -2 | -1 | 0 | 1;
 export const MATCH_STATUS_NUM: {
+  SOMEONE_QUIT: MATCH_STATUS_NUM,
+  SOMEONE_BLOCK: MATCH_STATUS_NUM,
+  CROSS: MATCH_STATUS_NUM,
   REJECTED: MATCH_STATUS_NUM,
-  LOADING: MATCH_STATUS_NUM,
+  WAITING: MATCH_STATUS_NUM,
   ACCEPTED: MATCH_STATUS_NUM,
 } = {
+  SOMEONE_QUIT: -4,
+  SOMEONE_BLOCK: -3,
+  CROSS: -2,
   REJECTED: -1,
-  LOADING: 0,
+  WAITING: 0,
   ACCEPTED: 1,
 };
 
@@ -233,3 +241,12 @@ export const IMAGE_S3_DIRECTORY: {
 } = {
   QUESTION_DRAWING: "question-drawing",
 };
+
+export type PERSONALITY_SCORE_KEY = "Openness" | "Conscientiousness" | "Extraversion" |
+  "Agreeableness" | "Neuroticism";
+
+export const SYSTEM_MATCH_NUM = 8;
+export const MANUAL_MATCH_NUM = 1;
+export const SYSTEM_MATCH_VALID_AFTER_MINS = 24 * 60;
+export const MANUAL_MATCH_VALID_AFTER_MINS = 1;
+export const PERSONALITY_SCORE_MAX = 10;

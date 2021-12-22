@@ -210,9 +210,9 @@ export const checkHaveFormatError = (formatError: any) => {
 
 export const loginAction = async (data: LoginResponse, setUser: (user: User) => any) => {
   const {token, user} = data;
-  const useUser = await requestAddNotificationToken(user);
   await setStoreData(STORE_KEY.ACCESS_TOKEN, token);
   setAxiosAuthorization(token);
+  const useUser = await requestAddNotificationToken(user);
   setUser(useUser);
 };
 

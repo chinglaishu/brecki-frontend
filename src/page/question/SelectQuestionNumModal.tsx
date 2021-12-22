@@ -11,24 +11,27 @@ import { ContextObj, Language, MultiLanguage, PageProps } from "../../type/commo
 import { ContextConsumer } from "../../utils/context";
 import { BORDER_RADIUS, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION } from "../../utils/size";
 import { T } from "../../utils/translate";
+import { getQuestionNumDescriptionByNum } from "./helper";
+import { QuestionNum } from "./type";
 
 type SelectQuestionNumProps = {
-  numList: number[],
+  questionNums: QuestionNum[],
   useNum: number,
   setUseNum: (num: number) => any,
   setIsAnswering: (isAnswering: boolean) => any,
   navigation: DrawerNavigationProp<any>,
 };
 
-export const SelectQuestionNumModal: FC<SelectQuestionNumProps> = ({numList, useNum, setUseNum, setIsAnswering,
+export const SelectQuestionNumModal: FC<SelectQuestionNumProps> = ({questionNums, useNum, setUseNum, setIsAnswering,
   navigation}) => {
 
   const getContent = (contextObj: ContextObj) => {
+
     const {theme, user} = contextObj;
     const {language} = user;
     const activeColor = theme.onSecondary;
     const passiveColor = theme.text;
-    const description = T.CHOOSE_QUESTION_NUM_DESCIPRION[useNum][language];
+    const description = getQuestionNumDescriptionByNum(questionNums, useNum, language);
     return (
       <CenterView style={{backgroundColor: theme.buttonBackground, width: wp(80), paddingHorizontal: wp(5),
         paddingVertical: hp(5), borderRadius: EXTRA_BORDER_RADIUS, marginBottom: hp(2.5),
@@ -36,7 +39,8 @@ export const SelectQuestionNumModal: FC<SelectQuestionNumProps> = ({numList, use
         <Title style={{color: theme.subText, marginBottom: hp(2.5), fontSize: hp(2.5)}}>{T.CHOOSE_QUESTION_NUM[language]}</Title>
         <SubTitle style={{color: theme.subText, paddingHorizontal: wp(2.5), textAlign: "center", opacity: 0.6, fontSize: hp(2)}}>{description}</SubTitle>
         <PlainRowView style={{marginTop: hp(5)}}>
-          {numList.map((num, index: number) => {
+          {questionNums.map((questionNum, index: number) => {
+            const num = questionNum.questionNum;
             const color = (num === useNum) ? activeColor : theme.subText;
             const backgroundColor = (num === useNum) ? theme.secondary : theme.empty;
             const marginLeft = (index !== 0) ? wp(5) : 0;

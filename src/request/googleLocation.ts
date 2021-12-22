@@ -65,7 +65,7 @@ const getLangForGoogle = () => {
   return (lang === "en") ? "en" : "zh-tw";
 };
 
-const GOOGLE_API_KEY = "AIzaSyBg5VPsLS_2gSx8j6OW1xnAVl_CIM-BuU4";
+const GOOGLE_API_KEY = "AIzaSyApeH4JZ3f-UBypKdxMUGkzEUlVtsMANjM";
 export const searchByName = async (name: string): GoogleRequest<GoogleSearchByNameResponse> => {
   const lang = getLangForGoogle();
   return await axios.post(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${name}&types=geocode&language=${lang}&key=${GOOGLE_API_KEY}`);

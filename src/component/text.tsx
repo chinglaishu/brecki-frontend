@@ -3,6 +3,7 @@ import { Text, View } from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import styled from "styled-components/native";
 import { FONT_BUTTON, FONT_NORMAL } from "../constant/constant";
+import { BORDER_RADIUS } from "../utils/size";
 
 type LineTextLineProps = {
   text: string,
@@ -10,6 +11,22 @@ type LineTextLineProps = {
   textStyle?: any,
   lineStyle?: any,
 }
+
+export const TagText = styled.Text.attrs(props => {
+  return {
+  };
+})`
+  border-radius: ${BORDER_RADIUS};
+  background-color: ${props => props.theme.empty};
+  color: ${props => props.theme.onSecondary};
+  font-size: ${hp(1.25)};
+  /* font-family: ${FONT_NORMAL}; */
+  font-weight: 600;
+  padding-top: ${hp(0.25)};
+  padding-bottom: ${hp(0.25)};
+  padding-left: ${wp(1)};
+  padding-right: ${wp(1)};
+`;
 
 export const DrawerItemText = styled.Text.attrs(props => {
   return {

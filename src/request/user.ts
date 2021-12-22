@@ -16,7 +16,7 @@ export const uploadProfilePicOne = async (base64: string, fileType: string): R<s
 };
 
 export const uploadImage = async (base64: string, fileType: string, directory: IMAGE_S3_DIRECTORY): R<string> => {
-  return await instance.post(`/user/upload/profile-pic-one`, {base64, fileType, directory});
+  return await instance.post(`/user/upload/image`, {base64, fileType, directory});
 };
 
 export const uploadProfilePicTwo = async (base64: string, fileType: string): R<ProfilePicTwoUrl> => {

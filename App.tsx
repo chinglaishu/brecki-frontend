@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, SafeAreaView, Text, View,
+import { StyleSheet, SafeAreaView, Text, View, BackHandler,
   Dimensions, Animated, Easing, Platform } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthNavigator, MainNavigator } from './src/navigator/MainNavigator';
@@ -29,6 +29,12 @@ const Content = () => {
   const {language} = user;
   const [theme, setTheme] = useState(getLightTheme(user.language));
   const [overlayColor, setOverlayColor] = useState(TRANSPARENT);
+  const [useNavigation, setUseNavigation] = useState(null as any);
+
+  BackHandler.addEventListener('hardwareBackPress', function () {
+    setUseNavigation(null);
+    return false;
+  });
 
   const logout = async () => {
     await removeStoreData(STORE_KEY.ACCESS_TOKEN);
@@ -45,7 +51,6 @@ const Content = () => {
 
   const changeStatusModal = ({statusType, isVisible, message, title, handleType}: StatusModalProps) => {
     const useStatusType = statusType || STATUS_TYPE.ERROR;
-    console.log(title);
     if (!title) {
       title = (useStatusType === STATUS_TYPE.ERROR) ? T.REQUEST_FAIL[user.language] : T.LOADING[user.language];
     }
@@ -96,10 +101,11 @@ const Content = () => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <ContextProvider value={{user, theme, setTheme, setUser, changeStatusModal, logout, overlayColor, setOverlayColor}}>
+        <ContextProvider value={{user, theme, setTheme, setUser, changeStatusModal, logout, overlayColor, setOverlayColor,
+            useNavigation, setUseNavigation}}>
           <View style={{flex: 1}}>
-            {!isLoading && isGuest && <AuthNavigator initialRoute={initialRoute} />}
-            {!isLoading && !isGuest && <MainNavigator initialRoute={appInitalRoute} />}
+            {!isLoading && isGuest && <AuthNavigator initialRoute={initialRoute} changeStatusModal={changeStatusModal} />}
+            {!isLoading && !isGuest && <MainNavigator initialRoute={appInitalRoute} changeStatusModal={changeStatusModal} />}
           </View>
           <StatusModal statusType={statusType} title={title} message={message} isVisible={isVisible} closeModal={closeStatusModal}
             handleType={handleType} />

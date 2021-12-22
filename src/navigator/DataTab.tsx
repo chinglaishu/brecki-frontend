@@ -12,7 +12,7 @@ import { ManualLikeZone } from "../page/likeZone/ManualLikeZone";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { FONT_NORMAL } from "../constant/constant";
 import imageLoader from "../utils/imageLoader";
-
+import { ScoreData } from "../page/data/ScoreData";
 
 const { UIManager } = NativeModules;
 
@@ -24,7 +24,7 @@ const Tab = createBottomTabNavigator();
 export const LikeZoneTab: FC<PageProps> = ({navigation}) => {
 
   const getContent = (contextObj: ContextObj) => {
-    const {theme, user} = contextObj;
+    const {theme, user, changeStatusModal} = contextObj;
     const {language} = user;
     return (
       <Tab.Navigator 
@@ -40,8 +40,7 @@ export const LikeZoneTab: FC<PageProps> = ({navigation}) => {
             return <Image source={image} style={{width: hp(2.5), height: hp(2.5), marginTop: hp(0.5), opacity}} />
           }
         })}>
-        <Tab.Screen name="System" component={SystemLikeZone} initialParams={{drawerNavigation: navigation}} />
-        <Tab.Screen name="Manual" component={ManualLikeZone} initialParams={{drawerNavigation: navigation}} />
+        <Tab.Screen name="ScoreData" component={ScoreData} initialParams={{drawerNavigation: navigation, changeStatusModal}} />
       </Tab.Navigator>
     );
   };

@@ -12,6 +12,7 @@ declare module "styled-components" {
     onPrimary: string;
     secondary: string;
     lightSecondary: string;
+    lighterSecondary: string;
     opacitySecondary: string;
     onSecondary: string;
     subTitle: string;
@@ -38,6 +39,7 @@ export const getLightTheme = (language: Language) => {
     onPrimary: "#FFFFFF",
     secondary: "#75CDCA",
     lightSecondary: "#15CDC1",
+    lighterSecondary: "#2FF1E5",
     opacitySecondary: "#75DCDA60",
     onSecondary: "#FFFFFF",
     subTitle: "#464646",
@@ -65,6 +67,7 @@ export const getDarkTheme = (language: Language) => {
     opacityPrimary: "#FFC85A60",
     secondary: "#00000050",
     lightSecondary: "#00000050",
+    lighterSecondary: "#2FF1E5",
     opacitySecondary: "#75DCDA60",
     onSecondary: "#FFFFFF",
     subTitle: "#00000070",

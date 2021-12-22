@@ -62,8 +62,15 @@ type Translate = {
   OPEN_OPTION_PLACEHOLDER: MultiLanguage,
   CAN_NOT_EMPTY: MultiLanguage,
   QUESTION_END: MultiLanguage,
+  SUBMIT_QUESTION_END: MultiLanguage,
   BACK_TO_HOME: MultiLanguage,
+  BACK: MultiLanguage,
   CANCEL: MultiLanguage,
+  NO_CONTENT: MultiLanguage,
+  NO_MATCH: MultiLanguage,
+  REQUEST_MATCH: MultiLanguage,
+  QUESTION_RECORD: MultiLanguage,
+  LIKE: MultiLanguage,
 }
 
 export const T: Translate = {
@@ -325,12 +332,40 @@ export const T: Translate = {
     en: "Congrats! answered all questions, others will rate you",
     zh: "Congrats, answered all questions, others will rate you",
   },
+  SUBMIT_QUESTION_END: {
+    en: "Thanks for rating, others will receive and like",
+    zh: "Thanks for rating, others will receive and like",
+  },
   BACK_TO_HOME: {
     en: "BACK TO HOME",
     zh: "BACK TO HOME",
   },
+  BACK: {
+    en: "BACK",
+    zh: "BACK",
+  },
   CANCEL: {
     en: "Cancel",
     zh: "Cancel",
+  },
+  NO_CONTENT: {
+    en: "No Content",
+    zh: "No Content",
+  },
+  NO_MATCH: {
+    en: "No match here, you should request match to get more user to match",
+    zh: "No match here, you should request match to get more user to match",
+  },
+  REQUEST_MATCH: {
+    en: "Request Match",
+    zh: "Request Match",
+  },
+  QUESTION_RECORD: {
+    en: "Record",
+    zh: "Record",
+  },
+  LIKE: {
+    en: "LIKE",
+    zh: "LIKE",
   },
 };

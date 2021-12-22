@@ -25,9 +25,10 @@ if (Platform.OS === 'android') {
 export type ProfilePicProps = {
   getValue: (user: User, key: PERSONAL_INFO_KEY) => any,
   onChangeInfoData: (key: PERSONAL_INFO_KEY, value: any, extraData: any) => any,
+  isOthers: boolean,
 };
 
-export const ProfilePic: FC<ProfilePicProps> = ({getValue, onChangeInfoData}) => {
+export const ProfilePic: FC<ProfilePicProps> = ({getValue, onChangeInfoData, isOthers}) => {
   
   const [isSwipe, setIsSwipe] = useState(false);
 
@@ -92,10 +93,10 @@ export const ProfilePic: FC<ProfilePicProps> = ({getValue, onChangeInfoData}) =>
 
     return (
       <>
-        <ProfileImageTouchable imageSource={profilePicOne}
+        <ProfileImageTouchable imageSource={profilePicOne} isOthers={isOthers}
           isFront={aIsFront} extraStyle={{...posA}} swipeFunction={changeIsSwipe}
           isProfilePicOne={true} setProfilePic={(base64: string, fileType: string) => setProfilePicOne(base64, fileType)} />
-        <ProfileImageTouchable imageSource={profilePicTwo} 
+        <ProfileImageTouchable imageSource={profilePicTwo} isOthers={isOthers}
           extraStyle={{...posB}} isFront={!aIsFront} swipeFunction={changeIsSwipe}
           isProfilePicOne={false} setProfilePic={(base64: string, fileType: string) => setProfilePicTwo(base64, fileType)} />
 

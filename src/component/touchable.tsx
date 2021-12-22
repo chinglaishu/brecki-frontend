@@ -79,8 +79,8 @@ export const ButtonTouchable = styled.TouchableOpacity.attrs(props => {
   shadow-offset: 2px 2px;
   elevation: ${EXTRA_ELEVATION};
 
-  padding-left: ${wp(1.5)};
-  padding-right: ${wp(1.5)};
+  padding-left: ${wp(2)};
+  padding-right: ${wp(2)};
 
   height: ${wp(7)};
   align-items: center;
@@ -144,6 +144,7 @@ export type ProfileImageTouchableProps = {
   swipeFunction: any,
   isProfilePicOne: boolean,
   setProfilePic: (base64: string, fileType: string) => any,
+  isOthers: boolean,
 };
 
 
@@ -173,7 +174,7 @@ export const ProfileTouchable = styled.TouchableHighlight.attrs(props => {
   align-items: center;
 `;
 
-export const ProfileImageTouchable: FC<ProfileImageTouchableProps> = ({imageSource, extraStyle, isFront, swipeFunction, setProfilePic}) => {
+export const ProfileImageTouchable: FC<ProfileImageTouchableProps> = ({imageSource, extraStyle, isFront, swipeFunction, setProfilePic, isOthers}) => {
 
 
   const swipe = (direction: string, state: any) => {
@@ -223,7 +224,7 @@ export const ProfileImageTouchable: FC<ProfileImageTouchableProps> = ({imageSour
       <GestureRecognizer
         style={{...extraStyle}}
         onSwipe={(direction: string, state: any) => swipe(direction, state)}>
-        <ProfileTouchable activeOpacity={0.6}  onPress={() => onPress()}
+        <ProfileTouchable activeOpacity={0.6}  onPress={() => onPress()} disabled={isOthers}
           underlayColor={theme.activeEmpty}>
           <Image source={useImageSource} style={{width: (width - 6) * imageSizeRatio, height: (height - 6) * imageSizeRatio,
             borderTopRightRadius: borderRadius, borderBottomLeftRadius: borderRadius}} blurRadius={0} />

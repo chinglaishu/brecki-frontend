@@ -20,6 +20,7 @@ export type QuestionChoiceRecord = {
   id?: string,
   userId?: string,
   questionId: string,
+  question?: Question,
   choiceId?: string,
   content?: any,
   isChoosingContent?: boolean,
@@ -28,16 +29,16 @@ export type QuestionChoiceRecord = {
   isChoosingImage?: boolean,
 };
 
-export type PersonalityScoreRecord = {
-  key: string,
-  score: number,
+export class PersonalityScore {
+  [key: string]: number
 };
 
 export type QuestionScoreRecord = {
   id: string,
   userId?: string,
   toUserId: string,
-  personalityScoreRecords: PersonalityScoreRecord[]; 
+  personalityScore: PersonalityScore;
+  submitQuestionRecordId: string;
 };
 
 export type SubmitQuestionRecord = {
@@ -45,4 +46,23 @@ export type SubmitQuestionRecord = {
   userId?: string,
   questionChoiceRecordIds: string[],
   questionChoiceRecords: QuestionChoiceRecord[],
+};
+
+export type QuestionNum = {
+  questionNum: number,
+  description: MultiLanguage,
+};
+
+// Pagination
+export type P<T> = {
+  totalPage: number,
+  page: number,
+  pageSize: number,
+  data: T[],
+};
+
+export type Personality = {
+  key: string,
+  name: MultiLanguage,
+  description: MultiLanguage,
 };

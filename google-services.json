@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "803004167482",
+    "firebase_url": "https://test-chat-550b2-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "test-chat-550b2",
+    "storage_bucket": "test-chat-550b2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:803004167482:android:dbd7b76ba2e9fbf7b6cc03",
+        "android_client_info": {
+          "package_name": "com.waiying.brecki"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "803004167482-da068q0faji7t2611gtfvrrv0arb8kut.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh4zriiC0ihD6836cLI9rw-nYzjDo1K6k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "803004167482-da068q0faji7t2611gtfvrrv0arb8kut.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

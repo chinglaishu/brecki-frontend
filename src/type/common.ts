@@ -61,6 +61,11 @@ export type User = {
 
 export type SetUserFunction = (user: User) => any;
 
+export type UseNavigation = {
+  navigation: DrawerNavigationProp<any> | StackNavigationProp<any>,
+  backScreen: string,
+};
+
 export type ContextObj = {
   user: User,
   setUser: SetUserFunction,
@@ -70,10 +75,16 @@ export type ContextObj = {
   logout: () => any,
   overlayColor: string,
   setOverlayColor: (color: string) => any,
+  useNavigation: UseNavigation | null,
+  setUseNavigation: (useNavigation: UseNavigation | null) => any,
 };
 
 export type PageProps = {
   navigation: DrawerNavigationProp<any>,
+};
+
+export type StackPageProps = {
+  navigation: StackNavigationProp<any>,
 };
 
 type AuthNavigationParams = {
@@ -119,3 +130,10 @@ export type CommonResponse<T> = {
 export type R<T> = Promise<AxiosResponse<CommonResponse<T>>>;
 
 export type GoogleRequest<T> = Promise<AxiosResponse<T>>;
+
+export type SystemOrManualMatch = {
+  id: string,
+  userId: string,
+  matchUserIds: string[],
+  matchUsers: User[],
+};

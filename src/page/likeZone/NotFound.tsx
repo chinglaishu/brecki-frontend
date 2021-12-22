@@ -11,12 +11,10 @@ const { UIManager } = NativeModules;
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
-export type LikeRowProps = {
-  user: User,
-  isManual: boolean,
+export type NotFoundProps = {
 };
 
-export const LikeRow: FC<LikeRowProps> = ({navigation}) => {
+export const NotFound: FC<NotFoundProps> = ({}) => {
 
   const getContent = (contextObj: ContextObj) => {
     const {theme, user} = contextObj;
@@ -36,11 +34,3 @@ export const LikeRow: FC<LikeRowProps> = ({navigation}) => {
     </ContextConsumer>
   )
 };
-
-
-
-
-
-
-
-

@@ -17,9 +17,10 @@ type SelectProps = {
   extraStyle?: any,
   textStyle?: any,
   isLocation?: any,
+  isDisabled: boolean,
 }
 
-export const Select: FC<SelectProps> = ({dataList, value, text, onPressEvent, extraStyle, textStyle, isLocation}) => {
+export const Select: FC<SelectProps> = ({dataList, value, text, onPressEvent, extraStyle, textStyle, isLocation, isDisabled}) => {
   
   const [isVisible, setIsVisible] = useState(false);
   const closeModal = () => {setIsVisible(false); }
@@ -28,11 +29,12 @@ export const Select: FC<SelectProps> = ({dataList, value, text, onPressEvent, ex
     const {theme, user} = contextObj;
     const {language} = user;
     return (
-      <SimpleTouchable activeOpacity={0.6} style={{height: hp(4), ...extraStyle}} onPress={() => setIsVisible(true)}>
+      <SimpleTouchable activeOpacity={0.6} style={{height: hp(4), ...extraStyle}} onPress={() => setIsVisible(true)}
+        disabled={isDisabled}>
         <Text style={{color: theme.primary, fontWeight: "600", fontSize: hp(1.75), ...textStyle}}>
           {text}
         </Text>
-        <Image source={imageLoader.down_arrow_primary} style={{width: hp(1.5), height: hp(1.5), marginLeft: wp(2)}} />
+        {!isDisabled && <Image source={imageLoader.down_arrow_primary} style={{width: hp(1.5), height: hp(1.5), marginLeft: wp(2)}} />}
         
         {!isLocation && <SelectModal isVisible={isVisible} onPressEvent={onPressEvent}
           closeModal={closeModal} initialValue={value}

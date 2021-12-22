@@ -13,20 +13,28 @@ import { BORDER_RADIUS, COMMON_BORDER_RADIUS, COMMON_ELEVATION, COMMON_OVERLAY, 
 import { T } from "../../utils/translate";
 import { checkIfRequestError, makeRequestWithStatus } from "../../utils/utilFunction";
 import { SelectQuestionNumModal } from "./SelectQuestionNumModal";
-import { Question } from "./type";
+import { Personality, PersonalityScore, Question, QuestionChoiceRecord, SubmitQuestionRecord } from "./type";
 import Carousel from 'react-native-snap-carousel';
 import Modal from "react-native-modal";
 import { NormalModal } from "../../component/modal";
 import { QuestionAnswerModal } from "./QuestionAnswerModal";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { QuestionScoreModal } from "./QuestionScoreModal";
 
 export type QuestionSlideProps = {
   questions: Question[],
-  navigation: DrawerNavigationProp<any>,
-  onAllSubmit: () => any,
+  onAllSubmit: (isCancel: boolean) => any,
+  questionChoiceRecords: QuestionChoiceRecord[],
+  changeQuestionChoiceRecords?: (questionChoiceRecords: QuestionChoiceRecord[]) => any,
+  isAnswer: boolean,
+  personalities?: Personality[],
+  personalityScore?: PersonalityScore,
+  changePersonalityScore?: (key: string, value: number) => any,
+  submitQuestionRecord?: SubmitQuestionRecord,
 }
 
-export const QuestionSlide: FC<QuestionSlideProps> = ({questions, navigation, onAllSubmit}) => {
+export const QuestionSlide: FC<QuestionSlideProps> = ({questions, questionChoiceRecords, changeQuestionChoiceRecords, isAnswer, onAllSubmit,
+  personalities, personalityScore, changePersonalityScore, submitQuestionRecord}) => {
   const ref: any = useRef(null);
   const [slideIndex, setSlideIndex] = useState(0);
   const [isFocusQuestion, setIsFocusQuestion] = useState(true);
@@ -95,9 +103,15 @@ export const QuestionSlide: FC<QuestionSlideProps> = ({questions, navigation, on
           scrollEnabled={false}
           scrollEndDragDebounceValue={200}
         />
-        <QuestionAnswerModal questions={questions} slideIndex={slideIndex} setSlideIndex={changeSlideIndex}
-          isFocusQuestion={isFocusQuestion} setIsFocusQuestion={setIsFocusQuestion} navigation={navigation}
-          onAllSubmit={onAllSubmit} />
+        {isAnswer && changeQuestionChoiceRecords && <QuestionAnswerModal questions={questions} slideIndex={slideIndex} setSlideIndex={changeSlideIndex}
+          isFocusQuestion={isFocusQuestion} setIsFocusQuestion={setIsFocusQuestion} questionChoiceRecords={questionChoiceRecords}
+          changeQuestionChoiceRecords={changeQuestionChoiceRecords} onAllSubmit={onAllSubmit} />}
+        {!isAnswer && personalities && personalityScore && changePersonalityScore && submitQuestionRecord &&
+          <QuestionScoreModal questions={questions} slideIndex={slideIndex} setSlideIndex={changeSlideIndex}
+            isFocusQuestion={isFocusQuestion} setIsFocusQuestion={setIsFocusQuestion}
+            onAllSubmit={onAllSubmit} questionChoiceRecords={questionChoiceRecords}
+            personalities={personalities} personalityScore={personalityScore} changePersonalityScore={changePersonalityScore}
+            submitQuestionRecord={submitQuestionRecord} /> }
       </View>
     );
   };

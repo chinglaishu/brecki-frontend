@@ -14,6 +14,8 @@ const contextObj: ContextObj = {
   logout: defaultFn,
   overlayColor: TRANSPARENT,
   setOverlayColor: defaultFn,
+  useNavigation: null,
+  setUseNavigation: defaultFn,
 };
 
 const Context = React.createContext(contextObj);

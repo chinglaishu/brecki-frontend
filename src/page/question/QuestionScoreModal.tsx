@@ -31,19 +31,23 @@ const { UIManager } = NativeModules;
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
-export type QuestionAnswerModalProps = {
+export type QuestionScoreModal = {
   questions: Question[],
   questionChoiceRecords: QuestionChoiceRecord[],
-  changeQuestionChoiceRecords: (questionChoiceRecords: QuestionChoiceRecord[]) => any,
   slideIndex: number,
   setSlideIndex: (index: number) => any,
   isFocusQuestion: boolean,
   setIsFocusQuestion: (isFocusQuestion: boolean) => any,
   onAllSubmit: (isCancel: boolean) => any,
+  personalities: Personality[],
+  personalityScore: PersonalityScore,
+  changePersonalityScore: (key: string, value: number) => any,
+  submitQuestionRecord: SubmitQuestionRecord,
 };
 
-export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, questionChoiceRecords, changeQuestionChoiceRecords, slideIndex, setSlideIndex,
-  isFocusQuestion, setIsFocusQuestion, onAllSubmit}) => {
+export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionChoiceRecords, slideIndex, setSlideIndex,
+  isFocusQuestion, setIsFocusQuestion, onAllSubmit, personalities, personalityScore, changePersonalityScore,
+  submitQuestionRecord}) => {
 
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
@@ -64,6 +68,7 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
   };
 
   const inputRef: any = useRef(null);
+
   const [typingString, setTypingString] = useState("_");
   const [isDrawing, setIsDrawing] = useState(false);
   const [isImageVisible, setIsImageVisible] = useState(false);
@@ -71,6 +76,10 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
   useEffect(() => {
     setTimeout(() => changeTypingString(), 500);
   }, [typingString]);
+
+  // useEffect(() => {
+  //   setQuestionChoiceRecords(getDefaultQuestionChoiceRecord(questions, useQuestionChoiceRecords));
+  // }, [questions, useQuestionChoiceRecords]);
 
   const changeTypingString = () => {
     const nextString = typingString === "_" ? "" : "_";
@@ -85,6 +94,12 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
     }
   };
 
+  const onSubmitScore = async (changeStatusModal: any) => {
+    const result = await makeRequestWithStatus<QuestionScoreRecord>(() => submitQuestionScoreRecord(personalityScore, submitQuestionRecord?.userId as string, submitQuestionRecord.id), changeStatusModal, false);
+    if (!result) {return; }
+    onAllSubmit(false);
+  };
+
   const onSubmitQuestion = async (changeStatusModal: any) => {
     const useQuestionChoiceRecords = await uploadBase64InQuestionChoiceRecords(questionChoiceRecords);
     const result = await makeRequestWithStatus<SubmitQuestionRecord>(() => submitQuestion(useQuestionChoiceRecords), changeStatusModal, false);
@@ -92,32 +107,9 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
     onAllSubmit(false);
   };
 
-  const onSelectOption = (index: number, choiceId: string) => {
-    const newQuestionChoiceRecords: QuestionChoiceRecord[] = JSON.parse(JSON.stringify(questionChoiceRecords));
-    newQuestionChoiceRecords[index].choiceId = choiceId;
-    newQuestionChoiceRecords[index].isChoosingContent = false;
-    newQuestionChoiceRecords[index].isChoosingImage = false;
-    inputRef.current.blur();
-    changeQuestionChoiceRecords(newQuestionChoiceRecords);
-  };
-
-  const onTypeOpenOption = (index: number, choiceId: string, content: string) => {
-    const newQuestionChoiceRecords: QuestionChoiceRecord[] = JSON.parse(JSON.stringify(questionChoiceRecords));
-    newQuestionChoiceRecords[index].choiceId = choiceId;
-    newQuestionChoiceRecords[index].content = content;
-    newQuestionChoiceRecords[index].isChoosingContent = true;
-    newQuestionChoiceRecords[index].isChoosingImage = false;
-    changeQuestionChoiceRecords(newQuestionChoiceRecords);
-  };
-
-  const onDrawOption = (index: number, choiceId: string, base64: string) => {
-    const newQuestionChoiceRecords: QuestionChoiceRecord[] = JSON.parse(JSON.stringify(questionChoiceRecords));
-    newQuestionChoiceRecords[index].choiceId = choiceId;
-    newQuestionChoiceRecords[index].base64 = base64;
-    newQuestionChoiceRecords[index].isChoosingImage = true;
-    newQuestionChoiceRecords[index].isChoosingContent = false;
-    changeQuestionChoiceRecords(newQuestionChoiceRecords);
-  };
+  // const changeQuestionChoiceRecords = (questionChoiceRecords: QuestionChoiceRecord[]) => {
+  //   setQuestionChoiceRecords(questionChoiceRecords);
+  // }
 
   const getContent = (contextObj: ContextObj) => {
 
@@ -133,7 +125,7 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
         return;
       }
       if (isLastQuestion) {
-        onSubmitQuestion(changeStatusModal);
+        onSubmitScore(changeStatusModal)
       } else {
         setSlideIndex(slideIndex + 1);
       }
@@ -150,22 +142,6 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
       setSlideIndex(nextIndex);
     };
 
-    const changeIsDrawing = (isDrawing: boolean) => {
-      const overlayColor = (isDrawing) ? COMMON_OVERLAY : TRANSPARENT;
-      setOverlayColor(overlayColor);
-      setIsDrawing(isDrawing);
-    };
-
-    const startDrawing = (index: number, choiceId: string) => {
-      const newQuestionChoiceRecords: QuestionChoiceRecord[] = JSON.parse(JSON.stringify(questionChoiceRecords));
-      newQuestionChoiceRecords[index].choiceId = choiceId;
-      newQuestionChoiceRecords[index].isChoosingImage = true;
-      newQuestionChoiceRecords[index].isChoosingContent = false;
-      changeQuestionChoiceRecords(newQuestionChoiceRecords);
-      setIsFocusQuestion(false);
-      changeIsDrawing(true);
-    };
-
     const question: Question = questions[slideIndex];
     if (!question) {return null; }
     const {title, questionChoices} = question;
@@ -179,65 +155,33 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
     const isDisabled = checkErrorWhenGoToNextQuestion(questionChoiceRecords[slideIndex]);
     const buttonColor = (isDisabled) ? theme.subText : theme.lightSecondary;
 
-    const getAnswerView = () => {
+    const getScoreView = () => {
+      if (!personalities) {return null; }
+      if (!personalityScore) {return null; }
+      if (!changePersonalityScore) {return null; }
       return (
-        <CenterView style={{flex: 1, marginTop: hp(20)}}>
-
-          {questionChoices.map((questionChoice, index: number) => {
-            const {choice, isFree, isPaint, id} = questionChoice;
-            const isLast = questionChoices.length - 1 === index;
-            const marginBottom = (isLast) ? 0 : hp(3);
-            const isSelected = (id === currentChoiceId);
-            const useColor = (isSelected) ? theme.lightSecondary : theme.onPrimary;
-
-            if (isPaint) {
-              return (
-                <PlainTouchable activeOpacity={1.0} style={{}}
-                  onPress={() => startDrawing(slideIndex, id)}>
-                  <CenterView style={{height: hp(60), width: wp(80), borderRadius: COMMON_BORDER_RADIUS,
-                    borderWidth: 2, marginBottom: wp(10),
-                    backgroundColor: useImageContainerBackground, borderColor: theme.onSecondary}}>
-                    <Image source={{uri: currentBase64}} style={{height: hp(60), width: wp(80), borderRadius: COMMON_BORDER_RADIUS, resizeMode: "stretch"}} />
-                    <CenterView style={{position: "absolute", height: hp(60) - 2, width: wp(80) - 2, backgroundColor: useImageBackground,
-                      borderRadius: COMMON_BORDER_RADIUS}}>
-                      <Image source={imageLoader.pen} style={{width: wp(15), height: wp(15), opacity: 0.5}} />
-                    </CenterView>
-                  </CenterView>
-                </PlainTouchable>
-              );
-            }
-
-            if (isFree) {
-
-              return (
-                <PlainTouchable activeOpacity={1.0} onPress={() => onTypeOpenOption(slideIndex, id, currentContent)}>
-                  <CenterView style={{padding: wp(3), marginBottom, backgroundColor: theme.questionBlockBackground,
-                    borderWidth: 2, borderColor: useColor, borderRadius: BORDER_RADIUS * 4,
-                    width: wp(60)}}>
-                    <TextInput spellCheck={false} ref={inputRef} style={{color: useColor, fontSize: hp(2), textAlign: "center",
-                      }} placeholderTextColor={"#FFFFFF50"} placeholder={T.OPEN_OPTION_PLACEHOLDER[language]}
-                      selectionColor={"#000000"} value={currentContent} onPressIn={() => onTypeOpenOption(slideIndex, id, currentContent)}
-                      onChange={(e: any) => onTypeOpenOption(slideIndex, id, e.nativeEvent.text)}
-                      underlineColorAndroid={TRANSPARENT} multiline={true} />
-                  </CenterView>
-                </PlainTouchable>
-              );
-            }
-
-            return (
-              <PlainTouchable activeOpacity={0.6} onPress={() => onSelectOption(slideIndex, id)}>
-                <CenterView style={{padding: wp(3), marginBottom, backgroundColor: theme.questionBlockBackground,
-                  borderWidth: 2, borderColor: useColor, borderRadius: BORDER_RADIUS,
-                  width: wp(60)}}>
-                  <Text style={{color: useColor, fontSize: hp(2)}}>{choice[language]}</Text>
-                </CenterView>
-              </PlainTouchable>
-            );
-
-          })}
-
-        </CenterView>
-      );
+        <ContainerView style={{backgroundColor: TRANSPARENT}}>
+          <PlainTouchable activeOpacity={1.0}>
+            <CenterView style={{alignItems: "flex-start", padding: wp(8), backgroundColor: theme.questionBlockBackground, borderRadius: EXTRA_BORDER_RADIUS, 
+              borderWidth: 2, borderColor: theme.border, paddingVertical: hp(4), marginTop: hp(10)}}>
+              {
+                personalities.map((personality, index: number) => {
+                  const isFirst = index === 0;
+                  const marginTop = (isFirst) ? 0 : hp(2);
+                  const currentBox = personalityScore[personality.key];
+                  return (
+                    <View style={{marginTop}}>
+                      <Title style={{marginBottom: hp(0.25)}}>{personality.name[language]}</Title>
+                      <BoxRow maxBox={PERSONALITY_SCORE_MAX} currentBox={currentBox} fillColor={theme.lightSecondary}
+                        borderColor={theme.border} onClickEvent={(index: number) => changePersonalityScore(personality.key, index)} />
+                    </View>
+                  );
+                })
+              }
+            </CenterView>
+          </PlainTouchable>
+        </ContainerView>
+      )
     };
 
     const getAnswerText = () => {
@@ -275,7 +219,7 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
               onPress={() => onPressOutside()}>
               <ContainerView style={{backgroundColor: TRANSPARENT}}>
 
-                {getAnswerView()}
+                {getScoreView()}
 
                 <View style={{margin: wp(5), marginBottom: hp(4),
                   padding: wp(2),
@@ -312,10 +256,6 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
             </PlainTouchable>
           </GestureRecognizer>
         </NormalModal>
-
-        <Canvas onDrawOption={(base64: string) => onDrawOption(slideIndex, currentChoiceId as any, base64)}
-          isDrawing={isDrawing} changeIsDrawing={changeIsDrawing}
-          setIsFocusQuestion={setIsFocusQuestion} base64={currentBase64} />
       </>
     );
   };

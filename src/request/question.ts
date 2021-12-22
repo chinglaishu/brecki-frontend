@@ -1,7 +1,7 @@
 import { instance } from "./config";
 import axios from "axios";
 import { PersonalInfo, ProfilePicTwoUrl, R, User } from "../type/common";
-import { PersonalityScoreRecord, Question, QuestionChoiceRecord, QuestionScoreRecord, SubmitQuestionRecord } from "../page/question/type";
+import { PersonalityScore, Question, QuestionChoiceRecord, QuestionNum, QuestionScoreRecord, SubmitQuestionRecord } from "../page/question/type";
 
 export const getRequestToAnswerQuestions = async (questionNum: number): R<Question[]> => {
   const result = await instance.get(`question/request-to-answer/${questionNum}`);
@@ -13,13 +13,29 @@ export const submitQuestion = async (questionChoiceRecords: QuestionChoiceRecord
 }
 
 export const getSubmitQuestionRecords = async (userId: string): R<SubmitQuestionRecord[]> => {
-  return await instance.get(`submit-question-record?filter={"userId": ${userId}}`);
+  return await instance.get(`submit-question-record/get/all?filter={"userId": ${userId}}`);
 };
 
 export const getSubmitQuestionRecordById = async (id: string): R<SubmitQuestionRecord> => {
   return await instance.get(`submit-question-record/${id}`);
 };
 
-export const submitQuestionScoreRecord = async (personalityScoreRecords: PersonalityScoreRecord[]): R<QuestionScoreRecord> => {
-  return await instance.post("question-score-record", {personalityScoreRecords});
+export const submitQuestionScoreRecord = async (personalityScore: PersonalityScore, toUserId: string, submitQuestionRecordId: string): R<QuestionScoreRecord> => {
+  return await instance.post("question-score-record", {personalityScore, toUserId, submitQuestionRecordId});
+};
+
+export const getQuestionNums = async (): R<QuestionNum[]> => {
+  return await instance.get("question-num");
+};
+
+export const getUserLastSubmitQuestionRecord = async (userId: string): R<SubmitQuestionRecord> => {
+  return await instance.get(`submit-question-record/get-user-last/${userId}`);
+};
+
+export const getPersonalities = async (): R<PersonalityScore[]> => {
+  return await instance.get(`personality/get/all`);
+};
+
+export const getOneQuestionScoreRecord = async (toUserId: string, submitQuestionRecordId: string) => {
+  return await instance.get(`question-score-record/get/one?filter={"toUserId": ${toUserId}, "submitQuestionRecordId": ${submitQuestionRecordId}}`);
 };

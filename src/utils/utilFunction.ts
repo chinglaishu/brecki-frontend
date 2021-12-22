@@ -30,6 +30,11 @@ export const getParamFromNavigation = (navigation: StackNavigationProp<any> | Dr
   return (routes as any)?.[index]?.["params"]?.[paramKey];
 };
 
+export const getChangeStatusModalFromNavigation = (navigation: StackNavigationProp<any> | DrawerNavigationProp<any>): (obj: StatusModalProps) => any => {
+  const {routes, index} = navigation.getState();
+  return (routes as any)?.[index]?.["params"]?.["changeStatusModal"];
+};
+
 export const getLastScreenNavigationParam = (value: string) => {
   const param: any = {};
   param[LAST_SCREEN_PARAM_KEY] = value;
@@ -139,17 +144,25 @@ export const getNumListByNum = (num: number) => {
   return useList;
 };
 
-export const makeRequestWithStatus = async <T>(request: any, changeStatusModal: (obj: StatusModalProps) => any, showSuccess: boolean): R<T> => {
+export const makeRequestWithStatus = async <T>(request: any, changeStatusModal: (obj: StatusModalProps) => any, showSuccess: boolean, showFail: boolean = true, close: boolean = true): R<T> => {
   changeStatusModal({statusType: STATUS_TYPE.LOADING});
   const result = await request();
   if (checkIfRequestError(result)) {
-    changeStatusModal({statusType: STATUS_TYPE.ERROR, message: result.data.message});
+    if (showFail) {
+      changeStatusModal({statusType: STATUS_TYPE.ERROR, message: result.data.message});
+    } else {
+      if (close) {
+        changeStatusModal({statusType: STATUS_TYPE.LOADING, isVisible: false});
+      }
+    }
     return null as any;
   }
   if (showSuccess) {
     changeStatusModal({statusType: STATUS_TYPE.SUCCESS});
   } else {
-    changeStatusModal({statusType: STATUS_TYPE.LOADING, isVisible: false});
+    if (close) {
+      changeStatusModal({statusType: STATUS_TYPE.LOADING, isVisible: false});
+    }
   }
   return result;
 };
