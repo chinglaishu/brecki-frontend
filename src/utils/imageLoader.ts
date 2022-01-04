@@ -18,8 +18,12 @@ const imageLoader = {
   heart: require("../../assets/icon/heart.png"),
   lock: require("../../assets/icon/lock.png"),
   tick: require("../../assets/icon/tick.png"),
+  double_tick: require("../../assets/icon/double_tick.png"),
   fail: require("../../assets/icon/fail.png"),
   setting: require('../../assets/icon/setting.png'),
+
+  back: require('../../assets/icon/back.png'),
+  back_2: require('../../assets/icon/back_2.png'),
 
   // change_grey: require('../../assets/icon/change_grey.png'),
   // change_primary: require('../../assets/icon/change_primary.png'),

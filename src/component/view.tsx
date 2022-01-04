@@ -3,7 +3,7 @@ import { Image, Text, View } from "react-native";
 import styled from "styled-components/native";
 import { FONT_NORMAL } from "../constant/constant";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-import { BORDER_RADIUS, COMMON_ELEVATION, EXTRA_ELEVATION } from "../utils/size";
+import { BORDER_RADIUS, COMMON_BORDER_RADIUS, COMMON_ELEVATION, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION } from "../utils/size";
 
 export const ContainerView = styled.View.attrs(props => {
   return {
@@ -210,4 +210,24 @@ export const CornerBorderContainer = styled.View.attrs(props => {
   padding-bottom: ${hp(1)};
   align-items: center;
   justify-content: center;
+`;
+
+export const CommonBlock = styled.View.attrs(props => {
+  return {
+  };
+})`
+  align-items: center;
+  justify-content: center;
+  background-color: ${props => props.theme.buttonBackground};
+  border-radius: ${EXTRA_BORDER_RADIUS};
+  padding-left: ${wp(5)};
+  padding-right: ${wp(5)};
+  padding-top: ${hp(5)};
+  padding-bottom: ${hp(5)};
+
+  shadow-opacity: 0.3;
+  shadow-radius: 2px;
+  shadow-color: #000000;
+  shadow-offset: 2px 2px;
+  elevation: ${EXTRA_ELEVATION};
 `;

@@ -33,8 +33,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.waiying.brecki",
-      "versionCode": 1,
-      "softwareKeyboardLayoutMode": "pan"
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"

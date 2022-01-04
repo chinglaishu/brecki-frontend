@@ -13,6 +13,8 @@ import { T } from "../../utils/translate";
 import { getChangeStatusModalFromNavigation, makeRequestWithStatus } from "../../utils/utilFunction";
 import { P } from "../question/type";
 import { LikeRowList } from "./LikeRowList";
+import { SCREEN } from "../../constant/constant";
+import { RoundButton } from "../../component/button";
 
 const { UIManager } = NativeModules;
 
@@ -29,6 +31,10 @@ export const ManualLikeZone: FC<StackPageProps> = ({navigation}) => {
   useEffect(() => {
     getDefaultUseUsers();
   }, []);
+
+  const changeUseUsers = (useUsers: User[]) => {
+    setUseUsers(useUsers);
+  };
 
   const getDefaultUseUsers = async () => {
     const result = await getSelfManualMatch();
@@ -55,17 +61,18 @@ export const ManualLikeZone: FC<StackPageProps> = ({navigation}) => {
     if (isShowNotFound) {
       return (
         <StatusPage isSuccess={false} text={T.NO_MATCH[language]} buttonText={T.REQUEST_MATCH[language]}
-          onClickEvent={() => getManualMatchs()} />
+          onClickEvent={() => getManualMatchs()} extraButton={true} extraButtonText={T.TO_SYSTEM_LIKE_ZONE[language]}
+          extraButtonClickEvent={() => navigation.navigate(SCREEN.SYSTEM_LIKE_ZONE)}  />
       )
     }
 
     return (
       <ContainerView style={{paddingTop: hp(12)}}>
-        <LikeRowList useUsers={useUsers} isManual={true} stackNavigation={navigation} />
-        <RoundTouchable style={{padding: wp(2), width: wp(80), height: ROUND_BUTTON_HEIGHT, marginTop: hp(6), marginBottom: hp(6)}}
-          activeOpacity={0.6} onPress={() => getManualMatchs()}>
-          <Title style={{color: theme.onSecondary, fontSize: hp(2.25)}}>{T.REQUEST_MATCH[language]}</Title>
-        </RoundTouchable>
+        <LikeRowList useUsers={useUsers} isManual={true} stackNavigation={navigation} changeUseUsers={changeUseUsers} />
+        <RoundButton touchableExtraStyle={{marginTop: hp(6), marginBottom: hp(2)}}
+          buttonText={T.REQUEST_MATCH[language]} clickFunction={() => getManualMatchs()} />
+        <RoundButton touchableExtraStyle={{marginBottom: hp(6), backgroundColor: theme.empty}}
+          buttonText={T.TO_SYSTEM_LIKE_ZONE[language]} clickFunction={() => navigation.navigate(SCREEN.SYSTEM_LIKE_ZONE)} />
       </ContainerView>
     );
   };

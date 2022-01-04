@@ -35,14 +35,14 @@ const useSlides: UseSlide[] = [
     descriptionTwoMultiLang: T.SCREEN_QUESTION_DESCRIPTION_2,
   },
   {
-    screen: SCREEN.LIKE_ZONE,
+    screen: SCREEN.SYSTEM_LIKE_ZONE,
     slideImage: imageLoader.slide_likezone,
     titleMultiLang: T.SCREEN_LIKE_ZONE,
     descriptionOneMultiLang: T.SCREEN_LIKE_ZONE_DESCRIPTION_1,
     descriptionTwoMultiLang: T.SCREEN_LIKE_ZONE_DESCRIPTION_2,
   },
   {
-    screen: SCREEN.CHAT,
+    screen: SCREEN.CHAT_LIST,
     slideImage: imageLoader.slide_chat,
     titleMultiLang: T.SCREEN_CHAT,
     descriptionOneMultiLang: T.SCREEN_CHAT_DESCRIPTION_1,
@@ -58,12 +58,6 @@ export const Home: FC<PageProps> = ({navigation}) => {
   //   changeSlideIndex(0);
   // }, []);
 
-  const onPressSlide = () => {
-    const useSlide = useSlides[slideIndex];
-    const {screen} = useSlide;
-    navigation.navigate(screen);
-  };
-
   const changeSlideIndex = (index: number) => {
     if (Math.abs(slideIndex - index) > 1) {
       // seems have animation may break layout
@@ -77,6 +71,13 @@ export const Home: FC<PageProps> = ({navigation}) => {
   const getContent = (contextObj: ContextObj) => {
     const {theme, user} = contextObj;
     const {language} = user;
+
+    const onPressSlide = () => {
+      const useSlide = useSlides[slideIndex];
+      const {screen} = useSlide;
+      navigation.navigate(screen, {userId: user.id});
+    };
+
     const useSlide = useSlides[slideIndex];
     const {titleMultiLang, descriptionOneMultiLang, descriptionTwoMultiLang, screen} = useSlide;
     // const useColor = (screen === SCREEN.QUESTION) ? theme.primary : theme.secondary;

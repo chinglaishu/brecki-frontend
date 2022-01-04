@@ -9,8 +9,8 @@ export const getSelfSystemMatch = async (): R<SystemOrManualMatch> => {
   return await instance.get(`/system-match/self`);
 };
 
-export const likeSystemMatchUser = async (toUserId: string): R<SystemOrManualMatch> => {
-  return await instance.post(`/system-match/like-user/${toUserId}`);
+export const systemCreateMatch = async (toUserId: string): R<SystemOrManualMatch> => {
+  return await instance.post(`/system-match/create-match/${toUserId}`);
 };
 
 export const crossSystemMatchUser = async (toUserId: string): R<SystemOrManualMatch> => {

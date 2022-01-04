@@ -22,6 +22,10 @@ import { initAxiosHeader } from './src/request/config';
 import Progressbar from './src/utils/test';
 import { TRANSPARENT } from './src/utils/size';
 import { Canvas } from './src/page/question/Canvas';
+import fire from './src/utils/firebase';
+import { heightPercentageToDP } from 'react-native-responsive-screen';
+import Toast from 'react-native-toast-message';
+import { getToast } from './src/component/Toast';
 
 const Content = () => {
 
@@ -44,7 +48,6 @@ const Content = () => {
   };
 
   const closeStatusModal = () => {
-    console.log("close");
     const useStatusModalObj = changeStateObj(statusModalObj, "isVisible", false);
     setStatusModalObj(useStatusModalObj);
   };
@@ -72,7 +75,9 @@ const Content = () => {
         setUser({...user, isLoading: false});
         changeStatusModal({statusType: STATUS_TYPE.ERROR, message: T.TOKEN_EXPIRE[language]});
       } else {
-        setUser({...result.data.data, isLoading: false, isGuest: false});
+        const user = result.data.data;
+        setUser({...user, isLoading: false, isGuest: false});
+        await fire.login(user);
         changeStatusModal({statusType: STATUS_TYPE.SUCCESS, isVisible: false});
       }
     }
@@ -103,7 +108,7 @@ const Content = () => {
       <ThemeProvider theme={theme}>
         <ContextProvider value={{user, theme, setTheme, setUser, changeStatusModal, logout, overlayColor, setOverlayColor,
             useNavigation, setUseNavigation}}>
-          <View style={{flex: 1}}>
+          <View style={{flex: 1, minHeight: heightPercentageToDP(100)}}>
             {!isLoading && isGuest && <AuthNavigator initialRoute={initialRoute} changeStatusModal={changeStatusModal} />}
             {!isLoading && !isGuest && <MainNavigator initialRoute={appInitalRoute} changeStatusModal={changeStatusModal} />}
           </View>
@@ -111,6 +116,7 @@ const Content = () => {
             handleType={handleType} />
         </ContextProvider>
         <StatusBar style="auto" />
+        {getToast(theme)}
       </ThemeProvider>
     </>
   );

@@ -5,7 +5,7 @@ import { ButtonText, SlideText, SlideTitle, SubTitle, Title } from "../../compon
 import { ButtonTouchable, SimpleTouchable } from "../../component/touchable";
 import { CenterView, ContainerView, PlainRowView, RowView, SlideTitleContainer } from "../../component/view";
 import { SCREEN, STATUS_TYPE } from "../../constant/constant";
-import { getOneQuestionScoreRecord, getPersonalities, getQuestionNums, getRequestToAnswerQuestions, getSubmitQuestionRecordById, getUserLastSubmitQuestionRecord } from "../../request/question";
+import { getOneQuestionScoreRecord, getPersonalities, getQuestionNums, getRequestToAnswerQuestions, getSubmitQuestionRecordById, getUserLastSubmitQuestionRecord, submitQuestionScoreRecord } from "../../request/question";
 import { ContextObj, Language, MultiLanguage, PageProps } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
 import imageLoader from "../../utils/imageLoader";
@@ -27,6 +27,7 @@ const defaultNum = 0;
 export const QuestionPage: FC<PageProps> = ({navigation}) => {
 
   const changeStatusModal = getChangeStatusModalFromNavigation(navigation);
+  const submitQuestionRecordId = getParamFromNavigation(navigation, "submitQuestionRecordId");
 
   const [useNum, setUseNum] = useState(defaultNum);
   const [isAnswering, setIsAnswering] = useState(false);
@@ -36,8 +37,19 @@ export const QuestionPage: FC<PageProps> = ({navigation}) => {
   const [questionChoiceRecords, setQuestionChoiceRecords] = useState([] as QuestionChoiceRecord[]);
   
   useEffect(() => {
-    setQuestionChoiceRecords(getDefaultQuestionChoiceRecord(questions, []));
+    if (!submitQuestionRecordId) {
+      setQuestionChoiceRecords(getDefaultQuestionChoiceRecord(questions, []));
+    }
   }, [questions]);
+
+  useEffect(() => {
+    if (submitQuestionRecordId) {
+      setIsAnswering(false);
+      requestQuestonNums();
+    } else {
+      getSubmitQuestionRecord();
+    }
+  }, [submitQuestionRecordId]);
 
   const changeUseNum = (num: number) => {
     LayoutAnimation.spring();
@@ -45,8 +57,28 @@ export const QuestionPage: FC<PageProps> = ({navigation}) => {
   };
 
   useEffect(() => {
-    requestQuestonNums();
+    if (!submitQuestionRecordId) {
+      requestQuestonNums();
+    } else {
+      getSubmitQuestionRecord();
+    }
   }, []);
+
+  const getSubmitQuestionRecord = async () => {
+    if (!submitQuestionRecordId) {return null; }
+    const result = await getSubmitQuestionRecordById(submitQuestionRecordId);
+    if (checkIfRequestError(result)) {return null; }
+    const questionChoiceRecords = result.data.data.questionChoiceRecords;
+    const useQuestions = questionChoiceRecords.map((questionChoiceRecord) => questionChoiceRecord.question) as Question[];
+    const useQuestionChoiceRecords = questionChoiceRecords.map((questionChoiceRecord) => {
+      const {questionId, choiceId, userId, content, imageUrl} = questionChoiceRecord;
+      return {questionId, choiceId, userId, content, imageUrl};
+    });
+    setQuestions(useQuestions);
+    setQuestionChoiceRecords(useQuestionChoiceRecords);
+    setIsAnswering(true);
+    return true;
+  };
 
   const requestQuestonNums = async () => {
     const result = await makeRequestWithStatus<P<QuestionNum>>(() => getQuestionNums(), changeStatusModal, false);
@@ -85,11 +117,11 @@ export const QuestionPage: FC<PageProps> = ({navigation}) => {
     return (
       <ContainerView style={{}}>
         {!isAnswering && <Image source={imageLoader.question_couple} style={{position: "absolute", width: wp(100), height: hp(90), opacity: 0.5, resizeMode: "stretch"}} blurRadius={2} />}
-        {!isAnswering && <SelectQuestionNumModal questionNums={questionNums} useNum={useNum} setUseNum={changeUseNum}
+        {!isAnswering && !submitQuestionRecordId && <SelectQuestionNumModal questionNums={questionNums} useNum={useNum} setUseNum={changeUseNum}
           setIsAnswering={changeIsAnswering} navigation={navigation} />}
         {isAnswering &&
           <QuestionSlide questions={questions} onAllSubmit={onAllSubmit} questionChoiceRecords={questionChoiceRecords}
-            isAnswer={true} />
+            changeQuestionChoiceRecords={setQuestionChoiceRecords} isAnswer={true} isDisabled={!!submitQuestionRecordId} />
         }
       </ContainerView>
     );

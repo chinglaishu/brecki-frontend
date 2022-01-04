@@ -13,7 +13,7 @@ import { BORDER_RADIUS, COMMON_BORDER_RADIUS, COMMON_ELEVATION, COMMON_OVERLAY, 
 import { T } from "../../utils/translate";
 import { checkIfRequestError, makeRequestWithStatus } from "../../utils/utilFunction";
 import { SelectQuestionNumModal } from "./SelectQuestionNumModal";
-import { Personality, PersonalityScore, Question, QuestionChoiceRecord, SubmitQuestionRecord } from "./type";
+import { Personality, PersonalityScore, Question, QuestionChoiceRecord, QuestionScoreRecord, SubmitQuestionRecord } from "./type";
 import Carousel from 'react-native-snap-carousel';
 import Modal from "react-native-modal";
 import { NormalModal } from "../../component/modal";
@@ -25,16 +25,17 @@ export type QuestionSlideProps = {
   questions: Question[],
   onAllSubmit: (isCancel: boolean) => any,
   questionChoiceRecords: QuestionChoiceRecord[],
-  changeQuestionChoiceRecords?: (questionChoiceRecords: QuestionChoiceRecord[]) => any,
   isAnswer: boolean,
+  changeQuestionChoiceRecords?: (questionChoiceRecords: QuestionChoiceRecord[]) => any,
   personalities?: Personality[],
-  personalityScore?: PersonalityScore,
-  changePersonalityScore?: (key: string, value: number) => any,
   submitQuestionRecord?: SubmitQuestionRecord,
+  questionScoreRecords?: QuestionScoreRecord[],
+  changeQuestionScoreRecords?: (questionScoreRecords: QuestionScoreRecord[]) => any,
+  isDisabled: boolean,
 }
 
 export const QuestionSlide: FC<QuestionSlideProps> = ({questions, questionChoiceRecords, changeQuestionChoiceRecords, isAnswer, onAllSubmit,
-  personalities, personalityScore, changePersonalityScore, submitQuestionRecord}) => {
+  personalities, submitQuestionRecord, questionScoreRecords, changeQuestionScoreRecords, isDisabled}) => {
   const ref: any = useRef(null);
   const [slideIndex, setSlideIndex] = useState(0);
   const [isFocusQuestion, setIsFocusQuestion] = useState(true);
@@ -105,13 +106,13 @@ export const QuestionSlide: FC<QuestionSlideProps> = ({questions, questionChoice
         />
         {isAnswer && changeQuestionChoiceRecords && <QuestionAnswerModal questions={questions} slideIndex={slideIndex} setSlideIndex={changeSlideIndex}
           isFocusQuestion={isFocusQuestion} setIsFocusQuestion={setIsFocusQuestion} questionChoiceRecords={questionChoiceRecords}
-          changeQuestionChoiceRecords={changeQuestionChoiceRecords} onAllSubmit={onAllSubmit} />}
-        {!isAnswer && personalities && personalityScore && changePersonalityScore && submitQuestionRecord &&
+          changeQuestionChoiceRecords={changeQuestionChoiceRecords} onAllSubmit={onAllSubmit} isDisabled={isDisabled} />}
+        {!isAnswer && personalities && submitQuestionRecord && questionScoreRecords && changeQuestionScoreRecords &&
           <QuestionScoreModal questions={questions} slideIndex={slideIndex} setSlideIndex={changeSlideIndex}
             isFocusQuestion={isFocusQuestion} setIsFocusQuestion={setIsFocusQuestion}
             onAllSubmit={onAllSubmit} questionChoiceRecords={questionChoiceRecords}
-            personalities={personalities} personalityScore={personalityScore} changePersonalityScore={changePersonalityScore}
-            submitQuestionRecord={submitQuestionRecord} /> }
+            personalities={personalities} questionScoreRecords={questionScoreRecords} changeQuestionScoreRecords={changeQuestionScoreRecords}
+            submitQuestionRecord={submitQuestionRecord} isDisabled={isDisabled} /> }
       </View>
     );
   };

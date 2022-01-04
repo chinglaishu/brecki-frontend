@@ -1,8 +1,11 @@
 import { MATCH_METHOD_NUM, MATCH_STATUS_NUM } from "../../constant/constant";
+import { User } from "../../type/common";
+import { SubmitQuestionScoreRecord } from "../question/type";
 
 export type Match = {
-  userId: string,
-  toUserId: string,
+  id: string,
+  userIds: string[],
+  users: User[],
   blockedIds: string,
   quitedIds: string,
   method: MATCH_METHOD_NUM,

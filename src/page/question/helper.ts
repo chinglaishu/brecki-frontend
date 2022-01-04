@@ -1,7 +1,7 @@
 import { IMAGE_S3_DIRECTORY } from "../../constant/constant";
 import { uploadImage } from "../../request/user";
 import { Language } from "../../type/common";
-import { Personality, PersonalityScore, Question, QuestionChoice, QuestionChoiceRecord, QuestionNum } from "./type";
+import { Personality, PersonalityScore, Question, QuestionChoice, QuestionChoiceRecord, QuestionNum, QuestionScoreRecord } from "./type";
 
 export type CANVAS_TOOL_KEY = "eraser" | "stroke-width" | "color" | "undo" | "close";
 export const CANVAS_TOOL_KEY: {
@@ -102,4 +102,15 @@ export const getDefaultPersonalityScore = (personalities: Personality[]) => {
     useObj[personalities[i].key] = 0;
   }
   return useObj;
+};
+
+export const checkIfValueAllZero = (questionScoreRecord: QuestionScoreRecord) => {
+  const personalityScore = questionScoreRecord?.personalityScore || {};
+  const values = Object.values(personalityScore);
+  for (let i = 0 ; i < values.length ; i++) {
+    if (values[i] !== 0 && values[i]) {
+      return false;
+    }
+  }
+  return true;
 };

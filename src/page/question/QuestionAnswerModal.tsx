@@ -40,6 +40,7 @@ export type QuestionAnswerModalProps = {
   isFocusQuestion: boolean,
   setIsFocusQuestion: (isFocusQuestion: boolean) => any,
   onAllSubmit: (isCancel: boolean) => any,
+  isDisabled: boolean,
 };
 
 export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, questionChoiceRecords, changeQuestionChoiceRecords, slideIndex, setSlideIndex,

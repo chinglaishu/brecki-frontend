@@ -6,13 +6,15 @@ import { ButtonText, SlideText, SlideTitle, SubTitle, Title } from "../../compon
 import { ButtonTouchable, RoundTouchable, SimpleTouchable } from "../../component/touchable";
 import { CenterView, ContainerView, PlainRowView, RowView, SlideTitleContainer } from "../../component/view";
 import { SCREEN, STATUS_TYPE } from "../../constant/constant";
+import { manualCreateMatch } from "../../request/manualMatch";
 import { getRequestToAnswerQuestions } from "../../request/question";
-import { ContextObj, Language, MultiLanguage, PageProps } from "../../type/common";
+import { systemCreateMatch } from "../../request/systemMatch";
+import { ContextObj, Language, MultiLanguage, PageProps, StackPageProps, SystemOrManualMatch } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
 import imageLoader from "../../utils/imageLoader";
 import { COMMON_OVERLAY, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION, TRANSPARENT } from "../../utils/size";
 import { T } from "../../utils/translate";
-import { checkIfRequestError, makeRequestWithStatus } from "../../utils/utilFunction";
+import { checkIfRequestError, getParamFromNavigation, makeRequestWithStatus } from "../../utils/utilFunction";
 import { Canvas } from "./Canvas";
 import { QuestionSlide } from "./QuestionSlide";
 import { SelectQuestionNumModal } from "./SelectQuestionNumModal";
@@ -23,7 +25,11 @@ const { UIManager } = NativeModules;
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
-export const SubmitQuestionEnd: FC<PageProps> = ({navigation}) => {
+export const SubmitQuestionEnd: FC<StackPageProps> = ({navigation}) => {
+
+  const isManual = getParamFromNavigation(navigation, "isManual");
+  const userId = getParamFromNavigation(navigation, "userId");
+  const changeUseUsers = getParamFromNavigation(navigation, "changeUseUsers");
 
   const getContent = (contextObj: ContextObj) => {
     const {theme, user, setOverlayColor, changeStatusModal, useNavigation, setUseNavigation} = contextObj;
@@ -35,9 +41,14 @@ export const SubmitQuestionEnd: FC<PageProps> = ({navigation}) => {
       setUseNavigation(null);
     };
 
-    const clickLike = async () => {
-      
-      clickBackFunction();
+    const clickChat = async () => {
+      const useFucntion = (isManual) ? systemCreateMatch : manualCreateMatch;
+      const result = await makeRequestWithStatus<SystemOrManualMatch>(() => useFucntion(userId), changeStatusModal, false);
+      if (!result) {return; }
+      if (changeUseUsers) {
+        changeUseUsers(result.data.data.matchUsers);
+      }
+      navigation.navigate(SCREEN.CHAT, {userId});
     };
 
     return (
@@ -49,9 +60,9 @@ export const SubmitQuestionEnd: FC<PageProps> = ({navigation}) => {
 
         <RoundTouchable style={{padding: wp(2), width: wp(80), height: hp(6.5), marginBottom: hp(2), backgroundColor: theme.warning,
           flexDirection: "row"}}
-          activeOpacity={0.6} onPress={() => console.log("like")}>
+          activeOpacity={0.6} onPress={() => clickChat()}>
           <Image source={imageLoader.heart} style={{width: hp(2.5), height: hp(2.1), marginRight: wp(2)}} />
-          <Title style={{color: theme.onSecondary, fontSize: hp(2.25)}}>{T.LIKE[language]}</Title>
+          <Title style={{color: theme.onSecondary, fontSize: hp(2.25)}}>{T.START_CHAT[language]}</Title>
         </RoundTouchable>
 
         <RoundTouchable style={{padding: wp(2), width: wp(80), height: hp(6.5), marginBottom: hp(4)}}

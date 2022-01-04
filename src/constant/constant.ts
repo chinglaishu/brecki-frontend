@@ -50,25 +50,36 @@ export const AUTH_SCREEN: {
   RESET_PASSWORD: "ResetPassword",
 };
 
-export type SCREEN = "Home" | "Question" | "QuesetionEnd" | "SubmitQuestionEnd" | "LikeZone" | "Chat" | "PersonalInfo" | "Setting";
+export type SCREEN = "Home" | "Question" | "QuestionRecord" | "QuesetionEnd" | "SubmitQuestionEnd" | "SystemLikeZone"
+  | "ManualLikeZone" | "Chat" | "ChatList" | "PersonalInfo" | "Setting" | "Account" | "History";
 export const SCREEN: {
   HOME: SCREEN,
   QUESTION: SCREEN,
+  QUESTION_RECORD: SCREEN,
   QUESTION_END: SCREEN,
   SUBMIT_QUESTION_END: SCREEN,
-  LIKE_ZONE: SCREEN,
+  SYSTEM_LIKE_ZONE: SCREEN,
+  MANUAL_LIKE_ZONE: SCREEN,
   CHAT: SCREEN,
+  CHAT_LIST: SCREEN,
   PERSONAL_INFO: SCREEN,
   SETTING: SCREEN,
+  ACCOUNT: SCREEN,
+  HISTORY: SCREEN,
 } = {
   HOME: "Home",
   QUESTION: "Question",
+  QUESTION_RECORD: "QuestionRecord",
   QUESTION_END: "QuesetionEnd",
   SUBMIT_QUESTION_END: "SubmitQuestionEnd",
-  LIKE_ZONE: "LikeZone",
+  SYSTEM_LIKE_ZONE: "SystemLikeZone",
+  MANUAL_LIKE_ZONE: "ManualLikeZone",
   CHAT: "Chat",
+  CHAT_LIST: "ChatList",
   PERSONAL_INFO: "PersonalInfo",
   SETTING: "Setting",
+  ACCOUNT: "Account",
+  HISTORY: "History",
 };
 
 export const LAST_SCREEN_PARAM_KEY = "last_screen";
@@ -244,6 +255,14 @@ export const IMAGE_S3_DIRECTORY: {
 
 export type PERSONALITY_SCORE_KEY = "Openness" | "Conscientiousness" | "Extraversion" |
   "Agreeableness" | "Neuroticism";
+
+export const PERSONALITY_SCORE_KEY_COLOR_REF = {
+  Openness: "#00000020",
+  Conscientiousness: "#00000040",
+  Extraversion: "#00000060",
+  Agreeableness: "#00000080",
+  Neuroticism: "#000000",
+};
 
 export const SYSTEM_MATCH_NUM = 8;
 export const MANUAL_MATCH_NUM = 1;

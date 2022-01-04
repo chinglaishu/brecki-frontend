@@ -1,4 +1,4 @@
-import { MultiLanguage } from "../../type/common";
+import { MultiLanguage, User } from "../../type/common";
 
 export type QuestionChoice = {
   id: string,
@@ -34,16 +34,27 @@ export class PersonalityScore {
 };
 
 export type QuestionScoreRecord = {
-  id: string,
-  userId?: string,
-  toUserId: string,
-  personalityScore: PersonalityScore;
-  submitQuestionRecordId: string;
+  id?: string,
+  personalityScore?: PersonalityScore,
+  questionId: string,
+  comment?: string,
 };
+
+export type SubmitQuestionScoreRecord = {
+  id: string,
+  userId: string,
+  user: User,
+  toUserId: string,
+  toUser?: User,
+  submitQuestionRecordId: string,
+  questionScoreRecordIds: string[],
+  questionScoreRecords: QuestionScoreRecord[],
+}
 
 export type SubmitQuestionRecord = {
   id: string,
   userId?: string,
+  user?: User,
   questionChoiceRecordIds: string[],
   questionChoiceRecords: QuestionChoiceRecord[],
 };

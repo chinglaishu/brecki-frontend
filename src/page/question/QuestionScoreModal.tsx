@@ -4,7 +4,7 @@ import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-nat
 import { ButtonText, SlideText, SlideTitle, SubTitle, Title } from "../../component/text";
 import { ButtonTouchable, PlainTouchable, SimpleTouchable } from "../../component/touchable";
 import { CenterView, ContainerView, PlainRowView, RowView, SlideTitleContainer } from "../../component/view";
-import { FONT_NORMAL, PERSONALITY_SCORE_MAX, SCREEN, STATUS_TYPE } from "../../constant/constant";
+import { FONT_NORMAL, PERSONALITY_SCORE_KEY, PERSONALITY_SCORE_MAX, SCREEN, STATUS_TYPE } from "../../constant/constant";
 import { getRequestToAnswerQuestions, submitQuestion, submitQuestionScoreRecord } from "../../request/question";
 import { ContextObj, Language, MultiLanguage, PageProps } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
@@ -19,7 +19,7 @@ import Modal from "react-native-modal";
 import { NormalModal } from "../../component/modal";
 import { NormalInput } from "../../component/input";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { checkErrorWhenGoToNextQuestion, getCurrentAnswer, getDefaultQuestionChoiceRecord, uploadBase64InQuestionChoiceRecords } from "./helper";
+import { checkErrorWhenGoToNextQuestion, checkIfValueAllZero, getCurrentAnswer, getDefaultQuestionChoiceRecord, uploadBase64InQuestionChoiceRecords } from "./helper";
 import { Canvas } from "./Canvas";
 import GestureRecognizer from 'react-native-swipe-gestures';
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -40,13 +40,14 @@ export type QuestionScoreModal = {
   setIsFocusQuestion: (isFocusQuestion: boolean) => any,
   onAllSubmit: (isCancel: boolean) => any,
   personalities: Personality[],
-  personalityScore: PersonalityScore,
-  changePersonalityScore: (key: string, value: number) => any,
   submitQuestionRecord: SubmitQuestionRecord,
+  questionScoreRecords: QuestionScoreRecord[],
+  changeQuestionScoreRecords: (questionScoreRecords: QuestionScoreRecord[]) => any,
+  isDisabled: boolean,
 };
 
 export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionChoiceRecords, slideIndex, setSlideIndex,
-  isFocusQuestion, setIsFocusQuestion, onAllSubmit, personalities, personalityScore, changePersonalityScore,
+  isFocusQuestion, setIsFocusQuestion, onAllSubmit, personalities, questionScoreRecords, changeQuestionScoreRecords,
   submitQuestionRecord}) => {
 
   useEffect(() => {
@@ -77,10 +78,6 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
     setTimeout(() => changeTypingString(), 500);
   }, [typingString]);
 
-  // useEffect(() => {
-  //   setQuestionChoiceRecords(getDefaultQuestionChoiceRecord(questions, useQuestionChoiceRecords));
-  // }, [questions, useQuestionChoiceRecords]);
-
   const changeTypingString = () => {
     const nextString = typingString === "_" ? "" : "_";
     setTypingString(nextString);
@@ -95,21 +92,32 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
   };
 
   const onSubmitScore = async (changeStatusModal: any) => {
-    const result = await makeRequestWithStatus<QuestionScoreRecord>(() => submitQuestionScoreRecord(personalityScore, submitQuestionRecord?.userId as string, submitQuestionRecord.id), changeStatusModal, false);
+    const result = await makeRequestWithStatus<QuestionScoreRecord>(() => submitQuestionScoreRecord(submitQuestionRecord?.userId as string, submitQuestionRecord.id, questionScoreRecords), changeStatusModal, false);
     if (!result) {return; }
     onAllSubmit(false);
   };
 
-  const onSubmitQuestion = async (changeStatusModal: any) => {
-    const useQuestionChoiceRecords = await uploadBase64InQuestionChoiceRecords(questionChoiceRecords);
-    const result = await makeRequestWithStatus<SubmitQuestionRecord>(() => submitQuestion(useQuestionChoiceRecords), changeStatusModal, false);
-    if (!result) {return; }
-    onAllSubmit(false);
+  const editComment = (index: number, value: any) => {
+    const useQuestionScoreRecords: QuestionScoreRecord[] = JSON.parse(JSON.stringify(questionScoreRecords));
+    useQuestionScoreRecords[index].comment = value;
+    changeQuestionScoreRecords(useQuestionScoreRecords); 
   };
 
-  // const changeQuestionChoiceRecords = (questionChoiceRecords: QuestionChoiceRecord[]) => {
-  //   setQuestionChoiceRecords(questionChoiceRecords);
-  // }
+  const editPersonalityScore = (index: number, key: string, value: number) => {
+    const useQuestionScoreRecords: QuestionScoreRecord[] = JSON.parse(JSON.stringify(questionScoreRecords));
+    (useQuestionScoreRecords[index].personalityScore as any)[key] = value;
+    changeQuestionScoreRecords(useQuestionScoreRecords);
+  };
+
+  const putScoreToNext = (index: number) => {
+    const nextIndex = index + 1;
+    if (nextIndex >= questionChoiceRecords.length) {return; }
+    const useQuestionScoreRecords: QuestionScoreRecord[] = JSON.parse(JSON.stringify(questionScoreRecords));
+    if (checkIfValueAllZero(useQuestionScoreRecords[nextIndex])) {
+      useQuestionScoreRecords[nextIndex].personalityScore = {...useQuestionScoreRecords[index].personalityScore};
+    }
+    changeQuestionScoreRecords(useQuestionScoreRecords);
+  }
 
   const getContent = (contextObj: ContextObj) => {
 
@@ -127,6 +135,7 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
       if (isLastQuestion) {
         onSubmitScore(changeStatusModal)
       } else {
+        putScoreToNext(slideIndex);
         setSlideIndex(slideIndex + 1);
       }
     }
@@ -143,7 +152,9 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
     };
 
     const question: Question = questions[slideIndex];
+    const questionScoreRecord: QuestionScoreRecord = questionScoreRecords[slideIndex];
     if (!question) {return null; }
+    if (!questionScoreRecord) {return null; }
     const {title, questionChoices} = question;
     const currentChoiceId = questionChoiceRecords[slideIndex]?.choiceId;
     const currentContent = questionChoiceRecords[slideIndex]?.content;
@@ -154,11 +165,11 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
     const useImageContainerBackground = (currentBase64) ? TRANSPARENT : theme.questionBlockBackground;
     const isDisabled = checkErrorWhenGoToNextQuestion(questionChoiceRecords[slideIndex]);
     const buttonColor = (isDisabled) ? theme.subText : theme.lightSecondary;
+    const comment = questionScoreRecord.comment;
 
     const getScoreView = () => {
-      if (!personalities) {return null; }
-      if (!personalityScore) {return null; }
-      if (!changePersonalityScore) {return null; }
+      const {personalityScore, comment} = questionScoreRecord;
+      
       return (
         <ContainerView style={{backgroundColor: TRANSPARENT}}>
           <PlainTouchable activeOpacity={1.0}>
@@ -168,16 +179,27 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
                 personalities.map((personality, index: number) => {
                   const isFirst = index === 0;
                   const marginTop = (isFirst) ? 0 : hp(2);
-                  const currentBox = personalityScore[personality.key];
+                  const currentBox = personalityScore?.[personality.key] || 0;
                   return (
                     <View style={{marginTop}}>
                       <Title style={{marginBottom: hp(0.25)}}>{personality.name[language]}</Title>
                       <BoxRow maxBox={PERSONALITY_SCORE_MAX} currentBox={currentBox} fillColor={theme.lightSecondary}
-                        borderColor={theme.border} onClickEvent={(index: number) => changePersonalityScore(personality.key, index)} />
+                        borderColor={theme.border} onClickEvent={(index: number) => editPersonalityScore(slideIndex, personality.key, index)} />
                     </View>
                   );
                 })
               }
+              <PlainTouchable activeOpacity={1.0}>
+                <CenterView style={{padding: wp(3), backgroundColor: theme.questionBlockBackground,
+                  borderWidth: 2, borderColor: theme.onPrimary, borderRadius: BORDER_RADIUS * 4,
+                  width: wp(60), marginTop: hp(3)}}>
+                  <TextInput spellCheck={false} ref={inputRef} style={{color: theme.onPrimary, fontSize: hp(2), textAlign: "center",
+                    }} placeholderTextColor={"#FFFFFF50"} placeholder={T.COMMENT[language]}
+                    selectionColor={"#000000"} value={comment}
+                    onChange={(e: any) => editComment(slideIndex, e.nativeEvent.text)}
+                    underlineColorAndroid={TRANSPARENT} multiline={true} />
+                </CenterView>
+              </PlainTouchable>
             </CenterView>
           </PlainTouchable>
         </ContainerView>

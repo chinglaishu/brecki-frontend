@@ -14,11 +14,16 @@ import { ContextObj, User } from "../type/common";
 import { T } from "../utils/translate";
 import { Header } from "../component/header";
 import { CustomDrawer } from "./CustomDrawer";
-import { LikeZoneStack, LikeZoneTab } from "./LikeZoneNavigator";
+import { LikeZoneStack } from "./LikeZoneNavigator";
 import { QuestionPage } from "../page/question/Question";
 import { Chat } from "../page/chat/Chat";
 import { QuestionEnd } from "../page/question/QuestionEnd";
 import { StatusModalProps } from "../component/modal";
+import { HistoryPage } from "../page/history/History";
+import { ChatList } from "../page/chat/ChatList";
+import { ChatStack } from "./ChatNavigator";
+import { KeyboardAvoidingView } from "react-native";
+import { SettingStack } from "./SettingNavigator";
 
 type MainNavigatorProps = {
   initialRoute: SCREEN,
@@ -38,19 +43,20 @@ export const MainNavigator: FC<MainNavigatorProps> = ({initialRoute, changeStatu
     const {user} = contextObj;
     const {language} = user;
     return (
-      <NavigationContainer>
-        <Drawer.Navigator initialRouteName={initialRoute} screenOptions={{header: (props) => <Header headerProps={props} /> }}
-          drawerContent={(props) => <CustomDrawer drawerContentProps={props} />}
-          backBehavior={"history"}>
-          <Drawer.Screen name={SCREEN.HOME} component={Home} options={{title: T.SCREEN_HOME[language]}} initialParams={{changeStatusModal}}/>
-          <Drawer.Screen name={SCREEN.QUESTION} component={QuestionPage} options={{title: T.SCREEN_QUESTION[language]}} initialParams={{changeStatusModal}} />
-          <Drawer.Screen name={SCREEN.LIKE_ZONE} component={LikeZoneStack} options={{title: T.SCREEN_LIKE_ZONE[language]}} initialParams={{changeStatusModal}} />
-          <Drawer.Screen name={SCREEN.CHAT} component={Chat} options={{title: T.SCREEN_CHAT[language]}} initialParams={{changeStatusModal}} />
-          <Drawer.Screen name={SCREEN.PERSONAL_INFO} component={PersonalInfo} options={{title: T.SCREEN_PERSONAL_INFO[language]}} initialParams={{changeStatusModal}} />
-          <Drawer.Screen name={SCREEN.SETTING} component={Setting} options={{title: T.SCREEN_SETTING[language]}} initialParams={{changeStatusModal}} />
-          <Drawer.Screen name={SCREEN.QUESTION_END} component={QuestionEnd} options={{title: T.SCREEN_QUESTION[language]}} initialParams={{changeStatusModal}} />
-        </Drawer.Navigator>
-      </NavigationContainer>
+        <NavigationContainer>
+          <Drawer.Navigator initialRouteName={initialRoute} screenOptions={{header: (props) => <Header headerProps={props} /> }}
+            drawerContent={(props) => <CustomDrawer drawerContentProps={props} />}
+            backBehavior={"history"}>
+            <Drawer.Screen name={SCREEN.HOME} component={Home} options={{title: T.SCREEN_HOME[language]}} initialParams={{changeStatusModal}}/>
+            <Drawer.Screen name={SCREEN.QUESTION} component={QuestionPage} options={{title: T.SCREEN_QUESTION[language]}} initialParams={{changeStatusModal}} />
+            <Drawer.Screen name={SCREEN.SYSTEM_LIKE_ZONE} component={LikeZoneStack} options={{title: T.SCREEN_LIKE_ZONE[language]}} initialParams={{changeStatusModal}} />
+            <Drawer.Screen name={SCREEN.CHAT_LIST} component={ChatStack} options={{title: T.SCREEN_CHAT[language]}} initialParams={{changeStatusModal}} />
+            <Drawer.Screen name={SCREEN.PERSONAL_INFO} component={PersonalInfo} options={{title: T.SCREEN_PERSONAL_INFO[language]}} initialParams={{changeStatusModal}} />
+            <Drawer.Screen name={SCREEN.SETTING} component={SettingStack} options={{title: T.SCREEN_SETTING[language]}} initialParams={{changeStatusModal}} />
+            <Drawer.Screen name={SCREEN.QUESTION_END} component={QuestionEnd} options={{title: T.SCREEN_QUESTION[language]}} initialParams={{changeStatusModal}} />
+            <Drawer.Screen name={SCREEN.HISTORY} component={HistoryPage} options={{title: T.SCREEN_HISTORY[language]}} initialParams={{changeStatusModal}} />
+          </Drawer.Navigator>
+        </NavigationContainer>
     );
   };
 

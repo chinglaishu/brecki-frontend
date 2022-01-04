@@ -56,15 +56,10 @@ instance.interceptors.response.use(
   async (error) => {
     const auth = getAxiosHeader(AUTHORIZATION_HEADER);
     const lang = getAxiosHeader(LANGUAGE_HEADER);
-    console.log("auth");
-    console.log(auth);
     // if ((error.code === undefined && error.message === 'Network Error') || error.code === 'ECONNABORTED') {
     //   throw new Error(lang === 'zht' ? '請檢查你的網絡連線' : 'Please check your network connection');
     // }
-
     const { response } = error;
-
-    console.log(response);
 
     if (response?.status === 403 && response?.data?.message === 'Forbidden resource' && response?.data?.info === 'F') {
       const request = error.config;

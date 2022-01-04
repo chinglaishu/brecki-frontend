@@ -18,6 +18,9 @@ import { QuestionPage } from "../page/question/Question";
 import { Header } from "../component/header";
 import { SubmitQuestionEnd } from "../page/question/SubmitQuestionEnd";
 import { BOTTOM_TAB_HEIGHT } from "../utils/size";
+import { HistoryPage } from "../page/history/History";
+import { Chat } from "../page/chat/Chat";
+import { QuestionRecord } from "../page/question/QuestionRecord";
 
 const { UIManager } = NativeModules;
 
@@ -34,11 +37,14 @@ export const LikeZoneStack: FC<PageProps> = ({navigation}) => {
     const {theme, user, changeStatusModal} = contextObj;
     const {language} = user;
     return (
-      <Stack.Navigator initialRouteName={SCREEN.LIKE_ZONE} screenOptions={{animationEnabled: true, header: (props) => null }}>
-        <Stack.Screen name={SCREEN.LIKE_ZONE} component={LikeZoneTab} initialParams={{changeStatusModal}}/>
+      <Stack.Navigator initialRouteName={SCREEN.SYSTEM_LIKE_ZONE} screenOptions={{animationEnabled: true, header: (props) => null }}>
+        <Stack.Screen name={SCREEN.SYSTEM_LIKE_ZONE} component={SystemLikeZone} initialParams={{changeStatusModal}}/>
+        <Stack.Screen name={SCREEN.MANUAL_LIKE_ZONE} component={ManualLikeZone} initialParams={{changeStatusModal}}/>
         <Stack.Screen name={SCREEN.PERSONAL_INFO} component={PersonalInfo} initialParams={{changeStatusModal}} />
-        <Stack.Screen name={SCREEN.QUESTION} component={QuestionPage} initialParams={{changeStatusModal}} />
+        <Stack.Screen name={SCREEN.QUESTION_RECORD} component={QuestionRecord} initialParams={{changeStatusModal}} />
+        <Stack.Screen name={SCREEN.HISTORY} component={HistoryPage} initialParams={{changeStatusModal}} />
         <Stack.Screen name={SCREEN.SUBMIT_QUESTION_END} component={SubmitQuestionEnd} initialParams={{changeStatusModal}} />
+        <Stack.Screen name={SCREEN.CHAT} component={Chat} initialParams={{changeStatusModal}} />
       </Stack.Navigator>
     );
   };
@@ -56,37 +62,37 @@ type LikeZoneTabProps = {
   stackNavigation: StackNavigationProp<any>,
 };
 
-export const LikeZoneTab: FC<LikeZoneTabProps> = ({stackNavigation}) => {
+// export const LikeZoneTab: FC<LikeZoneTabProps> = ({stackNavigation}) => {
 
-  // add matching history
-  const getContent = (contextObj: ContextObj) => {
-    const {theme, user, changeStatusModal} = contextObj;
-    const {language} = user;
-    return (
-      <Tab.Navigator 
-        screenOptions={({ route }) => ({
-          tabBarInactiveTintColor: "#FFFFFF75",
-          tabBarActiveTintColor: theme.onSecondary,
-          tabBarLabelStyle: { fontSize: hp(2), fontFamily: FONT_NORMAL },
-          tabBarStyle: {backgroundColor: theme.secondary, height: BOTTOM_TAB_HEIGHT},
-          header: () => null,
-          tabBarIcon: ({focused, color, size}) => {
-            const image = (route.name === "System") ? imageLoader.setting : imageLoader.pen;
-            const opacity = (focused) ? 1.0 : 0.5;
-            return <Image source={image} style={{width: hp(2.5), height: hp(2.5), marginTop: hp(0.5), opacity}} />
-          }
-        })}>
-        <Tab.Screen name="System" component={SystemLikeZone} initialParams={{navigation: stackNavigation, changeStatusModal}} />
-        <Tab.Screen name="Manual" component={ManualLikeZone} initialParams={{navigation: stackNavigation, changeStatusModal}} />
-      </Tab.Navigator>
-    );
-  };
+//   // add matching history
+//   const getContent = (contextObj: ContextObj) => {
+//     const {theme, user, changeStatusModal} = contextObj;
+//     const {language} = user;
+//     return (
+//       <Tab.Navigator 
+//         screenOptions={({ route }) => ({
+//           tabBarInactiveTintColor: "#FFFFFF75",
+//           tabBarActiveTintColor: theme.onSecondary,
+//           tabBarLabelStyle: { fontSize: hp(2), fontFamily: FONT_NORMAL },
+//           tabBarStyle: {backgroundColor: theme.secondary, height: BOTTOM_TAB_HEIGHT},
+//           header: () => null,
+//           tabBarIcon: ({focused, color, size}) => {
+//             const image = (route.name === "System") ? imageLoader.setting : imageLoader.pen;
+//             const opacity = (focused) ? 1.0 : 0.5;
+//             return <Image source={image} style={{width: hp(2.5), height: hp(2.5), marginTop: hp(0.5), opacity}} />
+//           }
+//         })}>
+//         <Tab.Screen name="System" component={SystemLikeZone} initialParams={{navigation: stackNavigation, changeStatusModal}} />
+//         <Tab.Screen name="Manual" component={ManualLikeZone} initialParams={{navigation: stackNavigation, changeStatusModal}} />
+//       </Tab.Navigator>
+//     );
+//   };
 
-  return (
-    <ContextConsumer>
-      {(contextObj: ContextObj) => {
-        return getContent(contextObj);
-      }}
-    </ContextConsumer>
-  )
-};
+//   return (
+//     <ContextConsumer>
+//       {(contextObj: ContextObj) => {
+//         return getContent(contextObj);
+//       }}
+//     </ContextConsumer>
+//   )
+// };

@@ -3,9 +3,10 @@ import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { FormObj } from "../../component/form";
 import { AUTH_SCREEN, SCREEN, STORE_KEY } from "../../constant/constant";
 import { checkUsernameAvailable, forgetPassword, forgetPasswordTokenRequest, login, LoginResponse, requestToken, signup } from "../../request/auth";
-import { setAxiosAuthorization } from "../../request/config";
+import { setAxiosAuthorization, setAxiosLanguage } from "../../request/config";
 import { addNotificationToken } from "../../request/user";
 import { InputObj, InputObjKey, Language, User } from "../../type/common";
+import fire from "../../utils/firebase";
 import imageLoader from "../../utils/imageLoader";
 import { getTokenForPushNotificationsAsync } from "../../utils/notification";
 import { TITLE_IMAGE_HEIGHT } from "../../utils/size";
@@ -213,6 +214,8 @@ export const loginAction = async (data: LoginResponse, setUser: (user: User) => 
   await setStoreData(STORE_KEY.ACCESS_TOKEN, token);
   setAxiosAuthorization(token);
   const useUser = await requestAddNotificationToken(user);
+  await fire.login(useUser);
+  setAxiosLanguage(useUser.language);
   setUser(useUser);
 };
 

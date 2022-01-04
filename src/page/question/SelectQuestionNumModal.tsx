@@ -5,7 +5,7 @@ import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-nat
 import { NormalModal } from "../../component/modal";
 import { ButtonText, SlideText, SlideTitle, SubTitle, Title } from "../../component/text";
 import { ButtonTouchable, PlainTouchable, RoundTouchable, SimpleTouchable } from "../../component/touchable";
-import { CenterView, ContainerView, PlainRowView, RowView, SlideTitleContainer } from "../../component/view";
+import { CenterView, CommonBlock, ContainerView, PlainRowView, RowView, SlideTitleContainer } from "../../component/view";
 import { SCREEN } from "../../constant/constant";
 import { ContextObj, Language, MultiLanguage, PageProps } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
@@ -33,9 +33,7 @@ export const SelectQuestionNumModal: FC<SelectQuestionNumProps> = ({questionNums
     const passiveColor = theme.text;
     const description = getQuestionNumDescriptionByNum(questionNums, useNum, language);
     return (
-      <CenterView style={{backgroundColor: theme.buttonBackground, width: wp(80), paddingHorizontal: wp(5),
-        paddingVertical: hp(5), borderRadius: EXTRA_BORDER_RADIUS, marginBottom: hp(2.5),
-        elevation: 8}}>
+      <CommonBlock style={{width: wp(80), marginBottom: hp(2.5)}}>
         <Title style={{color: theme.subText, marginBottom: hp(2.5), fontSize: hp(2.5)}}>{T.CHOOSE_QUESTION_NUM[language]}</Title>
         <SubTitle style={{color: theme.subText, paddingHorizontal: wp(2.5), textAlign: "center", opacity: 0.6, fontSize: hp(2)}}>{description}</SubTitle>
         <PlainRowView style={{marginTop: hp(5)}}>
@@ -72,7 +70,7 @@ export const SelectQuestionNumModal: FC<SelectQuestionNumProps> = ({questionNums
           }}>
           <Title style={{color: theme.onSecondary, fontSize: hp(2)}}>{T.BACK_TO_HOME[language]}</Title>
         </RoundTouchable>
-      </CenterView>
+      </CommonBlock>
     );
   };
 

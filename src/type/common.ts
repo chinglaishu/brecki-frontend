@@ -5,6 +5,7 @@ import { AxiosResponse } from "axios";
 import { DefaultTheme } from "styled-components";
 import { StatusModalProps } from "../component/modal";
 import { AGE_RANGE_NUM, SEX_NUM, STATUS_TYPE } from "../constant/constant";
+import { PersonalityScore, SubmitQuestionScoreRecord } from "../page/question/type";
 
 export type PersonalInfoLocation = {
   placeId: string,
@@ -57,6 +58,9 @@ export type User = {
   isEdited?: boolean,
   isGuest?: boolean,
   isLoading?: boolean,
+  submitQuestionScoreRecord?: SubmitQuestionScoreRecord,
+  personalityScore?: PersonalityScore,
+  personalityScoreNum?: number;
 };
 
 export type SetUserFunction = (user: User) => any;
@@ -137,3 +141,5 @@ export type SystemOrManualMatch = {
   matchUserIds: string[],
   matchUsers: User[],
 };
+
+export type MessageType = "text" | "image" | "voice";

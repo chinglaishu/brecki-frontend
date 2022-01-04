@@ -121,9 +121,17 @@ export const getDisplayNameByRouteName = (routeName: string, language: Language)
     return T.SCREEN_SETTING[language];
   } else if (routeName === SCREEN.QUESTION || routeName === SCREEN.QUESTION_END) {
     return T.SCREEN_QUESTION[language];
-  } else if (routeName === SCREEN.LIKE_ZONE) {
+  } else if (routeName === SCREEN.QUESTION_RECORD) {
+    return T.SCREEN_QUESTION[language];
+  } else if (routeName === SCREEN.SYSTEM_LIKE_ZONE) {
+    return T.SCREEN_LIKE_ZONE[language];
+  } else if (routeName === SCREEN.MANUAL_LIKE_ZONE) {
     return T.SCREEN_LIKE_ZONE[language];
   } else if (routeName === SCREEN.CHAT) {
+    return T.SCREEN_CHAT[language];
+  } else if (routeName === SCREEN.SUBMIT_QUESTION_END) {
+    return T.SCREEN_QUESTION[language];
+  } else if (routeName === SCREEN.CHAT_LIST) {
     return T.SCREEN_CHAT[language];
   }
   return null;

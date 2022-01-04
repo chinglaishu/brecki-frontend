@@ -10,6 +10,7 @@ import { ContextObj, Language, MultiLanguage, PageProps } from "../type/common";
 import { ContextConsumer } from "../utils/context";
 import imageLoader from "../utils/imageLoader";
 import { T } from "../utils/translate";
+import { RoundButton } from "./button";
 
 const { UIManager } = NativeModules;
 
@@ -24,10 +25,16 @@ type StatusPageProps = {
   buttonTextExtraStyle?: any,
   onClickEvent: any,
   buttonText: string,
-}
+  extraButton?: boolean,
+  extraButtonText?: string,
+  extraButtonStyle?: any,
+  extraButtonTextStyle?: any,
+  extraButtonClickEvent?: any,
+};
 
 export const StatusPage: FC<StatusPageProps> = ({isSuccess, text, textExtraStyle, buttonExtraStyle,
-  buttonTextExtraStyle, onClickEvent, buttonText}) => {
+  buttonTextExtraStyle, onClickEvent, buttonText, extraButton, extraButtonText, extraButtonStyle,
+  extraButtonTextStyle, extraButtonClickEvent}) => {
 
   const image = (isSuccess) ? imageLoader.character_done : imageLoader.character_fail;
   const getContent = (contextObj: ContextObj) => {
@@ -35,6 +42,7 @@ export const StatusPage: FC<StatusPageProps> = ({isSuccess, text, textExtraStyle
     const {language} = user;
     const baseWidth = wp(40);
     const width = (isSuccess) ? baseWidth : baseWidth * 1.4;
+    const marginBottom = (extraButton) ? hp(2) : hp(6);
     // text #00000080
     return (
       <ContainerView style={{paddingHorizontal: wp(10)}}>
@@ -42,10 +50,10 @@ export const StatusPage: FC<StatusPageProps> = ({isSuccess, text, textExtraStyle
           <Image source={image} style={{width, height: baseWidth * 1.4, marginBottom: hp(2), marginTop: hp(4)}} />
           <Title style={{color: "#00000080", fontSize: hp(2), textAlign: "center", ...textExtraStyle}}>{text}</Title>
         </ContainerView>
-        <RoundTouchable style={{padding: wp(2), width: wp(80), height: hp(6.5), marginBottom: hp(6), ...buttonExtraStyle}}
-          activeOpacity={0.6} onPress={() => onClickEvent()}>
-          <Title style={{color: theme.onSecondary, fontSize: hp(2.25), ...buttonTextExtraStyle}}>{buttonText}</Title>
-        </RoundTouchable>
+        <RoundButton touchableExtraStyle={{marginBottom, ...buttonExtraStyle}} buttonTextExtraStyle={buttonTextExtraStyle}
+          buttonText={buttonText} clickFunction={() => onClickEvent()} />
+        {extraButton && <RoundButton touchableExtraStyle={{marginBottom: hp(6), ...extraButtonStyle}} buttonTextExtraStyle={extraButtonTextStyle}
+          buttonText={extraButtonText as any} clickFunction={() => extraButtonClickEvent()} />}
       </ContainerView>
     );
   };

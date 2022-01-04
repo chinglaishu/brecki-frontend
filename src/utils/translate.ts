@@ -13,6 +13,7 @@ type Translate = {
   SCREEN_CHAT_DESCRIPTION_2: MultiLanguage,
   SCREEN_PERSONAL_INFO: MultiLanguage,
   SCREEN_SETTING: MultiLanguage,
+  SCREEN_HISTORY: MultiLanguage,
   LOADING: MultiLanguage,
   REQUEST_FAIL: MultiLanguage,
   SUCCESS: MultiLanguage,
@@ -71,6 +72,15 @@ type Translate = {
   REQUEST_MATCH: MultiLanguage,
   QUESTION_RECORD: MultiLanguage,
   LIKE: MultiLanguage,
+  START_CHAT: MultiLanguage,
+  TO_SYSTEM_LIKE_ZONE: MultiLanguage,
+  TO_MANUAL_LIKE_ZONE: MultiLanguage,
+  TO_QUESTION_RECORD: MultiLanguage,
+  TO_QUESTION_SCORE_RECORD: MultiLanguage,
+  COMMENT: MultiLanguage,
+  SETTING_THEME: MultiLanguage,
+  SETTING_NOTIFICATION: MultiLanguage,
+  SETTING_ACCOUNT: MultiLanguage,
 }
 
 export const T: Translate = {
@@ -121,6 +131,10 @@ export const T: Translate = {
   SCREEN_SETTING: {
     en: "Setting",
     zh: "Setting",
+  },
+  SCREEN_HISTORY: {
+    en: "History",
+    zh: "History",
   },
   REQUEST_FAIL: {
     en: "Request Fail",
@@ -367,5 +381,41 @@ export const T: Translate = {
   LIKE: {
     en: "LIKE",
     zh: "LIKE",
+  },
+  START_CHAT: {
+    en: "Start Chat",
+    zh: "Start Chat",
+  },
+  TO_SYSTEM_LIKE_ZONE: {
+    en: "To System",
+    zh: "To System",
+  },
+  TO_MANUAL_LIKE_ZONE: {
+    en: "To Manual",
+    zh: "To Manual",
+  },
+  TO_QUESTION_RECORD: {
+    en: "To Question Record",
+    zh: "To Question Record",
+  },
+  TO_QUESTION_SCORE_RECORD: {
+    en: "To Question Score Record",
+    zh: "To Question Score Record",
+  },
+  COMMENT: {
+    en: "Leave Comment...",
+    zh: "Comment",
+  },
+  SETTING_ACCOUNT: {
+    en: "Account",
+    zh: "Account",
+  },
+  SETTING_NOTIFICATION: {
+    en: "Notification",
+    zh: "Notification",
+  },
+  SETTING_THEME: {
+    en: "Theme",
+    zh: "Theme",
   },
 };

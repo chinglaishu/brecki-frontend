@@ -5,7 +5,8 @@ import "firebase/firestore";
 import "firebase/functions";
 import "firebase/storage";
 import * as uuid from "uuid";
-import { User } from '../type/common';
+import { MessageType, User } from '../type/common';
+import moment from "moment-timezone";
 
 const config = {
   apiKey: "AIzaSyBTdCA25-6RvtAb4GciHK5KQBr7CYkG7Ww",
@@ -20,15 +21,23 @@ const config = {
 
 class Fire {
   constructor() {
-    firebase.initializeApp(config);
+    this.init();
+  }
+
+  init = () => {
+    if (firebase.apps.length === 0) {
+      firebase.initializeApp(config);
+    }
   }
 
   login = async (user: User) => {
     console.log("logging in");
-    const result = await firebase.auth().signInWithEmailAndPassword(user.firebaseEmail, user.firebasePassword);
+    console.log(user);
+    const result = await firebase.auth().signInWithEmailAndPassword(user?.firebaseEmail as string, user?.firebasePassword as string);
     if (!result) {
       await this.createAccount(user);
     }
+    console.log("create");
     return true;
   }
 
@@ -48,14 +57,20 @@ class Fire {
     }
   };
 
-  createAccount = async (user: User) => {
-    firebase.auth()
-      .createUserWithEmailAndPassword(user.firebaseEmail, user.firebasePassword)
+  createAccount = (user: User) => {
+    console.log("start create");
+    return new Promise((resolve, reject) => {
+      firebase.auth()
+      .createUserWithEmailAndPassword(user?.firebaseEmail as string, user?.firebasePassword as string)
       .then(function() {
         console.log("firebase account created");
+        resolve(true);
       }, function(error) {
-        alert("Create account failed. Error: "+error.message);
+        console.log("eerrror");
+        alert("Create account failed. Error: " + error.message);
+        reject(error);
       });
+    });
   }
 
   // for update image on message?
@@ -97,12 +112,12 @@ class Fire {
     return (firebase.auth().currentUser || {}).uid;
   }
 
-  get ref() {
-    return firebase.database().ref('Messages');
+  ref(matchId: string) {
+    return firebase.database().ref(`${matchId}`);
   }
 
   parse = (snapshot: any) => {
-    const { timestamp: numberStamp, text, user } = snapshot.val();
+    const { timestamp: numberStamp, type, text, user } = snapshot.val();
     const { key: id } = snapshot;
     const { key: _id } = snapshot; //needed for giftedchat
     const timestamp = new Date(numberStamp);
@@ -111,38 +126,65 @@ class Fire {
       id,
       _id,
       timestamp,
+      type,
       text,
       user,
     };
     return message;
   };
 
-  refOn = (callback: any) => {
-    this.ref
-      .limitToLast(20)
+  useParse = (snapshots: any) => {
+    const messageData = snapshots.val();
+    if (!messageData) {return []; }
+    const keys = Object.keys(messageData);
+    return keys.map((key: any) => {
+      const {timestamp, type, text, user} = messageData[key];
+      return {
+        id: key,
+        _id: key,
+        timestamp,
+        type,
+        text,
+        user,
+      };
+    });
+  }
+
+  getMessages = (matchId: string, size: number, callback: any) => {
+    this.ref(matchId)
+      .orderByChild("timestamp")
+      .limitToLast(size)
+      .once("value", snapshot => callback(this.useParse(snapshot)));
+  };
+
+  refOn = (matchId: string, callback: any) => {
+    this.ref(matchId)
+      .limitToLast(1)
       .on('child_added', snapshot => callback(this.parse(snapshot)));
   }
 
-  get timestamp() {
-    return firebase.database.ServerValue.TIMESTAMP;
+  timestamp = () => {
+    return moment().toISOString();
   }
-  
+
   // send the message to the Backend
-  send = (messages: any) => {
-    for (let i = 0; i < messages.length; i++) {
-      const { type, content, userId } = messages[i];
-      const message = {
-        type,
-        content,
-        userId,
-        createdAt: this.timestamp,
-      };
-      this.ref.push(message);
-    }
+  send = (type: MessageType, matchId: string, userId: string, text: any) => {
+    const message = {
+      type,
+      text,
+      user: {
+        id: userId,
+        _id: userId,
+      },
+      timestamp: this.timestamp(),
+      isSend: false,
+      isRead: false,
+    };
+    this.ref(matchId).push(message);
   };
 
-  refOff= () => {
-    this.ref.off();
+  refOff = (matchId: string) => {
+    this.ref(matchId).off();
   }
 }
 

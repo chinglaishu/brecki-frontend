@@ -9,11 +9,6 @@ export const getSelfManualMatch = async (): R<SystemOrManualMatch> => {
   return await instance.get(`/manual-match/self`);
 };
 
-export const likeManualMatchUser = async (toUserId: string): R<SystemOrManualMatch> => {
-  return await instance.post(`/manual-match/like-user/${toUserId}`);
+export const manualCreateMatch = async (toUserId: string): R<SystemOrManualMatch> => {
+  return await instance.post(`/manual-match/create-match/${toUserId}`);
 };
-
-export const crossManualMatchUser = async (toUserId: string): R<SystemOrManualMatch> => {
-  return await instance.post(`/manual-match/cross-user/${toUserId}`);
-};
-

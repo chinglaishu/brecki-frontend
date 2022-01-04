@@ -2,10 +2,12 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import React, {FC, useEffect, useState} from "react";
 import { Text, View, LayoutAnimation, NativeModules, ScrollView } from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { RoundButton } from "../../component/button";
 import { StatusPage } from "../../component/StatusPage";
 import { ButtonText, SlideText, SlideTitle, Title } from "../../component/text";
 import { RoundTouchable } from "../../component/touchable";
 import { ContainerView, SlideTitleContainer } from "../../component/view";
+import { SCREEN } from "../../constant/constant";
 import { getSelfManualMatch, requestManualMatchs } from "../../request/manualMatch";
 import { getSelfSystemMatch, requestSystemMatchs } from "../../request/systemMatch";
 import { ContextObj, Language, MultiLanguage, PageProps, StackPageProps, SystemOrManualMatch, User } from "../../type/common";
@@ -32,6 +34,10 @@ export const SystemLikeZone: FC<StackPageProps> = ({navigation}) => {
     getDefaultUseUsers();
   }, []);
 
+  const changeUseUsers = (useUsers: User[]) => {
+    setUseUsers(useUsers);
+  };
+
   const getDefaultUseUsers = async () => {
     const result = await getSelfSystemMatch();
     const useList = result?.data?.data?.matchUsers || [];
@@ -57,22 +63,23 @@ export const SystemLikeZone: FC<StackPageProps> = ({navigation}) => {
     if (isShowNotFound) {
       return (
         <StatusPage isSuccess={false} text={T.NO_MATCH[language]} buttonText={T.REQUEST_MATCH[language]}
-          onClickEvent={() => getSystemMatchs()} />
+          onClickEvent={() => getSystemMatchs()} extraButton={true} extraButtonText={T.TO_MANUAL_LIKE_ZONE[language]}
+          extraButtonClickEvent={() => navigation.navigate(SCREEN.MANUAL_LIKE_ZONE)}  />
       );
     }
 
     return (
       <ContainerView>
         <ScrollView contentContainerStyle={{paddingTop: hp(6), justifyContent: "center", alignItems: "center"}}>
-          
+
           <ContainerView style={{minHeight: SYSTEM_PAGE_MIN_HEIGHT - hp(9)}}>
-            <LikeRowList useUsers={useUsers} isManual={false} stackNavigation={navigation} />
+            <LikeRowList useUsers={useUsers} isManual={false} stackNavigation={navigation} changeUseUsers={changeUseUsers} />
           </ContainerView>
-        
-          <RoundTouchable style={{padding: wp(2), width: wp(80), height: ROUND_BUTTON_HEIGHT, marginTop: hp(6), marginBottom: hp(6)}}
-            activeOpacity={0.6} onPress={() => getSystemMatchs()}>
-            <Title style={{color: theme.onSecondary, fontSize: hp(2.25)}}>{T.REQUEST_MATCH[language]}</Title>
-          </RoundTouchable>
+
+          <RoundButton touchableExtraStyle={{marginTop: hp(6), marginBottom: hp(2)}}
+            buttonText={T.REQUEST_MATCH[language]} clickFunction={() => getSystemMatchs()} />
+          <RoundButton touchableExtraStyle={{marginBottom: hp(6), backgroundColor: theme.empty}}
+            buttonText={T.TO_MANUAL_LIKE_ZONE[language]} clickFunction={() => navigation.navigate(SCREEN.MANUAL_LIKE_ZONE)} />
         </ScrollView>
       </ContainerView>
     );
