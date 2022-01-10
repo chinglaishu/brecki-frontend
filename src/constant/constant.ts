@@ -269,3 +269,5 @@ export const MANUAL_MATCH_NUM = 1;
 export const SYSTEM_MATCH_VALID_AFTER_MINS = 24 * 60;
 export const MANUAL_MATCH_VALID_AFTER_MINS = 1;
 export const PERSONALITY_SCORE_MAX = 10;
+export const MAX_INTIMACY_LEVEL = 1000;
+export const MAX_INTIMACY_BOX_NUM = 8;

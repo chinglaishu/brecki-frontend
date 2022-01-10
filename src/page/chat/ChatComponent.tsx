@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useEffect, useState} from "react";
+import React, {FC, useCallback, useEffect, useRef, useState} from "react";
 import { RoundInput } from "../../component/input";
 import { RoundInputContainer, RowView } from "../../component/view";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -8,17 +8,40 @@ import { PlainTouchable } from "../../component/touchable";
 import { ContextObj } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
 import { BORDER_RADIUS, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION, TRANSPARENT } from "../../utils/size";
-import { View, Image, Text } from "react-native";
+import { View, Image, Text, Keyboard } from "react-native";
 import { GiftedChatProps, SystemMessage } from "react-native-gifted-chat";
 import { DefaultTheme } from "styled-components";
 import moment from "moment-timezone";
+import { MessageUser } from "./type";
+import { checkIfUserRead } from "./helper";
 
 type ChatInputProps = {
   onSendEvent: any,
+  changeIsTyping: (isTyping: boolean) => any,
 };
 
-export const ChatInput: FC<ChatInputProps> = ({onSendEvent}) => {
+export const ChatInput: FC<ChatInputProps> = ({onSendEvent, changeIsTyping}) => {
   
+  const inputRef: any = useRef(null);
+
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+    Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+    // cleanup function
+    return () => {
+      Keyboard.removeListener('keyboardDidShow', _keyboardDidShow);
+      Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
+    };
+  }, []);
+
+  const [keyboardStatus, setKeyboardStatus] = useState(false as any);
+  const _keyboardDidShow = () => setKeyboardStatus(true);
+  const _keyboardDidHide = () => {
+    inputRef.current.blur();
+    setKeyboardStatus(false);
+  };
+
   const [text, setText] = useState("");
 
   const sendEvent = () => {
@@ -32,9 +55,11 @@ export const ChatInput: FC<ChatInputProps> = ({onSendEvent}) => {
       <RowView style={{justifyContent: "flex-start", paddingHorizontal: wp(2), paddingTop: hp(1.5)}}>
         <RoundInputContainer style={{justifyContent: "flex-start", flexDirection: "row", flex: 1, marginRight: wp(2),
           backgroundColor: theme.onPrimary, borderWidth: 0, elevation: 2}}>
-          <RoundInput value={text} 
+          <RoundInput ref={inputRef} value={text} 
             onChange={(e: any) => setText(e.nativeEvent.text)}
-            style={{height: hp(6), flex: 1}} placeholder={"123123"} />
+            onFocus={() => changeIsTyping(true)}
+            onBlur={() => changeIsTyping(false)}
+            style={{height: hp(6), flex: 1}} placeholder={"Enter Message..."} />
         </RoundInputContainer>
         <PlainTouchable activeOpacity={0.8} onPress={() => sendEvent()}>
           <View style={{borderRadius: EXTRA_BORDER_RADIUS, width: hp(6), height: hp(6), backgroundColor: theme.secondary,
@@ -52,14 +77,15 @@ export const ChatInput: FC<ChatInputProps> = ({onSendEvent}) => {
         return getContent(contextObj);
       }}
     </ContextConsumer>
-  )
+  );
 };
 
 type ChatMessageProps = {
   props: any,
+  messageUser: MessageUser | null,
 }
 
-export const ChatMessage: FC<ChatMessageProps> = ({props}) => {
+export const ChatMessage: FC<ChatMessageProps> = ({props, messageUser}) => {
   const {currentMessage} = props;
   if (!currentMessage) {return null; }
   const {user, text, type, timestamp, system} = currentMessage;
@@ -93,7 +119,8 @@ export const ChatMessage: FC<ChatMessageProps> = ({props}) => {
       : {backgroundColor: theme.onPrimary, elevation: 1};
   
     const useTimestamp = moment(timestamp).format("HH:mm");
-    const isRead = false;
+
+    const isRead = checkIfUserRead(messageUser, timestamp);
     const useImage = (isRead) ? imageLoader.double_tick : imageLoader.tick;
     const tickSize = (isRead) ? hp(1.5) : hp(1.5);
     return (

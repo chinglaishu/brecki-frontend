@@ -10,5 +10,6 @@ export type Match = {
   quitedIds: string,
   method: MATCH_METHOD_NUM,
   status: MATCH_STATUS_NUM,
-  intimacyLevel: number,
+  intimacy: number,
+  isTyping?: boolean, // for FE chat only
 };

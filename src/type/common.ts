@@ -5,6 +5,7 @@ import { AxiosResponse } from "axios";
 import { DefaultTheme } from "styled-components";
 import { StatusModalProps } from "../component/modal";
 import { AGE_RANGE_NUM, SEX_NUM, STATUS_TYPE } from "../constant/constant";
+import { Match } from "../page/likeZone/type";
 import { PersonalityScore, SubmitQuestionScoreRecord } from "../page/question/type";
 
 export type PersonalInfoLocation = {
@@ -81,6 +82,10 @@ export type ContextObj = {
   setOverlayColor: (color: string) => any,
   useNavigation: UseNavigation | null,
   setUseNavigation: (useNavigation: UseNavigation | null) => any,
+  matchs: Match[],
+  refreshMatchs: () => any,
+  setMatchs: (matchs: Match[]) => any,
+  changeMatchIsTyping: (matchId: string, isTyping: boolean) => any,
 };
 
 export type PageProps = {

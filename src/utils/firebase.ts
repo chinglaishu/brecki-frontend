@@ -7,6 +7,8 @@ import "firebase/storage";
 import * as uuid from "uuid";
 import { MessageType, User } from '../type/common';
 import moment from "moment-timezone";
+import { Match } from '../page/likeZone/type';
+import { MessageUser, MessageUserStatus } from '../page/chat/type';
 
 const config = {
   apiKey: "AIzaSyBTdCA25-6RvtAb4GciHK5KQBr7CYkG7Ww",
@@ -19,9 +21,34 @@ const config = {
   measurementId: "G-MBVJSDH553"
 };
 
+// message ref
+const MR = (matchId: string) => {
+  return `${matchId}/messages`;
+};
+
+// user ref
+const UR = (matchId: string, userId: string) => {
+  return `${matchId}/user/${userId}`;
+};
+
+// user status ref
+const SR = (userId: string) => {
+  return `/status/${userId}`;
+};
+
+const isOfflineForDatabase = {
+  state: 'offline',
+  last_changed: firebase.database.ServerValue.TIMESTAMP,
+};
+const isOnlineForDatabase = {
+  state: 'online',
+  last_changed: firebase.database.ServerValue.TIMESTAMP,
+};
+
 class Fire {
   constructor() {
     this.init();
+
   }
 
   init = () => {
@@ -112,17 +139,49 @@ class Fire {
     return (firebase.auth().currentUser || {}).uid;
   }
 
-  ref(matchId: string) {
-    return firebase.database().ref(`${matchId}`);
+  ref(ref: string) {
+    return firebase.database().ref(ref);
+  }
+
+  parseUser = (snapshot: any, id: string) => {
+    if (!snapshot.val()) {
+      return snapshot.val();
+    }
+    const {isTyping, lastSeen} = snapshot.val();
+
+    const user = {
+      id,
+      isTyping,
+      lastSeen,
+    };
+    return user;
+  }
+
+  parseUserStatus = (snapshot: any, id: string) => {
+    if (!snapshot.val()) {
+      return snapshot.val();
+    }
+
+    const {state, last_changed} = snapshot.val();
+
+    const userStatus: MessageUserStatus = {
+      id,
+      state,
+      last_changed,
+    };
+    return userStatus;
   }
 
   parse = (snapshot: any) => {
-    const { timestamp: numberStamp, type, text, user } = snapshot.val();
+    if (!snapshot.val()) {
+      return snapshot.val();
+    }
+
+    const {timestamp, type, text, user} = snapshot.val();
     const { key: id } = snapshot;
     const { key: _id } = snapshot; //needed for giftedchat
-    const timestamp = new Date(numberStamp);
-
-    const message = {
+    
+    return {
       id,
       _id,
       timestamp,
@@ -130,10 +189,25 @@ class Fire {
       text,
       user,
     };
-    return message;
+  }
+
+  getOneParse = (snapshot: any) => {
+
+    if (!snapshot.val()) {
+      return snapshot.val();
+    }
+
+    const messages = this.useParse(snapshot);
+
+    return messages?.[0];
   };
 
+
+
   useParse = (snapshots: any) => {
+    if (!snapshots.val()) {
+      return [];
+    }
     const messageData = snapshots.val();
     if (!messageData) {return []; }
     const keys = Object.keys(messageData);
@@ -150,22 +224,108 @@ class Fire {
     });
   }
 
+  getUnreadMessages = async (matchId: string, userLastSeen: number) => {
+    if (!userLastSeen) {userLastSeen = 0; }
+    const results = await this.ref(MR(matchId))
+      .startAt(userLastSeen)
+      .limitToLast(99)
+      .once("value");
+    return this.useParse(results);
+  }
+
+  getMessageUser = async (matchId: string, userId: string) => {
+    const result = await this.ref(UR(matchId, userId)).get();
+    return this.parseUser(result, userId);
+  };
+
+  getLastMessage = async (matchId: string) => {
+    const result = await this.ref(MR(matchId)).orderByChild("timestamp").limitToLast(1).once("value");
+    const parseResult = this.getOneParse(result);
+    return parseResult;
+  }
+
   getMessages = (matchId: string, size: number, callback: any) => {
-    this.ref(matchId)
+    this.ref(MR(matchId))
       .orderByChild("timestamp")
       .limitToLast(size)
       .once("value", snapshot => callback(this.useParse(snapshot)));
   };
 
-  refOn = (matchId: string, callback: any) => {
-    this.ref(matchId)
+  readAllMessages = (matchId: string, userId: string) => {
+    this.ref(UR(matchId, userId)).update({lastSeen: moment().toDate()});
+  }
+
+  messageAddRefOn = (matchId: string, callback: any) => {
+    this.ref(MR(matchId))
       .limitToLast(1)
       .on('child_added', snapshot => callback(this.parse(snapshot)));
   }
 
-  timestamp = () => {
-    return moment().toISOString();
+  messageChangeRefOn = (matchId: string, callback: any) => {
+    this.ref(MR(matchId))
+      .on('child_changed', snapshot => callback(this.parse(snapshot)));
   }
+
+  userChangeRefOn = (matchId: string, userId: string, callback: any) => {
+    this.ref(UR(matchId, userId))
+      .on("child_changed", snapshot => callback(this.parseUser(snapshot, userId)));
+  }
+
+  userStatusRefOn = async (userId: string, callback: any) => {
+    this.ref(SR(userId)).on("value", snaphshot => callback(this.parseUserStatus(snaphshot, userId)))
+  }
+
+  timestamp = () => {
+    return moment().unix();
+  }
+
+  updateLastSeen = (matchId: string, userId: string) => {
+    this.ref(UR(matchId, userId)).update({lastSeen: moment().unix()});
+  }
+
+  startTyping = (matchId: string, userId: string) => {
+    this.ref(UR(matchId, userId)).update({typing: true});
+  }
+
+  endTyping = (matchId: string, userId: string) => {
+    this.ref(UR(matchId, userId)).update({typing: false});  
+  }
+
+  createNewMatch = async (match: Match) => {
+    const {users} = match;
+    const user: any = {};
+    for (let i = 0 ; i < users.length ; i++) {
+      user[users[i].id] = {
+        isTyping: false,
+        lastSeen: moment().unix(),
+      } as MessageUser;
+    }
+    return await this.ref(match.id).set({
+      user,
+      messages: [],
+    });
+  }
+
+  online = async (userId: string) => {
+    this.ref(SR(userId)).set(isOnlineForDatabase);
+  }
+
+  offline = async (userId: string) => {
+    this.ref(SR(userId)).set(isOfflineForDatabase);
+  }
+
+  startStatusChecker = async (userId: string) => {
+    const userStatusDatabaseRef = this.ref(SR(userId));
+    
+    this.ref('.info/connected').on('value', function(snapshot) {
+      if (snapshot.val() == false) {
+        return;
+      };
+      userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(function() {
+        userStatusDatabaseRef.set(isOnlineForDatabase);
+      });
+    });
+  };
 
   // send the message to the Backend
   send = (type: MessageType, matchId: string, userId: string, text: any) => {
@@ -177,14 +337,20 @@ class Fire {
         _id: userId,
       },
       timestamp: this.timestamp(),
-      isSend: false,
-      isRead: false,
     };
-    this.ref(matchId).push(message);
+    this.ref(MR(matchId)).push(message);
   };
 
-  refOff = (matchId: string) => {
-    this.ref(matchId).off();
+  messageRefOff = (matchId: string) => {
+    this.ref(MR(matchId)).off();
+  }
+
+  userRefOff = (matchId: string, userId: string) => {
+    this.ref(UR(matchId, userId)).off();
+  }
+
+  logout = async () => {
+    firebase.auth().signOut();
   }
 }
 

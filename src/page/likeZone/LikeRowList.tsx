@@ -46,7 +46,7 @@ export const LikeRowList: FC<LikeRowListProps> = ({useUsers, isManual, stackNavi
       const matchUsers = result.data.data.matchUsers;
       changeUseUsers(matchUsers);
       setUseNavigation({navigation: stackNavigation, backScreen});
-      stackNavigation.navigate(SCREEN.CHAT, {matchId: result.data.data.id});
+      stackNavigation.navigate(SCREEN.CHAT, {matchId: result.data.data.id, userId: toUserId, selfUserId: user.id});
     };
 
     const toQuestionRecord = async (userId: string) => {

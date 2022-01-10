@@ -215,6 +215,7 @@ export const loginAction = async (data: LoginResponse, setUser: (user: User) => 
   setAxiosAuthorization(token);
   const useUser = await requestAddNotificationToken(user);
   await fire.login(useUser);
+  await fire.startStatusChecker(useUser.id);
   setAxiosLanguage(useUser.language);
   setUser(useUser);
 };

@@ -60,7 +60,7 @@ export const QuestionRecord: FC<StackPageProps> = ({navigation}) => {
     if (isError) {
       changeStatusModal({statusType: STATUS_TYPE.ERROR});
     } else {
-      changeStatusModal({statusType: STATUS_TYPE.SUCCESS});
+      changeStatusModal({statusType: STATUS_TYPE.LOADING, isVisible: false});
     }
   };
 

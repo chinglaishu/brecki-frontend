@@ -40,11 +40,11 @@ const Drawer = createDrawerNavigator();
 export const MainNavigator: FC<MainNavigatorProps> = ({initialRoute, changeStatusModal}: MainNavigatorProps) => {
 
   const getContent = (contextObj: ContextObj) => {
-    const {user} = contextObj;
+    const {user, matchs, refreshMatchs, useNavigation, setUseNavigation} = contextObj;
     const {language} = user;
     return (
         <NavigationContainer>
-          <Drawer.Navigator initialRouteName={initialRoute} screenOptions={{header: (props) => <Header headerProps={props} /> }}
+          <Drawer.Navigator initialRouteName={initialRoute} screenOptions={{header: (props) => <Header headerProps={props} matchs={matchs} refreshMatchs={refreshMatchs} useNavigation={useNavigation} setUseNavigation={setUseNavigation} /> }}
             drawerContent={(props) => <CustomDrawer drawerContentProps={props} />}
             backBehavior={"history"}>
             <Drawer.Screen name={SCREEN.HOME} component={Home} options={{title: T.SCREEN_HOME[language]}} initialParams={{changeStatusModal}}/>

@@ -35,7 +35,7 @@ export const Auth: FC<AuthProps> = ({navigation}) => {
   const phoneNumberInputRef = useRef();
 
   const getContent = (contextObj: ContextObj) => {
-    const {user, theme, changeStatusModal, setUser} = contextObj;
+    const {user, theme, changeStatusModal, setUser, refreshMatchs} = contextObj;
     const {language} = user;
 
     const currentRouteName = getCurrentRouteName(navigation) as AUTH_SCREEN;
@@ -68,6 +68,7 @@ export const Auth: FC<AuthProps> = ({navigation}) => {
 
       if (currentRouteName === AUTH_SCREEN.LOGIN) {
         await loginAction(result.data.data as any, setUser);
+        await refreshMatchs();
       } else {
         const param = getLastScreenNavigationParam(currentRouteName);
         param.phone = getPhone(inputObj?.phoneRegionCode?.content, inputObj?.phoneNumber?.content);

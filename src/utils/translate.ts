@@ -81,6 +81,7 @@ type Translate = {
   SETTING_THEME: MultiLanguage,
   SETTING_NOTIFICATION: MultiLanguage,
   SETTING_ACCOUNT: MultiLanguage,
+  IS_TYPING: MultiLanguage,
 }
 
 export const T: Translate = {
@@ -417,5 +418,9 @@ export const T: Translate = {
   SETTING_THEME: {
     en: "Theme",
     zh: "Theme",
+  },
+  IS_TYPING: {
+    en: "Typing...",
+    zh: "Typing...",
   },
 };

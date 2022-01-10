@@ -16,6 +16,10 @@ const contextObj: ContextObj = {
   setOverlayColor: defaultFn,
   useNavigation: null,
   setUseNavigation: defaultFn,
+  matchs: [],
+  refreshMatchs: defaultFn,
+  setMatchs: defaultFn,
+  changeMatchIsTyping: defaultFn,
 };
 
 const Context = React.createContext(contextObj);

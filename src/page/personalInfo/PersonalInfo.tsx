@@ -7,15 +7,17 @@ import { Select } from "../../component/select";
 import { ButtonText, LineTextLine, SubTitle, Title } from "../../component/text";
 import { ButtonTouchable, ProfileImageTouchable } from "../../component/touchable";
 import { ContainerView, RowView } from "../../component/view";
-import { SCREEN, SEX_NUM_REF, STATUS_TYPE } from "../../constant/constant";
+import { MAX_INTIMACY_BOX_NUM, SCREEN, SEX_NUM_REF, STATUS_TYPE } from "../../constant/constant";
+import { getMatchById } from "../../request/match";
 import { updatePersonalInfo } from "../../request/user";
 import { ContextObj, PageProps, PERSONAL_INFO_KEY, User } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
 import imageLoader from "../../utils/imageLoader";
 import { BORDER_RADIUS } from "../../utils/size";
 import { T } from "../../utils/translate";
-import { checkIfRequestError, getParamFromNavigation, makeRequestWithStatus } from "../../utils/utilFunction";
-import { getSelectContentList, getSelectText, getUseProfilePicTwo, PersonalInfoSelectType } from "./helper";
+import { checkIfRequestError, getChangeStatusModalFromNavigation, getParamFromNavigation, makeRequestWithStatus } from "../../utils/utilFunction";
+import { Match } from "../likeZone/type";
+import { getIntimacyBoxNum, getSelectContentList, getSelectText, getUseProfilePicTwo, PersonalInfoSelectType } from "./helper";
 import { ProfilePic } from "./ProfilePic";
 
 const { UIManager } = NativeModules;
@@ -39,15 +41,32 @@ const getSelect = (isDisabled: boolean, user: User, key: PERSONAL_INFO_KEY, getV
 export const PersonalInfo: FC<PageProps> = ({navigation}) => {
   
   const usePersonalInfo = getParamFromNavigation(navigation, "personalInfo");
+  const matchId = getParamFromNavigation(navigation, "matchId");
+  const changeStatusModal = getChangeStatusModalFromNavigation(navigation);
+
   const initInfoData = usePersonalInfo || {};
   const isOthers = !!usePersonalInfo;
   const [infoData, setInfoData] = useState(initInfoData);
   const [isEditing, setIsEditing] = useState(false);
+  const [match, setMatch] = useState(null as Match | null);
 
   useEffect(() => {
     const initInfoData = usePersonalInfo || {};
     setInfoData(initInfoData);
   }, [usePersonalInfo]);
+
+  const getMatch = async (matchId: string) => {
+    const result = await makeRequestWithStatus<Match>(() => getMatchById(matchId), changeStatusModal, false, true, true);
+    if (!result) {return; }
+    const match = result.data.data;
+    setMatch(match);
+  }
+
+  useEffect(() => {
+    if (matchId) {
+      getMatch(matchId);
+    }
+  }, [matchId]);
 
   const onChangeInfoData = (key: PERSONAL_INFO_KEY, value: any, extraData: any = {}) => {
     const useInfoData: any = {};
@@ -123,7 +142,8 @@ export const PersonalInfo: FC<PageProps> = ({navigation}) => {
     };
 
     const borderRadius = BORDER_RADIUS * 6;
-
+    const intimacy = match?.intimacy || 0;
+    const boxNum = getIntimacyBoxNum(intimacy);
     return (
       <ContainerView style={{justifyContent: "flex-start"}}>
         <View style={{justifyContent: "flex-start", alignItems: "center", width: "100%",
@@ -132,8 +152,8 @@ export const PersonalInfo: FC<PageProps> = ({navigation}) => {
           borderBottomRightRadius: borderRadius}}>
           <ProfilePic isOthers={isOthers} getValue={getValue} onChangeInfoData={onChangeInfoData} />
 
-          {isOthers && <RowView style={{marginTop: hp(2)}}>
-            <BoxRow maxBox={8} currentBox={2} fillColor={theme.lighterSecondary} borderColor={theme.border}
+          {isOthers && matchId && <RowView style={{marginTop: hp(2)}}>
+            <BoxRow maxBox={MAX_INTIMACY_BOX_NUM} currentBox={boxNum} fillColor={theme.lighterSecondary} borderColor={theme.border}
               onClickEvent={() => console.log("sdfsd")} extraStyle={{justifyContent: "center"}}
               useBoxSize={wp(6.5)} useMarginRight={wp(1)} useHeightRatio={0.8} />
           </RowView>}

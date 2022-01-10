@@ -2,7 +2,9 @@ import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
 import React, {useEffect, useState} from 'react';
 import { StyleSheet, SafeAreaView, Text, View, BackHandler,
-  Dimensions, Animated, Easing, Platform } from "react-native";
+  Dimensions, Animated, Easing, Platform, LayoutAnimation, NativeModules,
+  AppState, 
+  Keyboard} from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthNavigator, MainNavigator } from './src/navigator/MainNavigator';
 import { Auth } from './src/page/auth/Auth';
@@ -14,7 +16,7 @@ import {RobotoMono_400Regular} from '@expo-google-fonts/roboto-mono';
 import {ThemeProvider} from "styled-components/native";
 import "./src/request/config";
 import { StatusModal, StatusModalProps } from './src/component/modal';
-import { changeStateObj, checkIfRequestError, getCurrentRouteName, getDefaultHandleTypeByStatus, getStoreData, removeStoreData } from './src/utils/utilFunction';
+import { changeStateObj, checkIfRequestError, getCurrentRouteName, getDefaultHandleTypeByStatus, getParamFromNavigation, getStoreData, removeStoreData } from './src/utils/utilFunction';
 import { T } from './src/utils/translate';
 import { AUTH_SCREEN, MODAL_HANDLE_TYPE, SCREEN, STATUS_TYPE, STORE_KEY } from './src/constant/constant';
 import { getUserSelf } from './src/request/user';
@@ -26,6 +28,14 @@ import fire from './src/utils/firebase';
 import { heightPercentageToDP } from 'react-native-responsive-screen';
 import Toast from 'react-native-toast-message';
 import { getToast } from './src/component/Toast';
+import { Match } from './src/page/likeZone/type';
+import { getAllMatchs } from './src/request/match';
+import { User } from './src/type/common';
+
+const { UIManager } = NativeModules;
+
+UIManager.setLayoutAnimationEnabledExperimental &&
+  UIManager.setLayoutAnimationEnabledExperimental(true);
 
 const Content = () => {
 
@@ -34,16 +44,75 @@ const Content = () => {
   const [theme, setTheme] = useState(getLightTheme(user.language));
   const [overlayColor, setOverlayColor] = useState(TRANSPARENT);
   const [useNavigation, setUseNavigation] = useState(null as any);
+  const [matchs, setMatchs] = useState([] as Match[]);
+  const [appState, setAppState] = useState(AppState.currentState);
 
-  BackHandler.addEventListener('hardwareBackPress', function () {
-    setUseNavigation(null);
-    return false;
-  });
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+    return () => {
+      Keyboard.removeListener('keyboardDidHide', _keyboardDidHide);
+    };
+  }, []);
+
+  const endTyping = async () => {
+    if (useNavigation) {
+      const matchId = getParamFromNavigation(useNavigation?.navigation as any, "matchId");
+      if (!matchId) {
+        return fire.endTyping(matchId, user.id);
+      }
+    }
+    return null;
+  }
+
+  const _keyboardDidHide = () => {
+    endTyping();
+  };
+
+  const handleAppStateChange = (nextAppState: any) => {
+    if (user.isGuest) {return; }
+    if (appState === nextAppState) {return; }
+    if (appState.match(/inactive|background/) && nextAppState === 'active') {
+      fire.online(user.id);
+    } else {
+      endTyping();
+      fire.offline(user.id);
+    }
+    setAppState(nextAppState);
+  }
+
+  useEffect(() => {
+    AppState.addEventListener("change", handleAppStateChange);
+    return () => {
+       AppState.removeEventListener("change", handleAppStateChange);
+    };
+  }, []);
+
+  const changeMatchIsTyping = (matchId: string, isTyping: boolean) => {
+    const useMatchs: Match[] = JSON.parse(JSON.stringify(matchs));
+    for (let i = 0 ; i < useMatchs.length ; i++) {
+      if (useMatchs[i].id === matchId) {
+        useMatchs[i].isTyping = isTyping;
+      }
+    }
+    // LayoutAnimation.spring();
+    setMatchs(useMatchs);
+  };
+
+  const refreshMatchs = async (useUserId?: string) => {
+    const userId = useUserId || user.id;
+    const result = await getAllMatchs(userId);
+    if (!result) {return; }
+    const matchs = result.data.data;
+    setMatchs(matchs);
+  };
 
   const logout = async () => {
     await removeStoreData(STORE_KEY.ACCESS_TOKEN);
     await removeStoreData(STORE_KEY.REFRESH_TOKEN);
     await initAxiosHeader();
+    await endTyping();
+    await fire.offline(user.id);
+    await fire.logout();
     setUser({...guest, isLoading: false});
   };
 
@@ -78,6 +147,8 @@ const Content = () => {
         const user = result.data.data;
         setUser({...user, isLoading: false, isGuest: false});
         await fire.login(user);
+        await fire.startStatusChecker(user.id);
+        await refreshMatchs(user.id);
         changeStatusModal({statusType: STATUS_TYPE.SUCCESS, isVisible: false});
       }
     }
@@ -107,7 +178,7 @@ const Content = () => {
     <>
       <ThemeProvider theme={theme}>
         <ContextProvider value={{user, theme, setTheme, setUser, changeStatusModal, logout, overlayColor, setOverlayColor,
-            useNavigation, setUseNavigation}}>
+            useNavigation, setUseNavigation, matchs, refreshMatchs, setMatchs, changeMatchIsTyping}}>
           <View style={{flex: 1, minHeight: heightPercentageToDP(100)}}>
             {!isLoading && isGuest && <AuthNavigator initialRoute={initialRoute} changeStatusModal={changeStatusModal} />}
             {!isLoading && !isGuest && <MainNavigator initialRoute={appInitalRoute} changeStatusModal={changeStatusModal} />}

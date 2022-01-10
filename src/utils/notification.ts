@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    shouldShowAlert: false,
     shouldPlaySound: false,
     shouldSetBadge: false,
   }),
@@ -38,7 +38,7 @@ export const getTokenForPushNotificationsAsync = async () => {
   }
 };
 
-export const sendPushNotification = async (to: string, title: string, body: string, data: any) => {
+export const sendPushNotification = async (tokens: string[], title: string, body: string, data: any) => {
   // const message = { 
   //   to: expoPushToken,
   //   sound: 'default',
@@ -47,22 +47,24 @@ export const sendPushNotification = async (to: string, title: string, body: stri
   //   data: { someData: 'goes here' },
   // };
 
-  const message = { 
-    to,
-    sound: 'default',
-    title,
-    body,
-    data,
-  };
-
-  const result = await fetch('https://exp.host/--/api/v2/push/send', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Accept-encoding': 'gzip, deflate',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(message),
-  });
-  return result;
+  for (let i = 0 ; i < tokens.length ; i++) {
+    const message = { 
+      to: tokens[i],
+      sound: 'default',
+      title,
+      body,
+      data,
+    };
+  
+    const result = await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Accept-encoding': 'gzip, deflate',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message),
+    });
+    return result;
+  }
 };

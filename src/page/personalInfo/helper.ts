@@ -1,6 +1,6 @@
 import axios from "axios";
 import { SelectContent } from "../../component/modal";
-import { AGE_RANGE_REF, SEX_NUM_REF } from "../../constant/constant";
+import { AGE_RANGE_REF, MAX_INTIMACY_BOX_NUM, MAX_INTIMACY_LEVEL, SEX_NUM_REF } from "../../constant/constant";
 import { searchByName, GoogleSearchByNamePrediction, GoogleLocationType, GoogleGetByLatLngResult, getByLatLng } from "../../request/googleLocation";
 import { Language, PersonalInfo, ProfilePicTwoUrl, User } from "../../type/common";
 import { T } from "../../utils/translate";
@@ -91,4 +91,9 @@ export const getUseProfilePicTwo = (personalInfo?: PersonalInfo) => {
   if (!personalInfo) {return null; }
   const {profilePicTwoUrl} = personalInfo;
   return profilePicTwoUrl?.clear || profilePicTwoUrl?.blurLess || profilePicTwoUrl?.blurMore;
+};
+
+export const getIntimacyBoxNum = (intimacy: number) => {
+  const num = Math.floor(intimacy / (MAX_INTIMACY_LEVEL / MAX_INTIMACY_BOX_NUM));
+  return num;
 };
