@@ -1,4 +1,5 @@
 import { StackNavigationProp } from "@react-navigation/stack";
+import moment from "moment";
 import React, {FC, useEffect, useState} from "react";
 import { Text, View, LayoutAnimation, NativeModules, ScrollView } from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -27,6 +28,7 @@ export const SystemLikeZone: FC<StackPageProps> = ({navigation}) => {
 
   const [useUsers, setUseUsers] = useState([] as User[]);
   const [isLoading, setIsLoading] = useState(true);
+  const [updatedAt, setUpdatedAt] = useState(null as any);
 
   const changeStatusModal = getChangeStatusModalFromNavigation(navigation);
 
@@ -50,6 +52,7 @@ export const SystemLikeZone: FC<StackPageProps> = ({navigation}) => {
     if (!result) {return; }
     const useList = result.data.data.matchUsers || [];
     setUseUsers(useList);
+    setUpdatedAt(result.data.data.updatedAt);
   };
 
   const isShowNotFound = useUsers.length === 0;
@@ -58,13 +61,21 @@ export const SystemLikeZone: FC<StackPageProps> = ({navigation}) => {
     const {theme, user, changeStatusModal} = contextObj;
     const {language} = user;
 
+    const timeDiff = moment().diff(moment(updatedAt), "seconds");
+
+    const disabled = timeDiff > 0;
+
+    const buttonText = (disabled) 
+      ? T.REQUEST_MATCH[language]
+      : `${T.REQUEST_MATCH[language]} (${timeDiff})`;
+
     if (isLoading) {return null; }
 
     if (isShowNotFound) {
       return (
         <StatusPage isSuccess={false} text={T.NO_MATCH[language]} buttonText={T.REQUEST_MATCH[language]}
-          onClickEvent={() => getSystemMatchs()} extraButton={true} extraButtonText={T.TO_MANUAL_LIKE_ZONE[language]}
-          extraButtonClickEvent={() => navigation.navigate(SCREEN.MANUAL_LIKE_ZONE)}  />
+          onClickEvent={() => getSystemMatchs()} extraButton={true} extraButtonText={buttonText}
+          extraButtonClickEvent={() => navigation.navigate(SCREEN.MANUAL_LIKE_ZONE)} extraButtonDisabled={disabled}  />
       );
     }
 
@@ -76,8 +87,8 @@ export const SystemLikeZone: FC<StackPageProps> = ({navigation}) => {
             <LikeRowList useUsers={useUsers} isManual={false} stackNavigation={navigation} changeUseUsers={changeUseUsers} />
           </ContainerView>
 
-          <RoundButton touchableExtraStyle={{marginTop: hp(6), marginBottom: hp(2)}}
-            buttonText={T.REQUEST_MATCH[language]} clickFunction={() => getSystemMatchs()} />
+          <RoundButton disabled={disabled} touchableExtraStyle={{marginTop: hp(6), marginBottom: hp(2)}}
+            buttonText={buttonText} clickFunction={() => getSystemMatchs()} />
           <RoundButton touchableExtraStyle={{marginBottom: hp(6), backgroundColor: theme.empty}}
             buttonText={T.TO_MANUAL_LIKE_ZONE[language]} clickFunction={() => navigation.navigate(SCREEN.MANUAL_LIKE_ZONE)} />
         </ScrollView>

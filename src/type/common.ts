@@ -145,6 +145,7 @@ export type SystemOrManualMatch = {
   userId: string,
   matchUserIds: string[],
   matchUsers: User[],
+  updatedAt: Date,
 };
 
 export type MessageType = "text" | "image" | "voice";

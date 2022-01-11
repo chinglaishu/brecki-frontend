@@ -7,6 +7,7 @@ import { ButtonTouchable, SimpleTouchable } from "../../component/touchable";
 import { CenterView, ContainerView, PlainRowView, RowView, SlideTitleContainer } from "../../component/view";
 import { SCREEN, STATUS_TYPE } from "../../constant/constant";
 import { getRequestToAnswerQuestions } from "../../request/question";
+import { getUserSelf } from "../../request/user";
 import { ContextObj, Language, MultiLanguage, PageProps, User } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
 import imageLoader from "../../utils/imageLoader";
@@ -19,11 +20,36 @@ import { PersonalityScoreBlock } from "./personlityScoreBlock";
 export const HistoryPage: FC<PageProps> = ({navigation}) => {
 
   const changeStatusModal = getChangeStatusModalFromNavigation(navigation);
-  const useUser: User = getParamFromNavigation(navigation, "useUser");
+  const getUser: User = getParamFromNavigation(navigation, "useUser");
+
+  const [useUser, setUseUser] = useState(null as User | null);
+
+  const getUseUser = async () => {
+    const result = await makeRequestWithStatus<User>(() => getUserSelf(), changeStatusModal, false, false, true);
+    if (!result) {return; }
+    const user = result.data.data;
+    setUseUser(user);
+  };
+
+  useEffect(() => {
+    if (!getUser) {
+      getUseUser();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (getUser) {
+      setUseUser(getUser);
+    } else {
+      getUseUser();
+    }
+  }, [getUser]);
 
   const getContent = (contextObj: ContextObj) => {
     const {theme, user, setOverlayColor, changeStatusModal} = contextObj;
     const {language} = user;
+
+    if (!useUser) {return; }
 
     return (
       <ContainerView style={{}}>
@@ -42,5 +68,5 @@ export const HistoryPage: FC<PageProps> = ({navigation}) => {
         return getContent(contextObj);
       }}
     </ContextConsumer>
-  )
+  );
 };

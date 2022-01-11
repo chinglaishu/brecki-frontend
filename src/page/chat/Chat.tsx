@@ -84,6 +84,8 @@ export class Chat extends React.Component<StackPageProps, ChatState> {
     this.setState({messages: [newMessage, ...this.state.messages]});
   }
   private sendMessage(message: any, user: User) {
+    if (!message) {return; }
+    if (message.length === 0) {return; }
     fire.send("text", this.state.matchId, user.id, message);
     addChatDataRecord(this.state.matchId, "text", message?.length);
     if (this.state.matchUser?.notificationTokens) {

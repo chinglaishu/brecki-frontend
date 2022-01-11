@@ -16,16 +16,17 @@ type RoundButtonProps = {
   buttonText: string,
   buttonTextExtraStyle?: any,
   clickFunction: any,
+  disabled?: boolean,
 }
 
-export const RoundButton: FC<RoundButtonProps> = ({touchableExtraStyle, buttonText, buttonTextExtraStyle, clickFunction}) => {
+export const RoundButton: FC<RoundButtonProps> = ({touchableExtraStyle, buttonText, buttonTextExtraStyle, clickFunction, disabled}) => {
 
   const getContent = (contextObj: ContextObj) => {
     const {theme, user} = contextObj;
     const {language} = user;
 
     return (
-      <RoundTouchable style={{padding: wp(2), width: wp(80), height: ROUND_BUTTON_HEIGHT, ...touchableExtraStyle}}
+      <RoundTouchable disabled={!!disabled} style={{padding: wp(2), width: wp(80), height: ROUND_BUTTON_HEIGHT, ...touchableExtraStyle}}
         activeOpacity={0.6} onPress={() => clickFunction()}>
         <Title style={{color: theme.onSecondary, fontSize: hp(2.25), ...buttonTextExtraStyle}}>{buttonText}</Title>
       </RoundTouchable>
