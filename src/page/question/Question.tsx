@@ -28,6 +28,7 @@ export const QuestionPage: FC<PageProps> = ({navigation}) => {
 
   const changeStatusModal = getChangeStatusModalFromNavigation(navigation);
   const submitQuestionRecordId = getParamFromNavigation(navigation, "submitQuestionRecordId");
+  const isReadOnly = getParamFromNavigation(navigation, "isReadOnly");
 
   const [useNum, setUseNum] = useState(defaultNum);
   const [isAnswering, setIsAnswering] = useState(false);
@@ -92,6 +93,8 @@ export const QuestionPage: FC<PageProps> = ({navigation}) => {
     const {language} = user;
 
     const onAllSubmit = (isCancel: boolean) => {
+      if (isReadOnly) {return; }
+
       setIsAnswering(false);
       setQuestions([]);
       setQuestionChoiceRecords([] as QuestionChoiceRecord[]);

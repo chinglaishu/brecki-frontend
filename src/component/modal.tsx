@@ -92,7 +92,7 @@ export const SelectModal: FC<SelectModalProps> = ({isVisible, onPressEvent, clos
             })}
           </ModalScrollView>
         </ModalView>
-        <ButtonTouchable style={{marginTop: hp(1.5), elevation: 0}} activeOpacity={0.6}
+        <ButtonTouchable style={{marginTop: hp(1.5), elevation: 0, shadowOpacity: 0}} activeOpacity={0.6}
           onPress={() => onPressButton()}>
           <ButtonText>
             {T.CONFIRM[language]}
@@ -180,7 +180,6 @@ export const StatusModal: FC<StatusModalProps> = ({title, message, isVisible, cl
     </ContextConsumer>
   );
 };
-
 
 type NormalModalProps = {
   isVisible: boolean,

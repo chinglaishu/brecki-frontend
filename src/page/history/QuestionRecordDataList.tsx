@@ -1,3 +1,4 @@
+import { StackNavigationProp } from "@react-navigation/stack";
 import React, {FC, useEffect, useState} from "react";
 import { Text, View, LayoutAnimation, NativeModules, Image } from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -10,31 +11,23 @@ import { getRequestToAnswerQuestions, getSubmitQuestionRecordById, getSubmitQues
 import { ContextObj, Language, MultiLanguage, PageProps, User } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
 import imageLoader from "../../utils/imageLoader";
-import { COMMON_BORDER_RADIUS, COMMON_OVERLAY, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION, TRANSPARENT } from "../../utils/size";
+import { COMMON_BORDER_RADIUS, COMMON_OVERLAY, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION, EXTRA_SHADOW, TRANSPARENT } from "../../utils/size";
 import { T } from "../../utils/translate";
 import { checkIfRequestError, getChangeStatusModalFromNavigation, getParamFromNavigation, makeRequestWithStatus } from "../../utils/utilFunction";
 import { PersonalityScore, SubmitQuestionRecord } from "../question/type";
 import { PersonalityScoreBlock } from "./personlityScoreBlock";
 
-export const QuestionRecordDataList: FC<PageProps> = ({navigation}) => {
+type QuestionRecordDataListProps = {
+  navigation: StackNavigationProp<any>,
+  submitQuestionRecords: SubmitQuestionRecord[],
+  useUser: User,
+  setSubmitQuestionRecordId: (submitQuestionRecordId: string) => any,
+}
 
-  const changeStatusModal = getChangeStatusModalFromNavigation(navigation);
-  const userId: string = getParamFromNavigation(navigation, "userId");
-
-  const [submitQuestionRecords, setSubmitQuestionRecords] = useState([] as SubmitQuestionRecord[]);
-
-  const requestSubmitQuestionRecords = async () => {
-    const result = await makeRequestWithStatus<SubmitQuestionRecord[]>(() => getSubmitQuestionRecords(userId), changeStatusModal, false);
-    if (!result) {return; }
-    setSubmitQuestionRecords(result.data.data);
-  };
-
-  useEffect(() => {
-    requestSubmitQuestionRecords();
-  }, []);
+export const QuestionRecordDataList: FC<QuestionRecordDataListProps> = ({navigation, submitQuestionRecords, useUser, setSubmitQuestionRecordId}) => {
 
   const toQuestion = (submitQuestionRecordId: string) => {
-    navigation.navigate(SCREEN.QUESTION, {submitQuestionRecordId});
+    navigation.navigate(SCREEN.QUESTION, {submitQuestionRecordId, isReadOnly: true});
   };
 
   const getContent = (contextObj: ContextObj) => {
@@ -55,10 +48,10 @@ export const QuestionRecordDataList: FC<PageProps> = ({navigation}) => {
     };
 
     const getButton = (submitQuestionRecordId: string) => {
-      if (user.id === userId) {return null; }
+      if (user.id !== useUser.id) {return null; }
       return (
         <RoundTouchable activeOpacity={0.6} style={{height: hp(5), width: hp(5), backgroundColor: theme.primary}}
-          onPress={() => toQuestion(submitQuestionRecordId)}>
+          onPress={() => setSubmitQuestionRecordId(submitQuestionRecordId)}>
           <Image source={imageLoader.pen} style={{height: hp(2.5), width: hp(3)}} />
         </RoundTouchable>
       );
@@ -73,7 +66,7 @@ export const QuestionRecordDataList: FC<PageProps> = ({navigation}) => {
       return (
         <PlainTouchable activeOpacity={0.8} onPress={() => toQuestion(submitQuestionRecord.id)}>
           <ThreePartRow height={hp(12)} extraStyle={{borderRadius, borderColor: theme.border, borderWidth: 2, marginTop,
-            backgroundColor: theme.onSecondary, elevation: EXTRA_ELEVATION}}
+            backgroundColor: theme.onSecondary, elevation: EXTRA_ELEVATION, ...EXTRA_SHADOW}}
             Left={<Image source={{uri: profileUrl}} style={{height: hp(8), width: hp(8), borderRadius: borderRadius * 2, borderWidth: 2, borderColor: theme.border}} />}
             Body={getBody(name, submitQuestionRecord)}
             Right={getButton(submitQuestionRecord.id)}

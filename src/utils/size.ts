@@ -18,6 +18,32 @@ export const EXTRA_BORDER_RADIUS = BORDER_RADIUS * 4;
 export const TITLE_IMAGE_HEIGHT = hp(4);
 export const COMMON_ELEVATION = 6;
 export const EXTRA_ELEVATION = 8;
+
+export const NO_SHADOW = {
+  shadowOpacity: 0,
+};
+
+export const SLIGHT_SHADOW = {
+  shadowColor: '#000000',
+  shadowOffset: { width: 0, height: 0 },
+  shadowOpacity: 0.1,
+  shadowRadius: 2,
+};
+
+export const COMMON_SHADOW = {
+  shadowColor: '#000000',
+  shadowOffset: { width: 0, height: 0 },
+  shadowOpacity: 0.3,
+  shadowRadius: 2,
+};
+
+export const EXTRA_SHADOW = {
+  shadowColor: '#000000',
+  shadowOffset: { width: 0, height: 0 },
+  shadowOpacity: 0.6,
+  shadowRadius: 3,
+};
+
 export const TRANSPARENT = "#FFFFFF00";
 export const COMMON_OVERLAY = "#00000090";
 

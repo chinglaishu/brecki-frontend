@@ -14,18 +14,20 @@ import { COMMON_OVERLAY, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION, TRANSPARENT } fro
 import { T } from "../../utils/translate";
 import { checkIfRequestError, getChangeStatusModalFromNavigation, getParamFromNavigation, makeRequestWithStatus } from "../../utils/utilFunction";
 import { PersonalityScore } from "../question/type";
+import { StatisticData } from "./type";
 
 export const ScoreData: FC<PageProps> = ({navigation}) => {
 
   const changeStatusModal = getChangeStatusModalFromNavigation(navigation);
 
-  const [score, setScore] = useState({} as PersonalityScore);
+  const [statisticData, setStatisticData] = useState({} as StatisticData);
+  const [max, setMax] = useState(0);
 
   const getPersonalityScore = async () => {
-    const result = await makeRequestWithStatus<PersonalityScore>(() => getStatistic(), changeStatusModal, false, false, true);
+    const result = await makeRequestWithStatus<{statisticData: StatisticData, max: number}>(() => getStatistic(), changeStatusModal, false, false, true);
     if (!result) {return; }
-    const score = result.data.data;
-    setScore(score);
+    setStatisticData(result.data.data.statisticData);
+    setMax(result.data.data.max);
   };
 
   useEffect(() => {

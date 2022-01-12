@@ -131,7 +131,14 @@ export const ButtonLikeTextInput = styled.TextInput.attrs(props => {
   border-top-right-radius: ${BORDER_RADIUS};
   border-bottom-left-radius: ${BORDER_RADIUS};
 
+  shadow-opacity: 0.3;
+  shadow-radius: 2px;
+  shadow-color: #000000;
+  shadow-offset: 2px 2px;
+
   elevation: ${COMMON_ELEVATION};
+
+
 `;
 
 

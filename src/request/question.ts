@@ -41,6 +41,10 @@ export const getSubmitQuestionScoreRecords = async (userId: string): R<SubmitQue
   return await instance.get(`submit-question-score-record/get/all?filter={"toUserId": ${userId}}`);
 };
 
+export const getSubmitQuestionScoreRecordsBySubmitQuestionRecordId = async (submitQuestionRecordId: string): R<SubmitQuestionScoreRecord[]> => {
+  return await instance.get(`submit-question-score-record/get/all?filter={"submitQuestionRecordId": ${submitQuestionRecordId}}`);
+};
+
 export const getQuestionNums = async (): R<QuestionNum[]> => {
   return await instance.get("question-num");
 };

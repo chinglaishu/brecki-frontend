@@ -4,6 +4,7 @@ import { R } from "../type/common";
 import { Match } from "../page/likeZone/type";
 import { ChatMessageType } from "../page/chat/type";
 import { PersonalityScore } from "../page/question/type";
+import { StatisticData } from "../page/data/type";
 
 export const blockMatch = async (id: string): R<Match> => {
   return await instance.post(`/match/block-match/${id}`);
@@ -29,6 +30,6 @@ export const addChatDataRecord = async (matchId: string, type: ChatMessageType, 
   return await instance.post(`/match/add-chat-data-record/${matchId}`, {type, length});
 };
 
-export const getStatistic = async (): R<PersonalityScore> => {
+export const getStatistic = async (): R<{statisticData: StatisticData, max: number}> => {
   return await instance.get(`/match/statistic`);
 };

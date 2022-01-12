@@ -7,7 +7,7 @@ import imageLoader from "../../utils/imageLoader";
 import { PlainTouchable } from "../../component/touchable";
 import { ContextObj } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
-import { BORDER_RADIUS, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION, TRANSPARENT } from "../../utils/size";
+import { BORDER_RADIUS, COMMON_SHADOW, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION, EXTRA_SHADOW, SLIGHT_SHADOW } from "../../utils/size";
 import { View, Image, Text, Keyboard } from "react-native";
 import { GiftedChatProps, SystemMessage } from "react-native-gifted-chat";
 import { DefaultTheme } from "styled-components";
@@ -54,7 +54,7 @@ export const ChatInput: FC<ChatInputProps> = ({onSendEvent, changeIsTyping}) => 
     return (
       <RowView style={{justifyContent: "flex-start", paddingHorizontal: wp(2), paddingTop: hp(1.5)}}>
         <RoundInputContainer style={{justifyContent: "flex-start", flexDirection: "row", flex: 1, marginRight: wp(2),
-          backgroundColor: theme.onPrimary, borderWidth: 0, elevation: 2}}>
+          backgroundColor: theme.onPrimary, borderWidth: 0, elevation: 2, ...COMMON_SHADOW}}>
           <RoundInput ref={inputRef} value={text} 
             onChange={(e: any) => setText(e.nativeEvent.text)}
             onFocus={() => changeIsTyping(true)}
@@ -63,7 +63,7 @@ export const ChatInput: FC<ChatInputProps> = ({onSendEvent, changeIsTyping}) => 
         </RoundInputContainer>
         <PlainTouchable activeOpacity={0.8} onPress={() => sendEvent()}>
           <View style={{borderRadius: EXTRA_BORDER_RADIUS, width: hp(6), height: hp(6), backgroundColor: theme.secondary,
-            alignItems: "center", justifyContent: "center", elevation: 4}}>
+            alignItems: "center", justifyContent: "center", elevation: 4, ...EXTRA_SHADOW}}>
             <Image source={imageLoader.mic} style={{width: hp(2.5), height: hp(2.5)}} />
           </View>
         </PlainTouchable>
@@ -115,8 +115,8 @@ export const ChatMessage: FC<ChatMessageProps> = ({props, messageUser}) => {
     const isSelf = user.id === messageUserId;
     const justifyContent = (isSelf) ? "flex-end" : "flex-start";
     const useStyle = (isSelf)
-      ? {backgroundColor: "#D1F0ED", elevation: 1}
-      : {backgroundColor: theme.onPrimary, elevation: 1};
+      ? {backgroundColor: "#D1F0ED", elevation: 1, ...SLIGHT_SHADOW}
+      : {backgroundColor: theme.onPrimary, elevation: 1, ...SLIGHT_SHADOW};
   
     const useTimestamp = moment(timestamp).format("HH:mm");
 
