@@ -43,7 +43,7 @@ export const SelectQuestionNumModal: FC<SelectQuestionNumProps> = ({questionNums
             const backgroundColor = (num === useNum) ? theme.secondary : theme.empty;
             const marginLeft = (index !== 0) ? wp(5) : 0;
             return (
-              <PlainTouchable style={{marginLeft, elevation: 0, backgroundColor, borderRadius: BORDER_RADIUS * 10,
+              <PlainTouchable style={{marginLeft, elevation: 0, shadowOpacity: 0, backgroundColor, borderRadius: BORDER_RADIUS * 10,
                 width: hp(5), height: hp(5), justifyContent: "center", alignItems: "center"}}
                 activeOpacity={0.6}
                 onPress={() => {

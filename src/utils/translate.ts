@@ -14,6 +14,7 @@ type Translate = {
   SCREEN_PERSONAL_INFO: MultiLanguage,
   SCREEN_SETTING: MultiLanguage,
   SCREEN_HISTORY: MultiLanguage,
+  SCREEN_DATA: MultiLanguage,
   LOADING: MultiLanguage,
   REQUEST_FAIL: MultiLanguage,
   SUCCESS: MultiLanguage,
@@ -136,6 +137,10 @@ export const T: Translate = {
   SCREEN_HISTORY: {
     en: "History",
     zh: "History",
+  },
+  SCREEN_DATA: {
+    en: "Data",
+    zh: "Data",
   },
   REQUEST_FAIL: {
     en: "Request Fail",

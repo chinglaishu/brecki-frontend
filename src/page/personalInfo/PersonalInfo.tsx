@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from "react";
-import { Text, View, NativeModules, LayoutAnimation, Platform } from "react-native";
+import { Text, View, NativeModules, LayoutAnimation, Platform, ScrollView, RefreshControl } from "react-native";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { BoxRow } from "../../component/BoxRow";
 import { ButtonLikeTextInput } from "../../component/input";
@@ -16,6 +16,7 @@ import imageLoader from "../../utils/imageLoader";
 import { BORDER_RADIUS } from "../../utils/size";
 import { T } from "../../utils/translate";
 import { checkIfRequestError, getChangeStatusModalFromNavigation, getParamFromNavigation, makeRequestWithStatus } from "../../utils/utilFunction";
+import { getUseUserById } from "../chat/helper";
 import { Match } from "../likeZone/type";
 import { getIntimacyBoxNum, getSelectContentList, getSelectText, getUseProfilePicTwo, PersonalInfoSelectType } from "./helper";
 import { ProfilePic } from "./ProfilePic";
@@ -49,6 +50,7 @@ export const PersonalInfo: FC<PageProps> = ({navigation}) => {
   const [infoData, setInfoData] = useState(initInfoData);
   const [isEditing, setIsEditing] = useState(false);
   const [match, setMatch] = useState(null as Match | null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     const initInfoData = usePersonalInfo || {};
@@ -61,6 +63,18 @@ export const PersonalInfo: FC<PageProps> = ({navigation}) => {
     const match = result.data.data;
     setMatch(match);
   }
+
+  const refreshMatch = async () => {
+    setIsRefreshing(true);
+    const result = await getMatchById(matchId);
+    if (checkIfRequestError(result)) {
+      changeStatusModal({statusType: STATUS_TYPE.ERROR});
+      setIsRefreshing(false);
+    }
+    const match = result.data.data;
+    setMatch(match);
+    setIsRefreshing(false);
+  };
 
   useEffect(() => {
     if (matchId) {
@@ -103,7 +117,7 @@ export const PersonalInfo: FC<PageProps> = ({navigation}) => {
   const profileImageOffset = hp(2.5);
 
   const getContent = (contextObj: ContextObj) => {
-    const {theme, user, changeStatusModal, setUser} = contextObj;
+    const {theme, user, changeStatusModal, setUser, setUseNavigation} = contextObj;
     const {language} = user;
 
     const isSave = (!isOthers && isEditing);
@@ -113,7 +127,13 @@ export const PersonalInfo: FC<PageProps> = ({navigation}) => {
       if (isSave) {
         onSubmit(user);
       } else {
-        navigation.navigate(SCREEN.QUESTION);
+        // setUseNavigation({navigation});
+        if (match) {
+          const useUser = getUseUserById(match.users, user.id);
+          navigation.navigate(SCREEN.HISTORY, {useUser});
+        } else {
+          navigation.navigate(SCREEN.HISTORY, {useUser: user});
+        }
       }
     };
 
@@ -144,54 +164,66 @@ export const PersonalInfo: FC<PageProps> = ({navigation}) => {
     const borderRadius = BORDER_RADIUS * 6;
     const intimacy = match?.intimacy || 0;
     const boxNum = getIntimacyBoxNum(intimacy);
+    const isDisabled = isOthers && !match;
     return (
-      <ContainerView style={{justifyContent: "flex-start"}}>
-        <View style={{justifyContent: "flex-start", alignItems: "center", width: "100%",
-          paddingTop, backgroundColor: theme.primary,
-          paddingBottom: hp(8), borderBottomLeftRadius: borderRadius,
-          borderBottomRightRadius: borderRadius}}>
-          <ProfilePic isOthers={isOthers} getValue={getValue} onChangeInfoData={onChangeInfoData} />
+      <ScrollView
+        refreshControl={
+          <RefreshControl 
+            refreshing={isRefreshing}
+            onRefresh={() => refreshMatch()}
+            enabled={!!matchId}
+          />
+        }>
 
-          {isOthers && matchId && <RowView style={{marginTop: hp(2)}}>
-            <BoxRow maxBox={MAX_INTIMACY_BOX_NUM} currentBox={boxNum} fillColor={theme.lighterSecondary} borderColor={theme.border}
-              onClickEvent={() => console.log("sdfsd")} extraStyle={{justifyContent: "center"}}
-              useBoxSize={wp(6.5)} useMarginRight={wp(1)} useHeightRatio={0.8} />
-          </RowView>}
+        <ContainerView style={{justifyContent: "flex-start"}}>
+          <View style={{justifyContent: "flex-start", alignItems: "center", width: "100%",
+            paddingTop, backgroundColor: theme.primary,
+            paddingBottom: hp(8), borderBottomLeftRadius: borderRadius,
+            borderBottomRightRadius: borderRadius}}>
+            <ProfilePic isOthers={isOthers} getValue={getValue} onChangeInfoData={onChangeInfoData} />
 
-          <ButtonLikeTextInput placeholder={"Name..."} style={{marginTop: hp(5)}}
-            placeholderTextColor={theme.opacityPrimary}
-            value={getValue(user, "name")}
-            onChange={(e: any) => onChangeInfoData("name", e.nativeEvent.text)}
-            editable={!isOthers} />
+            {isOthers && matchId && <RowView style={{marginTop: hp(2)}}>
+              <BoxRow maxBox={MAX_INTIMACY_BOX_NUM} currentBox={boxNum} fillColor={theme.lighterSecondary} borderColor={theme.border}
+                onClickEvent={() => console.log("sdfsd")} extraStyle={{justifyContent: "center"}}
+                useBoxSize={wp(6.5)} useMarginRight={wp(1)} useHeightRatio={0.8} />
+            </RowView>}
 
-          <RowView style={{marginTop: hp(2.5), justifyContent: "center"}}>
-            {getSelect(isOthers, user, "ageRange", getValue, "AGE", onChangeInfoData, ageSelectList, {marginRight: wp(3)})}
-            {getSelect(isOthers, user, "sex", getValue, "SEX", onChangeInfoData, sexSelectList, {marginRight: wp(3)})}
-            {getSelect(isOthers, user, "location", getValue, "LOCATION", onChangeInfoData)}
-          </RowView>
+            <ButtonLikeTextInput placeholder={"Name..."} style={{marginTop: hp(5)}}
+              placeholderTextColor={theme.opacityPrimary}
+              value={getValue(user, "name")}
+              onChange={(e: any) => onChangeInfoData("name", e.nativeEvent.text)}
+              editable={!isOthers} />
 
-          {
-            !isOthers &&
-            <>
-              <LineTextLine text={T.TARGET_PREFERENCE[language]} extraStyle={{marginBottom: hp(3), marginTop: hp(6), height: hp(2.5)}}
-                textStyle={{color: theme.onPrimary, fontSize: hp(2)}}
-                lineStyle={{borderBottomColor: theme.onPrimary}} />
+            <RowView style={{marginTop: hp(2.5), justifyContent: "center"}}>
+              {getSelect(isOthers, user, "ageRange", getValue, "AGE", onChangeInfoData, ageSelectList, {marginRight: wp(3)})}
+              {getSelect(isOthers, user, "sex", getValue, "SEX", onChangeInfoData, sexSelectList, {marginRight: wp(3)})}
+              {getSelect(isOthers, user, "location", getValue, "LOCATION", onChangeInfoData)}
+            </RowView>
 
-              <RowView style={{marginTop: hp(2.5), justifyContent: "center"}}>
-                {getSelect(isOthers, user, "targetAgeRange", getValue, "AGE", onChangeInfoData, ageSelectList, {marginRight: wp(3)})}
-                {getSelect(isOthers, user, "targetSex", getValue, "SEX", onChangeInfoData, sexSelectList, {marginRight: wp(3)})}
-                {getSelect(isOthers, user, "targetLocation", getValue, "LOCATION", onChangeInfoData)}
-              </RowView>
-            </>
-          }
+            {
+              !isOthers &&
+              <>
+                <LineTextLine text={T.TARGET_PREFERENCE[language]} extraStyle={{marginBottom: hp(3), marginTop: hp(6), height: hp(2.5)}}
+                  textStyle={{color: theme.onPrimary, fontSize: hp(2)}}
+                  lineStyle={{borderBottomColor: theme.onPrimary}} />
 
-          <ButtonTouchable activeOpacity={0.6} style={{position: "absolute", height: hp(4), bottom: -hp(1.5), paddingHorizontal: wp(2)}}
-            onPress={() => onClickButton()}>
-            <ButtonText style={{color: theme.onPrimary, fontSize: hp(2)}}>{buttonText}</ButtonText>            
-          </ButtonTouchable>
-        </View>
+                <RowView style={{marginTop: hp(2.5), justifyContent: "center"}}>
+                  {getSelect(isOthers, user, "targetAgeRange", getValue, "AGE", onChangeInfoData, ageSelectList, {marginRight: wp(3)})}
+                  {getSelect(isOthers, user, "targetSex", getValue, "SEX", onChangeInfoData, sexSelectList, {marginRight: wp(3)})}
+                  {getSelect(isOthers, user, "targetLocation", getValue, "LOCATION", onChangeInfoData)}
+                </RowView>
+              </>
+            }
 
-      </ContainerView>
+            <ButtonTouchable activeOpacity={0.6} style={{position: "absolute", height: hp(4), bottom: -hp(1.5), paddingHorizontal: wp(2)}}
+              onPress={() => onClickButton()} disabled={isDisabled}>
+              <ButtonText style={{color: theme.onPrimary, fontSize: hp(2)}}>{buttonText}</ButtonText>            
+            </ButtonTouchable>
+          </View>
+
+        </ContainerView>
+
+      </ScrollView>
     );
   };
 

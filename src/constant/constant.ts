@@ -51,7 +51,7 @@ export const AUTH_SCREEN: {
 };
 
 export type SCREEN = "Home" | "Question" | "QuestionRecord" | "QuesetionEnd" | "SubmitQuestionEnd" | "SystemLikeZone"
-  | "ManualLikeZone" | "Chat" | "ChatList" | "PersonalInfo" | "Setting" | "Account" | "History";
+  | "ManualLikeZone" | "Chat" | "ChatList" | "PersonalInfo" | "Setting" | "Account" | "History" | "Data";
 export const SCREEN: {
   HOME: SCREEN,
   QUESTION: SCREEN,
@@ -66,6 +66,7 @@ export const SCREEN: {
   SETTING: SCREEN,
   ACCOUNT: SCREEN,
   HISTORY: SCREEN,
+  DATA: SCREEN,
 } = {
   HOME: "Home",
   QUESTION: "Question",
@@ -80,6 +81,7 @@ export const SCREEN: {
   SETTING: "Setting",
   ACCOUNT: "Account",
   HISTORY: "History",
+  DATA: "Data",
 };
 
 export const LAST_SCREEN_PARAM_KEY = "last_screen";

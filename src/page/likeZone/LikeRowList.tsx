@@ -14,7 +14,7 @@ import { manualCreateMatch } from "../../request/manualMatch";
 import { ContextObj, Language, MultiLanguage, PageProps, PersonalInfo, SystemOrManualMatch, User } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
 import imageLoader from "../../utils/imageLoader";
-import { BORDER_RADIUS, EXTRA_ELEVATION } from "../../utils/size";
+import { BORDER_RADIUS, EXTRA_ELEVATION, EXTRA_SHADOW } from "../../utils/size";
 import { T } from "../../utils/translate";
 import { makeRequestWithStatus } from "../../utils/utilFunction";
 import { SubmitQuestionRecord } from "../question/type";
@@ -71,7 +71,7 @@ export const LikeRowList: FC<LikeRowListProps> = ({useUsers, isManual, stackNavi
       return (
         <PlainTouchable activeOpacity={0.8} onPress={() => toPersonalInfo(usePersonalInfo)}>
           <ThreePartRow height={height} extraStyle={{borderRadius, borderColor: theme.border, borderWidth: 2, marginTop,
-            backgroundColor: theme.onSecondary, elevation: EXTRA_ELEVATION}}
+            backgroundColor: theme.onSecondary, elevation: EXTRA_ELEVATION, ...EXTRA_SHADOW}}
             Left={<PlainAvatar source={{uri: profilePicOneUrl}} style={{height: hp(8), width: hp(8)}} />}
             Body={getBody(personalInfo as any)}
             Right={getButtonRow(useUser)}

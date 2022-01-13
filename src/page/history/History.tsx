@@ -7,7 +7,8 @@ import { ButtonTouchable, SimpleTouchable } from "../../component/touchable";
 import { CenterView, ContainerView, PlainRowView, RowView, SlideTitleContainer } from "../../component/view";
 import { SCREEN, STATUS_TYPE } from "../../constant/constant";
 import { getRequestToAnswerQuestions } from "../../request/question";
-import { ContextObj, Language, MultiLanguage, PageProps, User } from "../../type/common";
+import { getUserSelf } from "../../request/user";
+import { ContextObj, Language, MultiLanguage, PageProps, StackPageProps, User } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
 import imageLoader from "../../utils/imageLoader";
 import { COMMON_OVERLAY, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION, TRANSPARENT } from "../../utils/size";
@@ -15,23 +16,58 @@ import { T } from "../../utils/translate";
 import { checkIfRequestError, getChangeStatusModalFromNavigation, getParamFromNavigation, makeRequestWithStatus } from "../../utils/utilFunction";
 import { PersonalityScore } from "../question/type";
 import { PersonalityScoreBlock } from "./personlityScoreBlock";
+import { QuestionRecordModal } from "./QuestionRecordModal";
+import { QuestionScoreRecordModal } from "./QuestionScoreRecordModal";
 
-export const HistoryPage: FC<PageProps> = ({navigation}) => {
+export const HistoryPage: FC<StackPageProps> = ({navigation}) => {
 
   const changeStatusModal = getChangeStatusModalFromNavigation(navigation);
-  const useUser: User = getParamFromNavigation(navigation, "useUser");
+  const getUser: User = getParamFromNavigation(navigation, "useUser");
+
+  const [isQuestionRecordMoalVisible, setIsQuestionRecordModalVisible] = useState(false);
+  const [isQuestionScoreRecordModalVisible, setIsQuestionScoreRecordModalVisible] = useState(false);
+
+  const [useUser, setUseUser] = useState(null as User | null);
+
+  const getUseUser = async () => {
+    const result = await makeRequestWithStatus<User>(() => getUserSelf(), changeStatusModal, false, false, true);
+    if (!result) {return; }
+    const user = result.data.data;
+    setUseUser(user);
+  };
+
+  useEffect(() => {
+    if (!getUser) {
+      getUseUser();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (getUser) {
+      setUseUser(getUser);
+    } else {
+      getUseUser();
+    }
+  }, [getUser]);
 
   const getContent = (contextObj: ContextObj) => {
     const {theme, user, setOverlayColor, changeStatusModal} = contextObj;
     const {language} = user;
 
+    if (!useUser) {return; }
+
     return (
       <ContainerView style={{}}>
         <PersonalityScoreBlock personalityScore={useUser.personalityScore as PersonalityScore} navigation={navigation as any} />
         <RoundButton touchableExtraStyle={{marginTop: hp(6), marginBottom: hp(2)}}
-          buttonText={T.TO_QUESTION_RECORD[language]} clickFunction={() => navigation.navigate(SCREEN.QUESTION)} />
+          buttonText={T.TO_QUESTION_RECORD[language]} clickFunction={() => setIsQuestionRecordModalVisible(true)} />
         <RoundButton touchableExtraStyle={{marginBottom: hp(6), backgroundColor: theme.empty}}
-          buttonText={T.TO_QUESTION_SCORE_RECORD[language]} clickFunction={() => navigation.navigate(SCREEN.SYSTEM_LIKE_ZONE)} />
+          buttonText={T.TO_QUESTION_SCORE_RECORD[language]} clickFunction={() => setIsQuestionScoreRecordModalVisible(true)} />
+      
+        <QuestionRecordModal isVisible={isQuestionRecordMoalVisible} setIsVisible={setIsQuestionRecordModalVisible}
+          useUser={useUser} navigation={navigation} />
+        <QuestionScoreRecordModal isVisible={isQuestionScoreRecordModalVisible} setIsVisible={setIsQuestionScoreRecordModalVisible}
+          useUser={useUser} navigation={navigation} />
       </ContainerView>
     );
   };
@@ -42,5 +78,5 @@ export const HistoryPage: FC<PageProps> = ({navigation}) => {
         return getContent(contextObj);
       }}
     </ContextConsumer>
-  )
+  );
 };

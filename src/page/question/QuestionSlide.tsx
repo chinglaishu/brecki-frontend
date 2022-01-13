@@ -9,7 +9,7 @@ import { getRequestToAnswerQuestions } from "../../request/question";
 import { ContextObj, Language, MultiLanguage, PageProps } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
 import imageLoader from "../../utils/imageLoader";
-import { BORDER_RADIUS, COMMON_BORDER_RADIUS, COMMON_ELEVATION, COMMON_OVERLAY, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION, TRANSPARENT } from "../../utils/size";
+import { BORDER_RADIUS, COMMON_BORDER_RADIUS, COMMON_ELEVATION, COMMON_OVERLAY, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION, EXTRA_SHADOW, TRANSPARENT } from "../../utils/size";
 import { T } from "../../utils/translate";
 import { checkIfRequestError, makeRequestWithStatus } from "../../utils/utilFunction";
 import { SelectQuestionNumModal } from "./SelectQuestionNumModal";
@@ -77,7 +77,7 @@ export const QuestionSlide: FC<QuestionSlideProps> = ({questions, questionChoice
           onPress={() => onPressOutside()}
         >
           <View style={{height: hp(90), width: wp(100), padding: wp(5)}}>
-            <View style={{height: hp(85), width: wp(90), elevation: EXTRA_ELEVATION, backgroundColor: theme.buttonBackground, borderRadius: EXTRA_BORDER_RADIUS, opacity: 0.99}}>
+            <View style={{height: hp(85), width: wp(90), elevation: EXTRA_ELEVATION, ...EXTRA_SHADOW, backgroundColor: theme.buttonBackground, borderRadius: EXTRA_BORDER_RADIUS, opacity: 0.99}}>
               <Image source={{uri: imageUrl}} style={{height: hp(85), width: wp(90), resizeMode: "stretch", borderRadius: EXTRA_BORDER_RADIUS}} blurRadius={0} />
             </View>
           </View>

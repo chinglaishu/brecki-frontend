@@ -49,6 +49,8 @@ export type SubmitQuestionScoreRecord = {
   submitQuestionRecordId: string,
   questionScoreRecordIds: string[],
   questionScoreRecords: QuestionScoreRecord[],
+  createdAt: Date,
+  updatedAt: Date,
 }
 
 export type SubmitQuestionRecord = {
@@ -57,6 +59,8 @@ export type SubmitQuestionRecord = {
   user?: User,
   questionChoiceRecordIds: string[],
   questionChoiceRecords: QuestionChoiceRecord[],
+  createdAt: Date,
+  updatedAt: Date,
 };
 
 export type QuestionNum = {

@@ -24,6 +24,7 @@ import { ChatList } from "../page/chat/ChatList";
 import { ChatStack } from "./ChatNavigator";
 import { KeyboardAvoidingView } from "react-native";
 import { SettingStack } from "./SettingNavigator";
+import { ScoreData } from "../page/data/ScoreData";
 
 type MainNavigatorProps = {
   initialRoute: SCREEN,
@@ -55,6 +56,7 @@ export const MainNavigator: FC<MainNavigatorProps> = ({initialRoute, changeStatu
             <Drawer.Screen name={SCREEN.SETTING} component={SettingStack} options={{title: T.SCREEN_SETTING[language]}} initialParams={{changeStatusModal}} />
             <Drawer.Screen name={SCREEN.QUESTION_END} component={QuestionEnd} options={{title: T.SCREEN_QUESTION[language]}} initialParams={{changeStatusModal}} />
             <Drawer.Screen name={SCREEN.HISTORY} component={HistoryPage} options={{title: T.SCREEN_HISTORY[language]}} initialParams={{changeStatusModal}} />
+            <Drawer.Screen name={SCREEN.DATA} component={ScoreData} options={{title: T.SCREEN_DATA[language]}} initialParams={{changeStatusModal}} />
           </Drawer.Navigator>
         </NavigationContainer>
     );

@@ -257,7 +257,7 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
                     fontFamily: FONT_NORMAL}}>{`Q: ${title[language]}`}</Text>
                   {getAnswerText()}
                   <RowView style={{position: "absolute", right: wp(2), bottom: wp(2), flex: 1, alignItems: "flex-end", justifyContent: "flex-end"}}>
-                    <ButtonTouchable style={{backgroundColor: TRANSPARENT, borderColor: theme.warning, elevation: 0,
+                    <ButtonTouchable style={{backgroundColor: TRANSPARENT, borderColor: theme.warning, elevation: 0, shadowOpacity: 0,
                       marginRight: wp(2)}}
                       activeOpacity={0.6} onPress={() => onAllSubmit(true)}>
                       <ButtonText style={{color: theme.warning}}>
@@ -265,7 +265,7 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
                       </ButtonText>  
                     </ButtonTouchable>   
                     
-                    <ButtonTouchable style={{backgroundColor: TRANSPARENT, borderColor: buttonColor, elevation: 0}}
+                    <ButtonTouchable style={{backgroundColor: TRANSPARENT, borderColor: buttonColor, elevation: 0, shadowOpacity: 0}}
                       activeOpacity={(isDisabled) ? 1.0 : 0.6} onPress={() => goNext()}>
                       <ButtonText style={{color: buttonColor}}>
                         {nextButtonText}                      

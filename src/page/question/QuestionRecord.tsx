@@ -28,6 +28,8 @@ export const QuestionRecord: FC<StackPageProps> = ({navigation}) => {
 
   const isManual = getParamFromNavigation(navigation, "isManual");
   const changeUseUsers = getParamFromNavigation(navigation, "changeUseUsers");
+
+  const isReadOnly = getParamFromNavigation(navigation, "isReadOnly");
   const submitQuestionRecordId = getParamFromNavigation(navigation, "submitQuestionRecordId");
   const submitQuestionScoreRecordId = getParamFromNavigation(navigation, "submitQuestionScoreRecordId");
 
@@ -117,6 +119,8 @@ export const QuestionRecord: FC<StackPageProps> = ({navigation}) => {
     };
 
     const onAllSubmit = (isCancel: boolean) => {
+      if (isReadOnly) {return; }
+
       setQuestions([]);
       setQuestionChoiceRecords([] as QuestionChoiceRecord[]);
       if (isCancel) {

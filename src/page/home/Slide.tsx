@@ -6,7 +6,7 @@ import { ContextObj, PageProps } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
 import Carousel from 'react-native-snap-carousel';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { BORDER_RADIUS, COMMON_ELEVATION, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION } from "../../utils/size";
+import { BORDER_RADIUS, COMMON_ELEVATION, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION, EXTRA_SHADOW } from "../../utils/size";
 import imageLoader from "../../utils/imageLoader";
 import { UseSlide } from "./Home";
 import { PlainTouchable } from "../../component/touchable";
@@ -39,7 +39,7 @@ export const Slide: FC<SlideProps> = ({useSlides, slideIndex, setSlideIndex, onP
         activeOpacity={0.7}
         onPress={() => onPressSlide(index)}
       >
-        <View style={{elevation: COMMON_ELEVATION, borderRadius: EXTRA_BORDER_RADIUS, opacity: 0.99}}>
+        <View style={{elevation: COMMON_ELEVATION, borderRadius: EXTRA_BORDER_RADIUS, opacity: 0.99, ...EXTRA_SHADOW}}>
           <Image source={item.slideImage} style={{height: hp(60), width: wp(80), borderRadius: EXTRA_BORDER_RADIUS}} />
         </View>
       </PlainTouchable>

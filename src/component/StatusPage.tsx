@@ -25,6 +25,7 @@ type StatusPageProps = {
   buttonTextExtraStyle?: any,
   onClickEvent: any,
   buttonText: string,
+  extraButtonDisabled?: boolean,
   extraButton?: boolean,
   extraButtonText?: string,
   extraButtonStyle?: any,
@@ -34,7 +35,7 @@ type StatusPageProps = {
 
 export const StatusPage: FC<StatusPageProps> = ({isSuccess, text, textExtraStyle, buttonExtraStyle,
   buttonTextExtraStyle, onClickEvent, buttonText, extraButton, extraButtonText, extraButtonStyle,
-  extraButtonTextStyle, extraButtonClickEvent}) => {
+  extraButtonTextStyle, extraButtonClickEvent, extraButtonDisabled}) => {
 
   const image = (isSuccess) ? imageLoader.character_done : imageLoader.character_fail;
   const getContent = (contextObj: ContextObj) => {
@@ -53,7 +54,7 @@ export const StatusPage: FC<StatusPageProps> = ({isSuccess, text, textExtraStyle
         <RoundButton touchableExtraStyle={{marginBottom, ...buttonExtraStyle}} buttonTextExtraStyle={buttonTextExtraStyle}
           buttonText={buttonText} clickFunction={() => onClickEvent()} />
         {extraButton && <RoundButton touchableExtraStyle={{marginBottom: hp(6), ...extraButtonStyle}} buttonTextExtraStyle={extraButtonTextStyle}
-          buttonText={extraButtonText as any} clickFunction={() => extraButtonClickEvent()} />}
+          buttonText={extraButtonText as any} clickFunction={() => extraButtonClickEvent()} disabled={!!extraButtonDisabled} />}
       </ContainerView>
     );
   };
