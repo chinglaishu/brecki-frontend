@@ -1,7 +1,7 @@
 import React, { Component, FC, useEffect } from "react";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { DrawerHeaderProps } from "@react-navigation/drawer/lib/typescript/src/types";
-import { getCurrentRouteName, getDisplayNameByRouteName, getParamFromNavigation } from "../utils/utilFunction";
+import { checkIsIOS, getCurrentRouteName, getDisplayNameByRouteName, getParamFromNavigation } from "../utils/utilFunction";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { ContextConsumer } from "../utils/context";
 import { ContextObj, PersonalInfo, UseNavigation, User } from "../type/common";
@@ -174,9 +174,11 @@ export const Header: FC<HeaderProps> = ({headerProps, extraStyle, matchs, refres
     const image = (!!useNavigation?.backScreen) ? imageLoader.back : imageLoader.menu_white;
     const useFunction = (!!useNavigation?.backScreen) ? clickBackFunction : onClick;
     const useIsChat = isChat();
+    const paddingTop = checkIsIOS() ? Constants.statusBarHeight - 10 : Constants.statusBarHeight;
+    const height = checkIsIOS() ? hp(10) : hp(10);
     return (
       <>
-        <ThreePartRow height={hp(10)} extraStyle={{paddingTop: Constants.statusBarHeight, backgroundColor: theme.primary, opacity: 1, ...extraStyle}}
+        <ThreePartRow height={height} extraStyle={{paddingTop, backgroundColor: theme.primary, opacity: 1, ...extraStyle}}
           Left={useIsChat ? getChatHeaderLeft() : getLeft()}
           Body={useIsChat ? getChatHeaderBody() : getBody()}
           Right={useIsChat ? getChatHeaderRight() : getSettingRight()}

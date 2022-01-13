@@ -16,7 +16,7 @@ import {RobotoMono_400Regular} from '@expo-google-fonts/roboto-mono';
 import {ThemeProvider} from "styled-components/native";
 import "./src/request/config";
 import { StatusModal, StatusModalProps } from './src/component/modal';
-import { changeStateObj, checkIfRequestError, getCurrentRouteName, getDefaultHandleTypeByStatus, getParamFromNavigation, getStoreData, removeStoreData } from './src/utils/utilFunction';
+import { changeStateObj, checkIfRequestError, checkIsIOS, getCurrentRouteName, getDefaultHandleTypeByStatus, getParamFromNavigation, getStoreData, removeStoreData } from './src/utils/utilFunction';
 import { T } from './src/utils/translate';
 import { AUTH_SCREEN, MODAL_HANDLE_TYPE, SCREEN, STATUS_TYPE, STORE_KEY } from './src/constant/constant';
 import { getUserSelf } from './src/request/user';
@@ -31,6 +31,7 @@ import { getToast } from './src/component/Toast';
 import { Match } from './src/page/likeZone/type';
 import { getAllMatchs } from './src/request/match';
 import { User } from './src/type/common';
+import { ContainerView } from './src/component/view';
 
 const { UIManager } = NativeModules;
 
@@ -196,6 +197,15 @@ const Content = () => {
 export default function App() {
   let [fontsLoaded] = useFonts({RobotoMono_400Regular, RubikMonoOne_400Regular});
   if (!fontsLoaded) {return <Text>Font Loading</Text>; }
+  
+  if (checkIsIOS()) {
+    return (
+      <View style={{flex: 1}}>
+        <Content />
+      </View>
+    )
+  }
+
   return (
     <SafeAreaProvider style={{flex: 1}}>
       <SafeAreaView style={{flex: 1}}>

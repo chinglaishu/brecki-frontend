@@ -6,7 +6,7 @@ import { MODAL_HANDLE_TYPE, STATUS_TYPE } from "../constant/constant";
 import { ContextObj } from "../type/common";
 import { ContextConsumer } from "../utils/context";
 import imageLoader from "../utils/imageLoader";
-import { checkIsWeb } from "../utils/utilFunction";
+import { checkIsIOS, checkIsWeb } from "../utils/utilFunction";
 import { ContainerView, ModalScrollView, RowView, ModalView } from "./view";
 import LottieView from "lottie-react-native";
 import { ButtonTouchable, PlainTouchable, RoundTouchable } from "./touchable";
@@ -190,14 +190,25 @@ type NormalModalProps = {
 export const NormalModal: FC<NormalModalProps> = ({isVisible, children}) => {
   if (checkIsWeb()) {return null; }
 
+  const [updateFlag, setUpdateFlag] = useState(true);
+
+  useEffect(() => {
+    if (isVisible && updateFlag && checkIsIOS()) {
+      setTimeout(() => setUpdateFlag(false), 1000);
+    }
+  }, [isVisible]);
+
   const getContent = (contextObj: ContextObj) => {
     const {theme, user} = contextObj;
     const {language} = user;
+    
+    const useIsVisible = !updateFlag && isVisible;
+    
     return (
-      <Modal isVisible={isVisible || false} style={{margin: 0, justifyContent: "center", alignItems: "center"}}
+      <Modal isVisible={useIsVisible || false} style={{margin: 0, justifyContent: "center", alignItems: "center"}}
         animationIn="fadeIn" animationOut="fadeOut"
         backdropTransitionOutTiming={0}
-        animationInTiming={500}
+        animationInTiming={0}
         animationOutTiming={500}
         hideModalContentWhileAnimating={true}
         deviceHeight={hp(100)} deviceWidth={wp(100)}

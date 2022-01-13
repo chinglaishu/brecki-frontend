@@ -45,6 +45,10 @@ export const checkIsWeb = () => {
   return Platform.OS === "web";
 };
 
+export const checkIsIOS = () => {
+  return Platform.OS === "ios";
+};
+
 export const getPhone = (phoneRegionCode: string, phoneNumber: string) => {
   return `+${phoneRegionCode}-${phoneNumber}`;
 };

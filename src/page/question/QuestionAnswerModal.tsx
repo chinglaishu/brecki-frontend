@@ -11,7 +11,7 @@ import { ContextConsumer } from "../../utils/context";
 import imageLoader from "../../utils/imageLoader";
 import { BORDER_RADIUS, COMMON_BORDER_RADIUS, COMMON_ELEVATION, COMMON_OVERLAY, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION, TRANSPARENT } from "../../utils/size";
 import { T } from "../../utils/translate";
-import { changeStateObj, checkIfRequestError, checkIsSwipe, makeRequestWithStatus } from "../../utils/utilFunction";
+import { changeStateObj, checkIfRequestError, checkIsIOS, checkIsSwipe, makeRequestWithStatus } from "../../utils/utilFunction";
 import { SelectQuestionNumModal } from "./SelectQuestionNumModal";
 import { Personality, PersonalityScore, Question, QuestionChoiceRecord, QuestionScoreRecord, SubmitQuestionRecord } from "./type";
 import Carousel from 'react-native-snap-carousel';
@@ -168,6 +168,7 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
     };
 
     const question: Question = questions[slideIndex];
+
     if (!question) {return null; }
     const {title, questionChoices} = question;
     const currentChoiceId = questionChoiceRecords[slideIndex]?.choiceId;

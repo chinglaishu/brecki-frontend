@@ -86,7 +86,7 @@ export const Home: FC<PageProps> = ({navigation}) => {
       <ContainerView>
         <Slide useSlides={useSlides} slideIndex={slideIndex} setSlideIndex={changeSlideIndex}
           onPressEvent={onPressSlide} />
-        <ContainerView style={{marginTop: -hp(10), backgroundColor: useColor,
+        <ContainerView style={{marginTop: -hp(15), backgroundColor: useColor,
           borderTopLeftRadius: EXTRA_BORDER_RADIUS, borderTopRightRadius: EXTRA_BORDER_RADIUS,
           width: wp(90), justifyContent: "flex-start"}}>
           <SlideTitleContainer style={{position: "absolute", top: -hp(1.75), borderColor: useColor}}>

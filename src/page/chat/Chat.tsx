@@ -4,7 +4,7 @@ import { ContextObj, PageProps, StackPageProps, User } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
 import fire from "../../utils/firebase";
 import EmojiSelector, { Categories } from "react-native-emoji-selector";
-import { getParamFromNavigation } from "../../utils/utilFunction";
+import { checkIsIOS, getParamFromNavigation } from "../../utils/utilFunction";
 import { GiftedChat } from 'react-native-gifted-chat';
 import { ContainerView } from "../../component/view";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -101,7 +101,7 @@ export class Chat extends React.Component<StackPageProps, ChatState> {
   private getContent = (contextObj: ContextObj) => {
     const {user, theme} = contextObj;
     const useUser = {...user, _id: user.id};
-    const marginBottom = hp(3);
+    const marginBottom = (checkIsIOS()) ? hp(6) : hp(3);
     return (
       <View style={{flex: 1, backgroundColor: theme.background}}>
         <View style={{flex: 1, marginBottom}}>

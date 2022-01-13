@@ -104,7 +104,7 @@ export const QuestionSlide: FC<QuestionSlideProps> = ({questions, questionChoice
           scrollEnabled={false}
           scrollEndDragDebounceValue={200}
         />
-        {isAnswer && changeQuestionChoiceRecords && <QuestionAnswerModal questions={questions} slideIndex={slideIndex} setSlideIndex={changeSlideIndex}
+        {isAnswer && !!changeQuestionChoiceRecords && <QuestionAnswerModal questions={questions} slideIndex={slideIndex} setSlideIndex={changeSlideIndex}
           isFocusQuestion={isFocusQuestion} setIsFocusQuestion={setIsFocusQuestion} questionChoiceRecords={questionChoiceRecords}
           changeQuestionChoiceRecords={changeQuestionChoiceRecords} onAllSubmit={onAllSubmit} isDisabled={isDisabled} />}
         {!isAnswer && personalities && submitQuestionRecord && questionScoreRecords && changeQuestionScoreRecords &&
