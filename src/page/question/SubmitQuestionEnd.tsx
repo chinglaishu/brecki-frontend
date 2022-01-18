@@ -28,6 +28,7 @@ UIManager.setLayoutAnimationEnabledExperimental &&
 export const SubmitQuestionEnd: FC<StackPageProps> = ({navigation}) => {
 
   const isManual = getParamFromNavigation(navigation, "isManual");
+  const isMatch = getParamFromNavigation(navigation, "isMatch");
   const userId = getParamFromNavigation(navigation, "userId");
   const changeUseUsers = getParamFromNavigation(navigation, "changeUseUsers");
 
@@ -37,11 +38,16 @@ export const SubmitQuestionEnd: FC<StackPageProps> = ({navigation}) => {
     const width = wp(40);
 
     const clickBackFunction = () => {
-      useNavigation?.navigation.navigate(useNavigation.backScreen);
-      setUseNavigation(null);
+      if (isMatch) {
+        const screen = isManual ? SCREEN.MANUAL_LIKE_ZONE : SCREEN.SYSTEM_LIKE_ZONE;
+        useNavigation?.navigation.navigate(screen);
+      } else {
+        useNavigation?.navigation.navigate(SCREEN.HISTORY);
+      }
     };
 
     const clickChat = async () => {
+      if (!isMatch) {return; }
       const useFucntion = (isManual) ? systemCreateMatch : manualCreateMatch;
       const result = await makeRequestWithStatus<SystemOrManualMatch>(() => useFucntion(userId), changeStatusModal, false);
       if (!result) {return; }
@@ -58,12 +64,12 @@ export const SubmitQuestionEnd: FC<StackPageProps> = ({navigation}) => {
           <Title style={{color: "#00000080", fontSize: hp(2), textAlign: "center"}}>{T.SUBMIT_QUESTION_END[language]}</Title>
         </ContainerView>
 
-        <RoundTouchable style={{padding: wp(2), width: wp(80), height: hp(6.5), marginBottom: hp(2), backgroundColor: theme.warning,
+        {isMatch && <RoundTouchable style={{padding: wp(2), width: wp(80), height: hp(6.5), marginBottom: hp(2), backgroundColor: theme.warning,
           flexDirection: "row"}}
           activeOpacity={0.6} onPress={() => clickChat()}>
           <Image source={imageLoader.heart} style={{width: hp(2.5), height: hp(2.1), marginRight: wp(2)}} />
           <Title style={{color: theme.onSecondary, fontSize: hp(2.25)}}>{T.START_CHAT[language]}</Title>
-        </RoundTouchable>
+        </RoundTouchable>}
 
         <RoundTouchable style={{padding: wp(2), width: wp(80), height: hp(6.5), marginBottom: hp(4)}}
           activeOpacity={0.6} onPress={() => clickBackFunction()}>

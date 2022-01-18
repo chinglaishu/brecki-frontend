@@ -24,13 +24,13 @@ export const STATUS_TYPE: {
   INFO: "info",
 };
 
-export type MODAL_HANDLE_TYPE = 1 | 4 | 0;
+export type MODAL_HANDLE_TYPE = 0.75 | 4 | 0;
 export const MODAL_HANDLE_TYPE: {
   SHORT_CLOSE: MODAL_HANDLE_TYPE,
   LONG_CLOSE: MODAL_HANDLE_TYPE,
   USER_HANDLE: MODAL_HANDLE_TYPE,
 } = {
-  SHORT_CLOSE: 1,
+  SHORT_CLOSE: 0.75,
   LONG_CLOSE: 4,
   USER_HANDLE: 0,
 };
@@ -259,11 +259,11 @@ export type PERSONALITY_SCORE_KEY = "Openness" | "Conscientiousness" | "Extraver
   "Agreeableness" | "Neuroticism";
 
 export const PERSONALITY_SCORE_KEY_COLOR_REF = {
-  Openness: "#00000020",
-  Conscientiousness: "#00000040",
-  Extraversion: "#00000060",
-  Agreeableness: "#00000080",
-  Neuroticism: "#000000",
+  Openness: "#FF7557",
+  Conscientiousness: "#64F755",
+  Extraversion: "#FEED3F",
+  Agreeableness: "#3FCDFE",
+  Neuroticism: "#F050E9",
 };
 
 export const SYSTEM_MATCH_NUM = 8;

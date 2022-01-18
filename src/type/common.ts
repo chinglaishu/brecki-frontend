@@ -68,7 +68,7 @@ export type SetUserFunction = (user: User) => any;
 
 export type UseNavigation = {
   navigation: DrawerNavigationProp<any> | StackNavigationProp<any>,
-  backScreen: string,
+  backScreen?: string,
 };
 
 export type ContextObj = {
@@ -78,6 +78,7 @@ export type ContextObj = {
   setTheme: (theme: DefaultTheme) => any,
   changeStatusModal: (obj: StatusModalProps) => any,
   logout: () => any,
+  loginAction: (user: User) => any,
   overlayColor: string,
   setOverlayColor: (color: string) => any,
   useNavigation: UseNavigation | null,

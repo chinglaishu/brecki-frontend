@@ -6,6 +6,7 @@ import { LocationModal } from "../page/personalInfo/Location";
 import { ContextObj } from "../type/common";
 import { ContextConsumer } from "../utils/context";
 import imageLoader from "../utils/imageLoader";
+import { TRANSPARENT } from "../utils/size";
 import { SelectContent, SelectModal } from "./modal";
 import { SimpleTouchable } from "./touchable";
 
@@ -28,10 +29,14 @@ export const Select: FC<SelectProps> = ({dataList, value, text, onPressEvent, ex
   const getContent = (contextObj: ContextObj) => {
     const {theme, user} = contextObj;
     const {language} = user;
+
+    const backgroundColor = isDisabled ? theme.primary : theme.buttonBackground;
+    const borderColor = isDisabled ? theme.buttonBorder : theme.buttonBorder;
+    const color = isDisabled ? theme.onPrimary : theme.primary;
     return (
-      <SimpleTouchable activeOpacity={0.6} style={{height: hp(4), ...extraStyle}} onPress={() => setIsVisible(true)}
+      <SimpleTouchable activeOpacity={0.6} style={{height: hp(4), ...extraStyle, backgroundColor, borderColor}} onPress={() => setIsVisible(true)}
         disabled={isDisabled}>
-        <Text style={{color: theme.primary, fontWeight: "600", fontSize: hp(1.75), ...textStyle}}>
+        <Text style={{color, fontWeight: "600", fontSize: hp(1.75), ...textStyle}}>
           {text}
         </Text>
         {!isDisabled && <Image source={imageLoader.down_arrow_primary} style={{width: hp(1.5), height: hp(1.5), marginLeft: wp(2)}} />}

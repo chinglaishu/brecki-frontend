@@ -44,6 +44,7 @@ export const SystemLikeZone: FC<StackPageProps> = ({navigation}) => {
     const result = await getSelfSystemMatch();
     const useList = result?.data?.data?.matchUsers || [];
     setUseUsers(useList);
+    setUpdatedAt(result?.data?.data?.updatedAt);
     setIsLoading(false);
   };
 
@@ -63,9 +64,9 @@ export const SystemLikeZone: FC<StackPageProps> = ({navigation}) => {
 
     const timeDiff = moment().diff(moment(updatedAt), "seconds");
 
-    const disabled = timeDiff > 0;
+    const disabled = false;
 
-    const buttonText = (disabled) 
+    const buttonText = (!disabled) 
       ? T.REQUEST_MATCH[language]
       : `${T.REQUEST_MATCH[language]} (${timeDiff})`;
 
@@ -73,9 +74,11 @@ export const SystemLikeZone: FC<StackPageProps> = ({navigation}) => {
 
     if (isShowNotFound) {
       return (
-        <StatusPage isSuccess={false} text={T.NO_MATCH[language]} buttonText={T.REQUEST_MATCH[language]}
-          onClickEvent={() => getSystemMatchs()} extraButton={true} extraButtonText={buttonText}
-          extraButtonClickEvent={() => navigation.navigate(SCREEN.MANUAL_LIKE_ZONE)} extraButtonDisabled={disabled}  />
+        <StatusPage isSuccess={false} text={T.NO_MATCH[language]} buttonText={buttonText}
+          buttonDisabled={disabled}
+          onClickEvent={() => getSystemMatchs()} extraButton={true} extraButtonText={T.TO_MANUAL_LIKE_ZONE[language]}
+          extraButtonStyle={{backgroundColor: theme.empty}}
+          extraButtonClickEvent={() => navigation.navigate(SCREEN.MANUAL_LIKE_ZONE)} />
       );
     }
 

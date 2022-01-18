@@ -25,6 +25,7 @@ type StatusPageProps = {
   buttonTextExtraStyle?: any,
   onClickEvent: any,
   buttonText: string,
+  buttonDisabled?: boolean,
   extraButtonDisabled?: boolean,
   extraButton?: boolean,
   extraButtonText?: string,
@@ -33,7 +34,7 @@ type StatusPageProps = {
   extraButtonClickEvent?: any,
 };
 
-export const StatusPage: FC<StatusPageProps> = ({isSuccess, text, textExtraStyle, buttonExtraStyle,
+export const StatusPage: FC<StatusPageProps> = ({isSuccess, text, textExtraStyle, buttonExtraStyle, buttonDisabled,
   buttonTextExtraStyle, onClickEvent, buttonText, extraButton, extraButtonText, extraButtonStyle,
   extraButtonTextStyle, extraButtonClickEvent, extraButtonDisabled}) => {
 
@@ -51,7 +52,7 @@ export const StatusPage: FC<StatusPageProps> = ({isSuccess, text, textExtraStyle
           <Image source={image} style={{width, height: baseWidth * 1.4, marginBottom: hp(2), marginTop: hp(4)}} />
           <Title style={{color: "#00000080", fontSize: hp(2), textAlign: "center", ...textExtraStyle}}>{text}</Title>
         </ContainerView>
-        <RoundButton touchableExtraStyle={{marginBottom, ...buttonExtraStyle}} buttonTextExtraStyle={buttonTextExtraStyle}
+        <RoundButton disabled={buttonDisabled} touchableExtraStyle={{marginBottom, ...buttonExtraStyle}} buttonTextExtraStyle={buttonTextExtraStyle}
           buttonText={buttonText} clickFunction={() => onClickEvent()} />
         {extraButton && <RoundButton touchableExtraStyle={{marginBottom: hp(6), ...extraButtonStyle}} buttonTextExtraStyle={extraButtonTextStyle}
           buttonText={extraButtonText as any} clickFunction={() => extraButtonClickEvent()} disabled={!!extraButtonDisabled} />}

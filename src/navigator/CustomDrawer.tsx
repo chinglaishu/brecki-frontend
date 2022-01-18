@@ -157,13 +157,19 @@ export const CustomDrawer: FC<CustomDrawerProps> = ({drawerContentProps}) => {
       {
         name: "Message",
         imageSource: imageLoader.drawer_chat,
-        screen: SCREEN.HOME,
+        screen: SCREEN.CHAT_LIST,
         needPersonalInfo: true,
       },
       {
         name: "History",
         imageSource: imageLoader.drawer_history,
-        screen: SCREEN.HOME,
+        screen: SCREEN.HISTORY,
+        needPersonalInfo: true,
+      },
+      {
+        name: "Data",
+        imageSource: imageLoader.drawer_data,
+        screen: SCREEN.DATA,
         needPersonalInfo: true,
       },
       {

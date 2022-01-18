@@ -1,5 +1,6 @@
 import React, {FC, useEffect, useState} from "react";
 import { Text, View, LayoutAnimation, NativeModules, Image } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { ButtonText, SlideText, SlideTitle, SubTitle, Title } from "../../component/text";
 import { ButtonTouchable, SimpleTouchable } from "../../component/touchable";
@@ -14,6 +15,7 @@ import { COMMON_OVERLAY, EXTRA_BORDER_RADIUS, EXTRA_ELEVATION, TRANSPARENT } fro
 import { T } from "../../utils/translate";
 import { checkIfRequestError, getChangeStatusModalFromNavigation, getParamFromNavigation, makeRequestWithStatus } from "../../utils/utilFunction";
 import { PersonalityScore } from "../question/type";
+import { ScoreHeatMap } from "./ScoreComponent";
 import { StatisticData } from "./type";
 
 export const ScoreData: FC<PageProps> = ({navigation}) => {
@@ -40,6 +42,11 @@ export const ScoreData: FC<PageProps> = ({navigation}) => {
 
     return (
       <ContainerView style={{}}>
+        <ScrollView contentContainerStyle={{paddingVertical: hp(4), width: wp(100), alignItems: "center", justifyContent: "center"}}>
+          <ContainerView style={{minHeight: hp(80)}}>
+            <ScoreHeatMap statisticData={statisticData} max={max} />
+          </ContainerView>
+        </ScrollView>
       </ContainerView>
     );
   };

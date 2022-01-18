@@ -48,7 +48,7 @@ export type QuestionScoreModal = {
 
 export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionChoiceRecords, slideIndex, setSlideIndex,
   isFocusQuestion, setIsFocusQuestion, onAllSubmit, personalities, questionScoreRecords, changeQuestionScoreRecords,
-  submitQuestionRecord}) => {
+  submitQuestionRecord, isDisabled}) => {
 
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
@@ -61,10 +61,14 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
     };
   }, []);
 
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [keyboardStatus, setKeyboardStatus] = useState(false as any);
-  const _keyboardDidShow = () => setKeyboardStatus(true);
+  const _keyboardDidShow = (e: any) => {
+    setKeyboardHeight(e.endCoordinates.height)
+    setKeyboardStatus(true);
+  };
   const _keyboardDidHide = () => {
-    inputRef.current.blur();
+    inputRef?.current?.blur();
     setKeyboardStatus(false);
   };
 
@@ -126,6 +130,9 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
 
     const isLastQuestion = slideIndex === questionChoiceRecords.length - 1;
     const nextButtonText = isLastQuestion ? T.SUBMIT[language] : T.NEXT[language];
+    
+    const hideNextButton = isLastQuestion && isDisabled;
+    const backButtonText = isDisabled ? T.BACK[language] : T.CANCEL[language];
 
     const goNext = () => {
       if (checkErrorWhenGoToNextQuestion(questionChoiceRecords[slideIndex])) {
@@ -153,8 +160,12 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
 
     const question: Question = questions[slideIndex];
     const questionScoreRecord: QuestionScoreRecord = questionScoreRecords[slideIndex];
+    
+    // console.log("pre");
+    // console.log(questionScoreRecord);
     if (!question) {return null; }
     if (!questionScoreRecord) {return null; }
+    
     const {title, questionChoices} = question;
     const currentChoiceId = questionChoiceRecords[slideIndex]?.choiceId;
     const currentContent = questionChoiceRecords[slideIndex]?.content;
@@ -163,8 +174,8 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
     const currentAnswer = getCurrentAnswer(questionChoiceRecords, slideIndex, questionChoices, language) || "";
     const useImageBackground = (currentBase64) ? theme.questionBlockBackground : TRANSPARENT;
     const useImageContainerBackground = (currentBase64) ? TRANSPARENT : theme.questionBlockBackground;
-    const isDisabled = checkErrorWhenGoToNextQuestion(questionChoiceRecords[slideIndex]);
-    const buttonColor = (isDisabled) ? theme.subText : theme.lightSecondary;
+    const useDisabled = checkErrorWhenGoToNextQuestion(questionChoiceRecords[slideIndex]);
+    const buttonColor = (useDisabled) ? theme.subText : theme.lightSecondary;
     const comment = questionScoreRecord.comment;
 
     const getScoreView = () => {
@@ -183,23 +194,28 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
                   return (
                     <View style={{marginTop}}>
                       <Title style={{marginBottom: hp(0.25)}}>{personality.name[language]}</Title>
-                      <BoxRow maxBox={PERSONALITY_SCORE_MAX} currentBox={currentBox} fillColor={theme.lightSecondary}
+                      <BoxRow maxBox={PERSONALITY_SCORE_MAX} currentBox={currentBox} fillColor={theme.lightSecondary} isDisabled={isDisabled}
                         borderColor={theme.border} onClickEvent={(index: number) => editPersonalityScore(slideIndex, personality.key, index)} />
                     </View>
                   );
                 })
               }
-              <PlainTouchable activeOpacity={1.0}>
-                <CenterView style={{padding: wp(3), backgroundColor: theme.questionBlockBackground,
-                  borderWidth: 2, borderColor: theme.onPrimary, borderRadius: BORDER_RADIUS * 4,
-                  width: wp(60), marginTop: hp(3)}}>
-                  <TextInput spellCheck={false} ref={inputRef} style={{color: theme.onPrimary, fontSize: hp(2), textAlign: "center",
-                    }} placeholderTextColor={"#FFFFFF50"} placeholder={T.COMMENT[language]}
-                    selectionColor={"#000000"} value={comment}
-                    onChange={(e: any) => editComment(slideIndex, e.nativeEvent.text)}
-                    underlineColorAndroid={TRANSPARENT} multiline={true} />
-                </CenterView>
-              </PlainTouchable>
+
+
+              <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={keyboardHeight - hp(10)}>
+                <PlainTouchable activeOpacity={1.0}>
+                  <CenterView style={{padding: wp(3), backgroundColor: theme.questionBlockBackground,
+                    borderWidth: 2, borderColor: theme.onPrimary, borderRadius: BORDER_RADIUS * 4,
+                    width: wp(60), marginTop: hp(3)}}>
+                    <TextInput spellCheck={false} ref={inputRef} style={{color: theme.onPrimary, fontSize: hp(2), textAlign: "center",
+                      }} placeholderTextColor={"#FFFFFF50"} placeholder={T.COMMENT[language]}
+                      selectionColor={"#000000"} value={comment}
+                      onChange={(e: any) => editComment(slideIndex, e.nativeEvent.text)}
+                      underlineColorAndroid={TRANSPARENT} multiline={true} />
+                  </CenterView>
+                </PlainTouchable>
+              </KeyboardAvoidingView>
+
             </CenterView>
           </PlainTouchable>
         </ContainerView>
@@ -247,8 +263,9 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
                   padding: wp(2),
                   paddingVertical: hp(0.5),
                   width: wp(90),
-                  height: hp(15),
+                  minHeight: hp(10),
                   marginHorizontal: wp(0),
+                  paddingBottom: hp(4),
                   borderWidth: 2, borderColor: theme.onPrimary,
                   borderBottomLeftRadius: COMMON_BORDER_RADIUS,
                   borderTopRightRadius: COMMON_BORDER_RADIUS,
@@ -257,20 +274,25 @@ export const QuestionScoreModal: FC<QuestionScoreModal> = ({questions, questionC
                     fontFamily: FONT_NORMAL}}>{`Q: ${title[language]}`}</Text>
                   {getAnswerText()}
                   <RowView style={{position: "absolute", right: wp(2), bottom: wp(2), flex: 1, alignItems: "flex-end", justifyContent: "flex-end"}}>
+                    
+                    <View style={{flex: 1, justifyContent: "flex-start", flexDirection: "row", paddingLeft: wp(1), paddingBottom: wp(1)}}>
+                      <Text style={{fontSize: hp(1.75), color: theme.subText}}>{`(${slideIndex + 1}/${questions.length})`}</Text>
+                    </View>
+
                     <ButtonTouchable style={{backgroundColor: TRANSPARENT, borderColor: theme.warning, elevation: 0, shadowOpacity: 0,
                       marginRight: wp(2)}}
                       activeOpacity={0.6} onPress={() => onAllSubmit(true)}>
                       <ButtonText style={{color: theme.warning}}>
-                        {T.CANCEL[language]}                      
+                        {backButtonText}                      
                       </ButtonText>  
                     </ButtonTouchable>   
                     
-                    <ButtonTouchable style={{backgroundColor: TRANSPARENT, borderColor: buttonColor, elevation: 0, shadowOpacity: 0}}
-                      activeOpacity={(isDisabled) ? 1.0 : 0.6} onPress={() => goNext()}>
+                    {!hideNextButton && <ButtonTouchable style={{backgroundColor: TRANSPARENT, borderColor: buttonColor, elevation: 0, shadowOpacity: 0}}
+                      activeOpacity={(useDisabled) ? 1.0 : 0.6} onPress={() => goNext()}>
                       <ButtonText style={{color: buttonColor}}>
                         {nextButtonText}                      
                       </ButtonText>  
-                    </ButtonTouchable>                    
+                    </ButtonTouchable>}                    
                   </RowView>
 
                 </View>

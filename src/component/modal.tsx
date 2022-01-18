@@ -12,9 +12,10 @@ import LottieView from "lottie-react-native";
 import { ButtonTouchable, PlainTouchable, RoundTouchable } from "./touchable";
 import SmoothPicker from "react-native-smooth-picker";
 import { T } from "../utils/translate";
-import { ButtonText } from "./text";
+import { ButtonText, Title } from "./text";
 import * as Location from 'expo-location';
 import { BORDER_RADIUS } from "../utils/size";
+import { LinearGradient } from 'expo-linear-gradient';
 
 export type SelectContent = {
   value: any,
@@ -127,7 +128,7 @@ export const StatusModal: FC<StatusModalProps> = ({title, message, isVisible, cl
     if (!isVisible) {return; }
     if (handleType === MODAL_HANDLE_TYPE.SHORT_CLOSE || handleType === MODAL_HANDLE_TYPE.LONG_CLOSE) {
       console.log("set time out");
-      setTimeout(() => doCloseModal(false), handleType);
+      setTimeout(() => doCloseModal(false), handleType * 1000);
     }
   }, [isVisible, handleType]);
 
@@ -140,6 +141,10 @@ export const StatusModal: FC<StatusModalProps> = ({title, message, isVisible, cl
 
   const lottieViewRef = useRef(null);
   const lottieSource = getLottieSource(statusType);
+
+  const isLoading = statusType === "loading";
+
+  const width = isLoading ? wp(50) : wp(75);
 
   const getContent = (contextObj: ContextObj) => {
     const {theme} = contextObj;
@@ -154,7 +159,8 @@ export const StatusModal: FC<StatusModalProps> = ({title, message, isVisible, cl
         hideModalContentWhileAnimating={true}
         deviceHeight={hp(100)} deviceWidth={wp(100)}
         backdropOpacity={0.4}>
-        <ModalView style={{padding: wp(2), maxWidth: wp(80)}}>
+        <ModalView style={{padding: wp(0), width, backgroundColor: theme.secondary,
+          borderWidth: 4, borderColor: theme.onPrimary}}>
           <LottieView
             ref={lottieViewRef}
             style={{
@@ -165,8 +171,12 @@ export const StatusModal: FC<StatusModalProps> = ({title, message, isVisible, cl
             autoPlay
             loop={statusType === "loading" || statusType === "info"}
           />
-          <Text>{title}</Text>
-          <Text>{message}</Text>
+          {!isLoading && <LinearGradient colors={["#00000000", "#00000060", "#00000000"]} style={{width: "95%", flexDirection: "row", justifyContent: "center", paddingVertical: hp(0.5)}}
+            start={[0, 1]} end={[1, 0]}>
+            <Title style={{color: theme.onSecondary, fontSize: hp(2.5)}}>{title}</Title>
+          </LinearGradient>}
+          {!isLoading && <Text style={{paddingHorizontal: wp(5), fontSize: hp(2), color: theme.onSecondary,
+            marginVertical: hp(3), textAlign: "center"}}>{message}</Text>}
         </ModalView>
       </Modal>
     );

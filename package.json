@@ -36,9 +36,12 @@
     "expo-font": "~10.0.3",
     "expo-google-sign-in": "~10.0.3",
     "expo-image-picker": "~11.0.3",
+    "expo-linear-gradient": "~10.0.3",
     "expo-location": "~13.0.4",
     "expo-notifications": "~0.13.3",
+    "expo-splash-screen": "~0.13.5",
     "expo-status-bar": "~1.1.0",
+    "expo-updates": "~0.10.13",
     "firebase": "8.2.3",
     "lottie-react-native": "4.0.3",
     "moment-timezone": "^0.5.34",
@@ -72,9 +75,7 @@
     "react-native-web": "0.17.1",
     "react-native-webview": "^11.15.0",
     "styled-components": "^5.3.3",
-    "uuid": "^8.3.2",
-    "expo-splash-screen": "~0.13.5",
-    "expo-updates": "~0.10.13"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

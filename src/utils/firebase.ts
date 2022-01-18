@@ -58,13 +58,10 @@ class Fire {
   }
 
   login = async (user: User) => {
-    console.log("logging in");
-    console.log(user);
-    const result = await firebase.auth().signInWithEmailAndPassword(user?.firebaseEmail as string, user?.firebasePassword as string);
+    const result = await firebase.auth().signInWithEmailAndPassword("test@gmail.com", "test1234");
     if (!result) {
       await this.createAccount(user);
     }
-    console.log("create");
     return true;
   }
 
@@ -101,31 +98,31 @@ class Fire {
   }
 
   // for update image on message?
-  uploadImage = async (uri: string) => {
-    console.log('got image to upload. uri:' + uri);
-    try {
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      const ref = firebase
-        .storage()
-        .ref('image')
-        .child(uuid.v4());
-      const task = ref.put(blob);
+  // uploadImage = async (uri: string) => {
+  //   console.log('got image to upload. uri:' + uri);
+  //   try {
+  //     const response = await fetch(uri);
+  //     const blob = await response.blob();
+  //     const ref = firebase
+  //       .storage()
+  //       .ref('image')
+  //       .child(uuid.v4());
+  //     const task = ref.put(blob);
     
-      return new Promise((resolve, reject) => {
-        task.on(
-          'state_changed',
-          () => {
-              /* noop but you can track the progress here */
-          },
-          reject /* this is where you would put an error callback! */,
-          () => resolve(task.snapshot.ref.getDownloadURL())
-        );
-      });
-    } catch (err) {
-      console.log('uploadImage try/catch error: ' + err.message); //Cannot load an empty url
-    }
-  }
+  //     return new Promise((resolve, reject) => {
+  //       task.on(
+  //         'state_changed',
+  //         () => {
+  //             /* noop but you can track the progress here */
+  //         },
+  //         reject /* this is where you would put an error callback! */,
+  //         () => resolve(task.snapshot.ref.getDownloadURL())
+  //       );
+  //     });
+  //   } catch (err) {
+  //     console.log('uploadImage try/catch error: ' + err.message); //Cannot load an empty url
+  //   }
+  // }
 
   onLogout = (user: User) => {
     firebase.auth().signOut().then(function() {
@@ -147,7 +144,9 @@ class Fire {
     if (!snapshot.val()) {
       return snapshot.val();
     }
-    const {isTyping, lastSeen} = snapshot.val();
+
+    const val = snapshot.val();
+    const {isTyping, lastSeen} = val;
 
     const user = {
       id,
@@ -280,15 +279,19 @@ class Fire {
   }
 
   updateLastSeen = (matchId: string, userId: string) => {
+    console.log(matchId, userId);
     this.ref(UR(matchId, userId)).update({lastSeen: moment().unix()});
   }
 
   startTyping = (matchId: string, userId: string) => {
-    this.ref(UR(matchId, userId)).update({typing: true});
+    console.log("set is tying");
+    this.ref(UR(matchId, userId)).update({isTyping: true, lastUpdated: moment().unix()});
   }
 
   endTyping = (matchId: string, userId: string) => {
-    this.ref(UR(matchId, userId)).update({typing: false});  
+    console.log("set is not typ");
+    console.log(matchId, userId);
+    this.ref(UR(matchId, userId)).update({isTyping: false, lastUpdated: moment().unix()});  
   }
 
   createNewMatch = async (match: Match) => {

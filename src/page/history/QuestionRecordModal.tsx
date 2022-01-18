@@ -31,6 +31,9 @@ export type QuestionRecordModalProps = {
 
 export const QuestionRecordModal: FC<QuestionRecordModalProps> = ({navigation, useUser, isVisible, setIsVisible}) => {
 
+  console.log('a')
+  console.log(isVisible);
+
   const changeStatusModal = getChangeStatusModalFromNavigation(navigation);
   const [submitQuestionRecords, setSubmitQuestionRecords] = useState([] as SubmitQuestionRecord[]);
   const [submitQuestionScoreRecords, setSubmitQuestionScoreRecords] = useState([] as SubmitQuestionScoreRecord[]);
@@ -38,15 +41,19 @@ export const QuestionRecordModal: FC<QuestionRecordModalProps> = ({navigation, u
   const [submitQuestionRecordId, setSubmitQuestionRecordId] = useState(null as any);
 
   const requestSubmitQuestionRecords = async () => {
-    const result = await makeRequestWithStatus<SubmitQuestionRecord[]>(() => getSubmitQuestionRecords(useUser.id), changeStatusModal, false);
+    const result = await makeRequestWithStatus<SubmitQuestionRecord[]>(() => getSubmitQuestionRecords(useUser.id), changeStatusModal, false, true, true);
     if (!result) {return; }
-    setSubmitQuestionRecords(result.data.data);
+    const data = result.data.data;
+    const reverse = data.reverse();
+    setSubmitQuestionRecords(reverse);
   };
 
   const requestSubtmiQuestionScoreRecords = async (submitQuestionRecordId: string) => {
-    const result = await makeRequestWithStatus<SubmitQuestionScoreRecord[]>(() => getSubmitQuestionScoreRecordsBySubmitQuestionRecordId(submitQuestionRecordId), changeStatusModal, false, false, true);
+    const result = await makeRequestWithStatus<SubmitQuestionScoreRecord[]>(() => getSubmitQuestionScoreRecordsBySubmitQuestionRecordId(submitQuestionRecordId), changeStatusModal, false, true, true);
     if (!result) {return; }
-    setSubmitQuestionScoreRecords(result.data.data);
+    const data = result.data.data;
+    const reverse = data.reverse();
+    setSubmitQuestionScoreRecords(reverse);
   };
 
   useEffect(() => {
@@ -62,6 +69,8 @@ export const QuestionRecordModal: FC<QuestionRecordModalProps> = ({navigation, u
   const getContent = (contextObj: ContextObj) => {
     const {theme, user, setOverlayColor, changeStatusModal} = contextObj;
     const {language} = user;
+
+    const isSelf = user.id === useUser.id;
 
     const getTitle = () => {
       if (submitQuestionRecordId) {
@@ -80,9 +89,9 @@ export const QuestionRecordModal: FC<QuestionRecordModalProps> = ({navigation, u
     const getHeader = () => {
   
       return (
-        <RowView style={{height: hp(6), elevation: COMMON_ELEVATION, ...COMMON_SHADOW}}>
+        <RowView style={{height: hp(6), marginTop: hp(1), elevation: COMMON_ELEVATION, ...COMMON_SHADOW}}>
           {submitQuestionRecordId && <PlainTouchable onPress={() => setSubmitQuestionRecordId(null)}>
-            <Image source={imageLoader.back} style={{width: hp(4), height: hp(4), marginRight: wp(2)}} />
+            <Image source={imageLoader.back} style={{width: hp(2.5), height: hp(2.5), marginRight: wp(2)}} />
           </PlainTouchable>}
   
           <Text style={{fontSize: hp(2), color: theme.text}}>
@@ -93,29 +102,36 @@ export const QuestionRecordModal: FC<QuestionRecordModalProps> = ({navigation, u
       );
     };
 
+    console.log('isv');
+    console.log(isVisible);
+  
     return (
       <NormalModal isVisible={isVisible}>
         <PlainTouchable style={{height: hp(100), width: wp(100)}} activeOpacity={1.0}
           onPress={() => setIsVisible(false)}>
-          <ContainerView style={{justifyContent: "flex-end", paddingBottom: hp(2)}}>
-            <View style={{borderRadius: COMMON_BORDER_RADIUS, backgroundColor: theme.onPrimary, paddingHorizontal: wp(5), 
-              paddingBottom: hp(2)}}>
+          <ContainerView style={{justifyContent: "flex-end", backgroundColor: TRANSPARENT,
+            paddingHorizontal: wp(6), height: hp(100), paddingBottom: hp(3) }}>
+            <PlainTouchable activeOpacity={1.0}>
+              <View style={{borderRadius: COMMON_BORDER_RADIUS, backgroundColor: theme.onPrimary, paddingHorizontal: wp(5), 
+                paddingBottom: hp(1)}}>
 
-              {getHeader()}
+                {getHeader()}
 
-              <View style={{height: hp(35)}}>
-                <ScrollView>
-                  {!submitQuestionRecordId && 
-                    <QuestionRecordDataList navigation={navigation} submitQuestionRecords={submitQuestionRecords}
-                      useUser={useUser} setSubmitQuestionRecordId={setSubmitQuestionRecordId} />
-                  }
-                  {submitQuestionRecordId &&
-                    <QuestionScoreRecordDataList navigation={navigation} submitQuestionScoreRecords={submitQuestionScoreRecords}
-                      useUser={useUser} />
-                  }
-                </ScrollView>
+                <View style={{maxHeight: hp(35), minHeight: hp(15)}}>
+                  <ScrollView contentContainerStyle={{paddingHorizontal: wp(1), paddingBottom: hp(2)}}>
+                    {!submitQuestionRecordId && 
+                      <QuestionRecordDataList navigation={navigation} submitQuestionRecords={submitQuestionRecords}
+                        useUser={useUser} setSubmitQuestionRecordId={setSubmitQuestionRecordId} setIsVisible={setIsVisible}
+                        isSelf={isSelf} />
+                    }
+                    {submitQuestionRecordId &&
+                      <QuestionScoreRecordDataList navigation={navigation} submitQuestionScoreRecords={submitQuestionScoreRecords}
+                        useUser={useUser} setIsVisible={setIsVisible} />
+                    }
+                  </ScrollView>
+                </View>
               </View>
-            </View>
+            </PlainTouchable>
           </ContainerView>
         </PlainTouchable>
       </NormalModal>

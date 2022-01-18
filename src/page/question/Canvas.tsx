@@ -3,7 +3,7 @@ import { Text, View, LayoutAnimation, NativeModules, Image, TextInput, KeyboardA
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { ButtonText, DivideLine, SlideText, SlideTitle, SubTitle, Title } from "../../component/text";
 import { ButtonTouchable, PlainTouchable, CircleTouchable } from "../../component/touchable";
-import { CenterView, ContainerView, PlainRowView, RowView, SlideTitleContainer } from "../../component/view";
+import { CenterView, ContainerView, DivideLineView, PlainRowView, RowView, SlideTitleContainer } from "../../component/view";
 import { FONT_NORMAL, STATUS_TYPE } from "../../constant/constant";
 import { getRequestToAnswerQuestions } from "../../request/question";
 import { ContextObj, Language, MultiLanguage, PageProps } from "../../type/common";
@@ -14,6 +14,7 @@ import imageLoader from "../../utils/imageLoader";
 import { BORDER_RADIUS, EXTRA_BORDER_RADIUS, TRANSPARENT } from "../../utils/size";
 import { Tooltip } from 'native-base';
 import { CANVAS_TOOL_KEY, colorList, strokeWidthList } from "./helper";
+import { checkIsIOS } from "../../utils/utilFunction";
 
 export type CanvasProps = {
   onDrawOption: (base64: string) => any,
@@ -27,7 +28,7 @@ export const Canvas: FC<CanvasProps> = ({onDrawOption, isDrawing, changeIsDrawin
 
   const ref = useRef<SignatureViewRef>(null);
 
-  const [closeFlag, setCloseFlag] = useState(false);
+  const [reopenFlag, setReopenFlag] = useState(false);
   const [currentToolKey, setCurrentToolKey] = useState("");
   const [drawColor, setDrawColor] = useState("#75CDCA");
   const [drawStrokeWidth, setDrawStrokeWidth] = useState(1);
@@ -38,22 +39,31 @@ export const Canvas: FC<CanvasProps> = ({onDrawOption, isDrawing, changeIsDrawin
   }, [isDrawing]);
 
   useEffect(() => {
-    if (closeFlag) {
+    if (reopenFlag) {
+      changeIsDrawing(true);
+      setReopenFlag(false);
+    } else {
       changeIsDrawing(false);
       setIsFocusQuestion(true);
     }
   }, [base64]);
 
+  useEffect(() => {
+    if (reopenFlag) {
+      ref.current?.readSignature();
+    }
+  }, [reopenFlag]);
+
   const changeDrawColor = (drawColor: string) => {
-    ref.current?.readSignature();
     setIsErasing(false);
     setDrawColor(drawColor);
+    setReopenFlag(true);
   };
 
   const changeStrokeWidth = (strokeWidth: number) => {
-    ref.current?.readSignature();
     setIsErasing(false);
     setDrawStrokeWidth(strokeWidth);
+    setReopenFlag(true);
   }
 
   const getContent = (contextObj: ContextObj) => {
@@ -61,12 +71,13 @@ export const Canvas: FC<CanvasProps> = ({onDrawOption, isDrawing, changeIsDrawin
     const {language} = user;
 
     const onConfirmButton = () => {
+      setReopenFlag(false);
       ref.current?.readSignature();
     };
 
     const onSubmit = (signature: string) => {
       console.log("submit")
-      setCloseFlag(true);
+      // setCloseFlag(true);
       onDrawOption(signature);
     };
 
@@ -74,19 +85,6 @@ export const Canvas: FC<CanvasProps> = ({onDrawOption, isDrawing, changeIsDrawin
       changeIsDrawing(false);
       setIsFocusQuestion(true);
     };
-
-    // const style = `
-    // .m-signature-pad--footer
-    // .button.save {
-    //   background-color: #00000050;
-    //   color: ${theme.onSecondary};
-    // }
-    // .m-signature-pad--footer
-    // .button.clear {
-    //   background-color: #00000050;
-    //   color: ${theme.onSecondary};
-    // }
-    // `;
 
     const height = hp(80);
     const padding = wp(5);
@@ -151,9 +149,10 @@ export const Canvas: FC<CanvasProps> = ({onDrawOption, isDrawing, changeIsDrawin
 
     if (!isDrawing) {return null; }
     const useTop = imageHeight + padding + wp(12);
+    const top = checkIsIOS() ? hp(2) : hp(5);
     return (
       <>
-        <CenterView style={{position: "absolute", height, width: wp(90), padding, left: wp(5), top: hp(5),
+        <CenterView style={{position: "absolute", height, width: wp(90), padding, left: wp(5), top,
           backgroundColor: theme.secondary, borderRadius: EXTRA_BORDER_RADIUS, zIndex: 1, flex: 1}}>
           <RowView style={{marginBottom, justifyContent: "space-around"}}>
             {toolList.map((tool) => {
@@ -208,14 +207,13 @@ export const Canvas: FC<CanvasProps> = ({onDrawOption, isDrawing, changeIsDrawin
                   return (
                     <CircleTouchable activeOpacity={0.6} style={{backgroundColor}} onPress={() => changeStrokeWidth(strokeWidth)}>
                       <CenterView style={{width: imageHeight, height: imageHeight}}>
-                        <DivideLine style={{borderBottomWidth: strokeWidth, opacity: 1.0, height: imageHeight * 0.5 + strokeWidth/4}} />
+                        <DivideLineView style={{borderBottomWidth: strokeWidth * 1.5, opacity: 1.0, height: imageHeight * 0.5 + strokeWidth/1.5}}></DivideLineView>
                       </CenterView>
                     </CircleTouchable>
                   );
                 })}
               </RowView>
           }
-
 
           <SignatureScreen
             ref={ref}

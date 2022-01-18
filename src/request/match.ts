@@ -31,5 +31,5 @@ export const addChatDataRecord = async (matchId: string, type: ChatMessageType, 
 };
 
 export const getStatistic = async (): R<{statisticData: StatisticData, max: number}> => {
-  return await instance.get(`/match/statistic`);
+  return await instance.get(`/match/get/statistic`);
 };

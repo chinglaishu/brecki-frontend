@@ -28,10 +28,11 @@ type BoxRowProps = {
   useBoxSize?: number,
   useMarginRight?: number,
   useHeightRatio?: number,
+  isDisabled?: boolean,
 }
 
 export const BoxRow: FC<BoxRowProps> = ({maxBox, currentBox, fillColor, borderColor, extraStyle, onClickEvent,
-  useBoxSize, useMarginRight, useHeightRatio}) => {
+  useBoxSize, useMarginRight, useHeightRatio, isDisabled}) => {
 
   let numList = getNumListByNum(maxBox - 1);
 
@@ -47,7 +48,7 @@ export const BoxRow: FC<BoxRowProps> = ({maxBox, currentBox, fillColor, borderCo
       const backgroundColor = (isFill) ? fillColor : TRANSPARENT;
       const applyMarginRight = (index === numList.length) ? 0 : marginRight;
       return (
-        <PlainTouchable activeOpacity={0.6} onPress={() => onClickEvent(index)}>
+        <PlainTouchable disabled={isDisabled} activeOpacity={0.6} onPress={() => onClickEvent(index)}>
           <View style={{width: boxSize, height: boxSize * heightRatio, borderWidth: 2, borderColor: borderColor, backgroundColor, marginRight: applyMarginRight}} />
         </PlainTouchable>
       );

@@ -53,7 +53,7 @@ export const LikeRowList: FC<LikeRowListProps> = ({useUsers, isManual, stackNavi
       const result = await makeRequestWithStatus<SubmitQuestionRecord>(() => getUserLastSubmitQuestionRecord(userId), changeStatusModal, false);
       if (!result) {return; }
       setUseNavigation({navigation: stackNavigation, backScreen});
-      stackNavigation.navigate(SCREEN.QUESTION_RECORD, {submitQuestionRecordId: result.data.data.id, isManual, changeUseUsers});
+      stackNavigation.navigate(SCREEN.QUESTION_RECORD, {submitQuestionRecordId: result.data.data.id, isManual, changeUseUsers, isMatch: true});
     };
 
     const toPersonalInfo = (personalInfo: PersonalInfo) => {

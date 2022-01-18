@@ -21,7 +21,7 @@ export type MessageData = {
   matchId: string,
   messageUser?: MessageUser,
   lastMessage?: Message,
-  unreadNum: number,
+  unreadNum?: number,
 };
 
 export type MessageUser = {

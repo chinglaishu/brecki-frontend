@@ -13,11 +13,13 @@ export const submitQuestion = async (questionChoiceRecords: QuestionChoiceRecord
 }
 
 export const getSubmitQuestionRecords = async (userId: string): R<SubmitQuestionRecord[]> => {
-  return await instance.get(`submit-question-record/get/all?filter={"userId": ${userId}}`);
+  const result = await instance.get(`submit-question-record/get/all?filter={"userId": "${userId}"}`);
+  return result;
 };
 
 export const getSubmitQuestionRecordById = async (id: string): R<SubmitQuestionRecord> => {
-  return await instance.get(`submit-question-record/${id}`);
+  const result = await instance.get(`submit-question-record/${id}`);
+  return result;
 };
 
 // export const submitQuestionScoreRecord = async (personalityScore: PersonalityScore, toUserId: string, submitQuestionRecordId: string): R<QuestionScoreRecord> => {
@@ -30,7 +32,7 @@ export const submitQuestionScoreRecord = async (toUserId: string, submitQuestion
 };
 
 export const getOneSubmitQuestionScoreRecord = async (toUserId: string, submitQuestionRecordId: string): R<SubmitQuestionScoreRecord> => {
-  return await instance.get(`submit-question-score-record/get/one?filter={"toUserId": ${toUserId}, "submitQuestionRecordId": ${submitQuestionRecordId}}`);
+  return await instance.get(`submit-question-score-record/get/one?filter={"toUserId": "${toUserId}", "submitQuestionRecordId": "${submitQuestionRecordId}"}`);
 };
 
 export const getSubmitQuestionScoreRecordById = async (id: string): R<SubmitQuestionScoreRecord> => {
@@ -38,11 +40,11 @@ export const getSubmitQuestionScoreRecordById = async (id: string): R<SubmitQues
 };
 
 export const getSubmitQuestionScoreRecords = async (userId: string): R<SubmitQuestionScoreRecord[]> => {
-  return await instance.get(`submit-question-score-record/get/all?filter={"toUserId": ${userId}}`);
+  return await instance.get(`submit-question-score-record/get/all?filter={"toUserId": "${userId}"}`);
 };
 
 export const getSubmitQuestionScoreRecordsBySubmitQuestionRecordId = async (submitQuestionRecordId: string): R<SubmitQuestionScoreRecord[]> => {
-  return await instance.get(`submit-question-score-record/get/all?filter={"submitQuestionRecordId": ${submitQuestionRecordId}}`);
+  return await instance.get(`submit-question-score-record/get/all?filter={"submitQuestionRecordId": "${submitQuestionRecordId}"}`);
 };
 
 export const getQuestionNums = async (): R<QuestionNum[]> => {
@@ -58,5 +60,5 @@ export const getPersonalities = async (): R<Personality[]> => {
 };
 
 export const getOneQuestionScoreRecord = async (toUserId: string, submitQuestionRecordId: string) => {
-  return await instance.get(`question-score-record/get/one?filter={"toUserId": ${toUserId}, "submitQuestionRecordId": ${submitQuestionRecordId}}`);
+  return await instance.get(`question-score-record/get/one?filter={"toUserId": "${toUserId}", "submitQuestionRecordId": "${submitQuestionRecordId}"}`);
 };

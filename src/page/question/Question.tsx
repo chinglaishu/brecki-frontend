@@ -17,6 +17,7 @@ import { QuestionSlide } from "./QuestionSlide";
 import { SelectQuestionNumModal } from "./SelectQuestionNumModal";
 import { P, Personality, PersonalityScore, Question, QuestionChoiceRecord, QuestionNum, QuestionScoreRecord, SubmitQuestionRecord } from "./type";
 
+
 const { UIManager } = NativeModules;
 
 UIManager.setLayoutAnimationEnabledExperimental &&
@@ -37,6 +38,8 @@ export const QuestionPage: FC<PageProps> = ({navigation}) => {
   const [questions, setQuestions] = useState([] as Question[]);
   const [questionChoiceRecords, setQuestionChoiceRecords] = useState([] as QuestionChoiceRecord[]);
   
+  const [isShow, setIsShow] = useState(true);
+
   useEffect(() => {
     if (!submitQuestionRecordId) {
       setQuestionChoiceRecords(getDefaultQuestionChoiceRecord(questions, []));
@@ -63,6 +66,18 @@ export const QuestionPage: FC<PageProps> = ({navigation}) => {
     } else {
       getSubmitQuestionRecord();
     }
+
+    navigation.addListener("focus", () => {
+      console.log("focus");
+      setIsShow(true);
+
+      if (!submitQuestionRecordId) {
+        requestQuestonNums();
+      } else {
+        getSubmitQuestionRecord();
+      }
+    });
+
   }, []);
 
   const getSubmitQuestionRecord = async () => {
@@ -73,7 +88,7 @@ export const QuestionPage: FC<PageProps> = ({navigation}) => {
     const useQuestions = questionChoiceRecords.map((questionChoiceRecord) => questionChoiceRecord.question) as Question[];
     const useQuestionChoiceRecords = questionChoiceRecords.map((questionChoiceRecord) => {
       const {questionId, choiceId, userId, content, imageUrl} = questionChoiceRecord;
-      return {questionId, choiceId, userId, content, imageUrl};
+      return {questionId, choiceId, userId, content, imageUrl, isChoosingImage: !!imageUrl, isChoosingContent: !!content};
     });
     setQuestions(useQuestions);
     setQuestionChoiceRecords(useQuestionChoiceRecords);
@@ -92,14 +107,24 @@ export const QuestionPage: FC<PageProps> = ({navigation}) => {
     const {theme, user, setOverlayColor, changeStatusModal, useNavigation, setUseNavigation} = contextObj;
     const {language} = user;
 
+    const clickBackFunction = () => {
+      if (useNavigation?.navigation.canGoBack()) {
+        useNavigation.navigation.goBack();
+      }
+    };
+
     const onAllSubmit = (isCancel: boolean) => {
-      if (isReadOnly) {return; }
+      if (isReadOnly) {
+        setIsShow(false);
+        navigation.navigate(SCREEN.HISTORY);
+        return;
+      }
 
       setIsAnswering(false);
       setQuestions([]);
       setQuestionChoiceRecords([] as QuestionChoiceRecord[]);
       if (isCancel) {
-        navigation.navigate(SCREEN.HOME);
+        clickBackFunction();
       } else {
         navigation.navigate(SCREEN.QUESTION_END); 
       }
@@ -116,6 +141,8 @@ export const QuestionPage: FC<PageProps> = ({navigation}) => {
       setIsAnswering(to);
       getQuestions();
     };
+
+    if (!isShow) {return null; }
 
     return (
       <ContainerView style={{}}>

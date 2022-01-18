@@ -12,7 +12,7 @@ import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-nat
 import { T } from "../../utils/translate";
 import { TITLE_IMAGE_HEIGHT } from "../../utils/size";
 import imageLoader from "../../utils/imageLoader";
-import { checkIfRequestError, getLastScreenNavigationParam, getParamFromNavigation } from "../../utils/utilFunction";
+import { checkIfRequestError, checkIsIOS, getLastScreenNavigationParam, getParamFromNavigation } from "../../utils/utilFunction";
 import { requestToken, signup, verifyPhone, verifySMSOnly } from "../../request/auth";
 import { RM } from "../../utils/requestMessage";
 import { loginAction } from "./helper";
@@ -97,13 +97,14 @@ export const VerifyPhone: FC<AuthProps> = ({navigation}) => {
       navigation.navigate(AUTH_SCREEN.LOGIN);
     };
 
+    const bottomMarginBottom = (checkIsIOS()) ? hp(4) : hp(2);
     const resendCountDownText = (resendCountDown > 0) ? ` (${String(resendCountDown)})` : "";
     return (
       <ContainerView>
         <ContainerView>
           <Image source={imageLoader.text_verification} style={{width: TITLE_IMAGE_HEIGHT * 9.5, height: TITLE_IMAGE_HEIGHT,
             marginBottom: hp(6), marginTop: hp(2)}} />
-          <Reminder style={{paddingHorizontal: wp(15), marginBottom: hp(12)}}>
+          <Reminder style={{paddingHorizontal: wp(10), marginBottom: hp(12), fontSize: hp(1.5)}}>
             {T.VERIFICATION_REMIND[language]}
           </Reminder>
           <CodeField
@@ -139,7 +140,7 @@ export const VerifyPhone: FC<AuthProps> = ({navigation}) => {
 
         <View>
           <SubTitle>{T.GO_LOGIN[language]}</SubTitle>
-          <ButtonTouchable activeOpacity={0.5} style={{marginBottom: hp(2), marginTop: hp(1), backgroundColor: theme.subText}}
+          <ButtonTouchable activeOpacity={0.5} style={{marginBottom: bottomMarginBottom, marginTop: hp(1), backgroundColor: theme.subText}}
             onPress={() => onPressFooterButton()}>
             <ButtonText>{T.LOGIN[language]}</ButtonText>
           </ButtonTouchable>

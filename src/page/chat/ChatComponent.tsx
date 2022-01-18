@@ -38,7 +38,7 @@ export const ChatInput: FC<ChatInputProps> = ({onSendEvent, changeIsTyping}) => 
   const [keyboardStatus, setKeyboardStatus] = useState(false as any);
   const _keyboardDidShow = () => setKeyboardStatus(true);
   const _keyboardDidHide = () => {
-    inputRef.current.blur();
+    inputRef?.current?.blur();
     setKeyboardStatus(false);
   };
 
@@ -49,6 +49,21 @@ export const ChatInput: FC<ChatInputProps> = ({onSendEvent, changeIsTyping}) => 
     setText("");
   };
 
+  useEffect(() => {
+    doChangeIsTyping();
+  }, [text]);
+
+  const doChangeIsTyping = () => {
+    const isTyping = checkChangeIsTyping();
+    changeIsTyping(isTyping);
+  }
+
+  const checkChangeIsTyping = () => {
+    if (!text) {return false; }
+    if (text?.length === 0) {return false; }
+    return true;
+  }
+
   const getContent = (contextObj: ContextObj) => {
     const {theme} = contextObj;
     return (
@@ -57,14 +72,14 @@ export const ChatInput: FC<ChatInputProps> = ({onSendEvent, changeIsTyping}) => 
           backgroundColor: theme.onPrimary, borderWidth: 0, elevation: 2, ...COMMON_SHADOW}}>
           <RoundInput ref={inputRef} value={text} 
             onChange={(e: any) => setText(e.nativeEvent.text)}
-            onFocus={() => changeIsTyping(true)}
+            onFocus={() => doChangeIsTyping()}
             onBlur={() => changeIsTyping(false)}
             style={{height: hp(6), flex: 1}} placeholder={"Enter Message..."} />
         </RoundInputContainer>
         <PlainTouchable activeOpacity={0.8} onPress={() => sendEvent()}>
           <View style={{borderRadius: EXTRA_BORDER_RADIUS, width: hp(6), height: hp(6), backgroundColor: theme.secondary,
-            alignItems: "center", justifyContent: "center", elevation: 4, ...EXTRA_SHADOW}}>
-            <Image source={imageLoader.mic} style={{width: hp(2.5), height: hp(2.5)}} />
+            alignItems: "center", justifyContent: "center", elevation: 4, ...COMMON_SHADOW}}>
+            <Image source={imageLoader.send} style={{width: hp(2.5), height: hp(2.5), marginLeft: hp(0.25), marginBottom: hp(0.1), tintColor: theme.onPrimary}} />
           </View>
         </PlainTouchable>
       </RowView>

@@ -24,3 +24,10 @@ b 8
 c 3
 d 8
 e 9
+
+
+
+- should not get repeat user in matchs, 
+- not have same user in system / manual match
+- show user have scored the question
+

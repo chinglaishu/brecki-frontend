@@ -137,6 +137,10 @@ export const getDisplayNameByRouteName = (routeName: string, language: Language)
     return T.SCREEN_QUESTION[language];
   } else if (routeName === SCREEN.CHAT_LIST) {
     return T.SCREEN_CHAT[language];
+  } else if (routeName === SCREEN.HISTORY) {
+    return T.SCREEN_HISTORY[language];
+  } else if (routeName === SCREEN.DATA) {
+    return T.SCREEN_DATA[language];
   }
   return null;
 };
@@ -183,4 +187,12 @@ export const checkIsSwipe = (state: any) => {
   const {vx, vy} = state;
   const isSwipe = Math.abs(vx) > 0.5 || Math.abs(vy) > 0.5;
   return isSwipe;
+};
+
+export const clearTemporarayStorage = async () => {
+  await removeStoreData("useUser");
+};
+
+export const checkNumberInRange = (num: number, min: number, max: number) => {
+  return num >= min && num <= max;
 };

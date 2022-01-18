@@ -25,6 +25,9 @@ import { ChatStack } from "./ChatNavigator";
 import { KeyboardAvoidingView } from "react-native";
 import { SettingStack } from "./SettingNavigator";
 import { ScoreData } from "../page/data/ScoreData";
+import { QuestionStack } from "./QuestionNavigator";
+import { PersonalInfoStack } from "./PersonalInfoNavigator";
+import { HistoryStack } from "./HistoryNavigator";
 
 type MainNavigatorProps = {
   initialRoute: SCREEN,
@@ -49,13 +52,12 @@ export const MainNavigator: FC<MainNavigatorProps> = ({initialRoute, changeStatu
             drawerContent={(props) => <CustomDrawer drawerContentProps={props} />}
             backBehavior={"history"}>
             <Drawer.Screen name={SCREEN.HOME} component={Home} options={{title: T.SCREEN_HOME[language]}} initialParams={{changeStatusModal}}/>
-            <Drawer.Screen name={SCREEN.QUESTION} component={QuestionPage} options={{title: T.SCREEN_QUESTION[language]}} initialParams={{changeStatusModal}} />
+            <Drawer.Screen name={SCREEN.QUESTION} component={QuestionStack} options={{title: T.SCREEN_QUESTION[language]}} initialParams={{changeStatusModal}} />
             <Drawer.Screen name={SCREEN.SYSTEM_LIKE_ZONE} component={LikeZoneStack} options={{title: T.SCREEN_LIKE_ZONE[language]}} initialParams={{changeStatusModal}} />
             <Drawer.Screen name={SCREEN.CHAT_LIST} component={ChatStack} options={{title: T.SCREEN_CHAT[language]}} initialParams={{changeStatusModal}} />
-            <Drawer.Screen name={SCREEN.PERSONAL_INFO} component={PersonalInfo} options={{title: T.SCREEN_PERSONAL_INFO[language]}} initialParams={{changeStatusModal}} />
+            <Drawer.Screen name={SCREEN.PERSONAL_INFO} component={PersonalInfoStack} options={{title: T.SCREEN_PERSONAL_INFO[language]}} initialParams={{changeStatusModal}} />
             <Drawer.Screen name={SCREEN.SETTING} component={SettingStack} options={{title: T.SCREEN_SETTING[language]}} initialParams={{changeStatusModal}} />
-            <Drawer.Screen name={SCREEN.QUESTION_END} component={QuestionEnd} options={{title: T.SCREEN_QUESTION[language]}} initialParams={{changeStatusModal}} />
-            <Drawer.Screen name={SCREEN.HISTORY} component={HistoryPage} options={{title: T.SCREEN_HISTORY[language]}} initialParams={{changeStatusModal}} />
+            <Drawer.Screen name={SCREEN.HISTORY} component={HistoryStack} options={{title: T.SCREEN_HISTORY[language]}} initialParams={{changeStatusModal}} />
             <Drawer.Screen name={SCREEN.DATA} component={ScoreData} options={{title: T.SCREEN_DATA[language]}} initialParams={{changeStatusModal}} />
           </Drawer.Navigator>
         </NavigationContainer>

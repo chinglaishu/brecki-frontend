@@ -44,7 +44,7 @@ export type QuestionAnswerModalProps = {
 };
 
 export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, questionChoiceRecords, changeQuestionChoiceRecords, slideIndex, setSlideIndex,
-  isFocusQuestion, setIsFocusQuestion, onAllSubmit}) => {
+  isFocusQuestion, setIsFocusQuestion, onAllSubmit, isDisabled}) => {
 
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
@@ -57,10 +57,14 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
     };
   }, []);
 
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [keyboardStatus, setKeyboardStatus] = useState(false as any);
-  const _keyboardDidShow = () => setKeyboardStatus(true);
+  const _keyboardDidShow = (e: any) => {
+    setKeyboardHeight(e.endCoordinates.height)
+    setKeyboardStatus(true);
+  };
   const _keyboardDidHide = () => {
-    inputRef.current.blur();
+    inputRef?.current?.blur();
     setKeyboardStatus(false);
   };
 
@@ -87,6 +91,7 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
   };
 
   const onSubmitQuestion = async (changeStatusModal: any) => {
+    if (isDisabled) {return; }
     const useQuestionChoiceRecords = await uploadBase64InQuestionChoiceRecords(questionChoiceRecords);
     const result = await makeRequestWithStatus<SubmitQuestionRecord>(() => submitQuestion(useQuestionChoiceRecords), changeStatusModal, false);
     if (!result) {return; }
@@ -94,6 +99,7 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
   };
 
   const onSelectOption = (index: number, choiceId: string) => {
+    if (isDisabled) {return; }
     const newQuestionChoiceRecords: QuestionChoiceRecord[] = JSON.parse(JSON.stringify(questionChoiceRecords));
     newQuestionChoiceRecords[index].choiceId = choiceId;
     newQuestionChoiceRecords[index].isChoosingContent = false;
@@ -103,6 +109,8 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
   };
 
   const onTypeOpenOption = (index: number, choiceId: string, content: string) => {
+    if (isDisabled) {return; }
+    inputRef.current.focus();
     const newQuestionChoiceRecords: QuestionChoiceRecord[] = JSON.parse(JSON.stringify(questionChoiceRecords));
     newQuestionChoiceRecords[index].choiceId = choiceId;
     newQuestionChoiceRecords[index].content = content;
@@ -112,6 +120,7 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
   };
 
   const onDrawOption = (index: number, choiceId: string, base64: string) => {
+    if (isDisabled) {return; }
     const newQuestionChoiceRecords: QuestionChoiceRecord[] = JSON.parse(JSON.stringify(questionChoiceRecords));
     newQuestionChoiceRecords[index].choiceId = choiceId;
     newQuestionChoiceRecords[index].base64 = base64;
@@ -127,6 +136,8 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
 
     const isLastQuestion = slideIndex === questionChoiceRecords.length - 1;
     const nextButtonText = isLastQuestion ? T.SUBMIT[language] : T.NEXT[language];
+    const hideNextButton = isLastQuestion && isDisabled;
+    const backButtonText = isDisabled ? T.BACK[language] : T.CANCEL[language];
 
     const goNext = () => {
       if (checkErrorWhenGoToNextQuestion(questionChoiceRecords[slideIndex])) {
@@ -158,6 +169,12 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
     };
 
     const startDrawing = (index: number, choiceId: string) => {
+
+      if (isDisabled) {
+        setIsImageVisible(true);
+        return;
+      }
+
       const newQuestionChoiceRecords: QuestionChoiceRecord[] = JSON.parse(JSON.stringify(questionChoiceRecords));
       newQuestionChoiceRecords[index].choiceId = choiceId;
       newQuestionChoiceRecords[index].isChoosingImage = true;
@@ -178,8 +195,8 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
     const currentAnswer = getCurrentAnswer(questionChoiceRecords, slideIndex, questionChoices, language) || "";
     const useImageBackground = (currentBase64) ? theme.questionBlockBackground : TRANSPARENT;
     const useImageContainerBackground = (currentBase64) ? TRANSPARENT : theme.questionBlockBackground;
-    const isDisabled = checkErrorWhenGoToNextQuestion(questionChoiceRecords[slideIndex]);
-    const buttonColor = (isDisabled) ? theme.subText : theme.lightSecondary;
+    const useDisabled = checkErrorWhenGoToNextQuestion(questionChoiceRecords[slideIndex]);
+    const buttonColor = (useDisabled) ? theme.subText : theme.lightSecondary;
 
     const getAnswerView = () => {
       return (
@@ -192,6 +209,8 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
             const isSelected = (id === currentChoiceId);
             const useColor = (isSelected) ? theme.lightSecondary : theme.onPrimary;
 
+            const uri = (isDisabled) ? currentAnswer : currentBase64;
+
             if (isPaint) {
               return (
                 <PlainTouchable activeOpacity={1.0} style={{}}
@@ -199,7 +218,7 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
                   <CenterView style={{height: hp(60), width: wp(80), borderRadius: COMMON_BORDER_RADIUS,
                     borderWidth: 2, marginBottom: wp(10),
                     backgroundColor: useImageContainerBackground, borderColor: theme.onSecondary}}>
-                    <Image source={{uri: currentBase64}} style={{height: hp(60), width: wp(80), borderRadius: COMMON_BORDER_RADIUS, resizeMode: "stretch"}} />
+                    <Image source={{uri}} style={{height: hp(60), width: wp(80), borderRadius: COMMON_BORDER_RADIUS, resizeMode: "stretch"}} />
                     <CenterView style={{position: "absolute", height: hp(60) - 2, width: wp(80) - 2, backgroundColor: useImageBackground,
                       borderRadius: COMMON_BORDER_RADIUS}}>
                       <Image source={imageLoader.pen} style={{width: wp(15), height: wp(15), opacity: 0.5}} />
@@ -212,22 +231,24 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
             if (isFree) {
 
               return (
-                <PlainTouchable activeOpacity={1.0} onPress={() => onTypeOpenOption(slideIndex, id, currentContent)}>
-                  <CenterView style={{padding: wp(3), marginBottom, backgroundColor: theme.questionBlockBackground,
-                    borderWidth: 2, borderColor: useColor, borderRadius: BORDER_RADIUS * 4,
-                    width: wp(60)}}>
-                    <TextInput spellCheck={false} ref={inputRef} style={{color: useColor, fontSize: hp(2), textAlign: "center",
-                      }} placeholderTextColor={"#FFFFFF50"} placeholder={T.OPEN_OPTION_PLACEHOLDER[language]}
-                      selectionColor={"#000000"} value={currentContent} onPressIn={() => onTypeOpenOption(slideIndex, id, currentContent)}
-                      onChange={(e: any) => onTypeOpenOption(slideIndex, id, e.nativeEvent.text)}
-                      underlineColorAndroid={TRANSPARENT} multiline={true} />
-                  </CenterView>
-                </PlainTouchable>
+                <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={keyboardHeight - hp(10)}>
+                  <PlainTouchable disabled={isDisabled} activeOpacity={1.0} onPress={() => onTypeOpenOption(slideIndex, id, currentContent)}>
+                    <CenterView style={{padding: wp(3), marginBottom, backgroundColor: theme.questionBlockBackground,
+                      borderWidth: 2, borderColor: useColor, borderRadius: BORDER_RADIUS * 4,
+                      width: wp(60)}}>
+                      <TextInput spellCheck={false} ref={inputRef} style={{color: useColor, fontSize: hp(2), textAlign: "center",
+                        }} placeholderTextColor={"#FFFFFF50"} placeholder={T.OPEN_OPTION_PLACEHOLDER[language]}
+                        selectionColor={"#FFFFFF"} value={currentContent} onPressIn={() => onTypeOpenOption(slideIndex, id, currentContent)}
+                        onChange={(e: any) => onTypeOpenOption(slideIndex, id, e.nativeEvent.text)}
+                        underlineColorAndroid={TRANSPARENT} multiline={true} />
+                    </CenterView>
+                  </PlainTouchable>
+                </KeyboardAvoidingView>
               );
             }
 
             return (
-              <PlainTouchable activeOpacity={0.6} onPress={() => onSelectOption(slideIndex, id)}>
+              <PlainTouchable disabled={isDisabled} activeOpacity={0.6} onPress={() => onSelectOption(slideIndex, id)}>
                 <CenterView style={{padding: wp(3), marginBottom, backgroundColor: theme.questionBlockBackground,
                   borderWidth: 2, borderColor: useColor, borderRadius: BORDER_RADIUS,
                   width: wp(60)}}>
@@ -265,7 +286,6 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
       );
     };
 
-    // const button
     return (
       <>
         <NormalModal isVisible={isFocusQuestion}>
@@ -283,8 +303,9 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
                   padding: wp(2),
                   paddingVertical: hp(0.5),
                   width: wp(90),
-                  height: hp(15),
+                  minHeight: hp(15),
                   marginHorizontal: wp(0),
+                  paddingBottom: hp(6),
                   borderWidth: 2, borderColor: theme.onPrimary,
                   borderBottomLeftRadius: COMMON_BORDER_RADIUS,
                   borderTopRightRadius: COMMON_BORDER_RADIUS,
@@ -293,20 +314,25 @@ export const QuestionAnswerModal: FC<QuestionAnswerModalProps> = ({questions, qu
                     fontFamily: FONT_NORMAL}}>{`Q: ${title[language]}`}</Text>
                   {getAnswerText()}
                   <RowView style={{position: "absolute", right: wp(2), bottom: wp(2), flex: 1, alignItems: "flex-end", justifyContent: "flex-end"}}>
+                    
+                    <View style={{flex: 1, justifyContent: "flex-start", flexDirection: "row", paddingLeft: wp(1), paddingBottom: wp(1)}}>
+                      <Text style={{fontSize: hp(1.75), color: theme.subText}}>{`(${slideIndex + 1}/${questions.length})`}</Text>
+                    </View>
+                    
                     <ButtonTouchable style={{backgroundColor: TRANSPARENT, borderColor: theme.warning, elevation: 0, shadowOpacity: 0,
                       marginRight: wp(2)}}
                       activeOpacity={0.6} onPress={() => onAllSubmit(true)}>
                       <ButtonText style={{color: theme.warning}}>
-                        {T.CANCEL[language]}                      
+                        {backButtonText}                      
                       </ButtonText>  
                     </ButtonTouchable>   
                     
-                    <ButtonTouchable style={{backgroundColor: TRANSPARENT, borderColor: buttonColor, elevation: 0, shadowOpacity: 0}}
-                      activeOpacity={(isDisabled) ? 1.0 : 0.6} onPress={() => goNext()}>
+                    {!hideNextButton && <ButtonTouchable style={{backgroundColor: TRANSPARENT, borderColor: buttonColor, elevation: 0, shadowOpacity: 0}}
+                      activeOpacity={(useDisabled) ? 1.0 : 0.6} onPress={() => goNext()}>
                       <ButtonText style={{color: buttonColor}}>
                         {nextButtonText}                      
                       </ButtonText>  
-                    </ButtonTouchable>                    
+                    </ButtonTouchable>}                  
                   </RowView>
 
                 </View>

@@ -21,6 +21,7 @@ import { BOTTOM_TAB_HEIGHT } from "../utils/size";
 import { HistoryPage } from "../page/history/History";
 import { Chat } from "../page/chat/Chat";
 import { QuestionRecord } from "../page/question/QuestionRecord";
+import { ChatContainer } from "./ChatNavigator";
 
 const { UIManager } = NativeModules;
 
@@ -41,10 +42,11 @@ export const LikeZoneStack: FC<PageProps> = ({navigation}) => {
         <Stack.Screen name={SCREEN.SYSTEM_LIKE_ZONE} component={SystemLikeZone} initialParams={{changeStatusModal}}/>
         <Stack.Screen name={SCREEN.MANUAL_LIKE_ZONE} component={ManualLikeZone} initialParams={{changeStatusModal}}/>
         <Stack.Screen name={SCREEN.PERSONAL_INFO} component={PersonalInfo} initialParams={{changeStatusModal}} />
+        <Stack.Screen name={SCREEN.QUESTION} component={QuestionPage} initialParams={{changeStatusModal}} />
         <Stack.Screen name={SCREEN.QUESTION_RECORD} component={QuestionRecord} initialParams={{changeStatusModal}} />
         <Stack.Screen name={SCREEN.HISTORY} component={HistoryPage} initialParams={{changeStatusModal}} />
         <Stack.Screen name={SCREEN.SUBMIT_QUESTION_END} component={SubmitQuestionEnd} initialParams={{changeStatusModal}} />
-        <Stack.Screen name={SCREEN.CHAT} component={Chat} initialParams={{changeStatusModal}} />
+        <Stack.Screen name={SCREEN.CHAT} component={ChatContainer} initialParams={{changeStatusModal}} />
       </Stack.Navigator>
     );
   };

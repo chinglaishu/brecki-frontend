@@ -36,7 +36,9 @@ export const QuestionScoreRecordModal: FC<QuestionScoreRecordModalProps> = ({nav
   const requestSubtmiQuestionScoreRecords = async () => {
     const result = await makeRequestWithStatus<SubmitQuestionScoreRecord[]>(() => getSubmitQuestionScoreRecords(useUser.id), changeStatusModal, false, false, true);
     if (!result) {return; }
-    setSubmitQuestionScoreRecords(result.data.data);
+    const data = result.data.data;
+    const reverse = data.reverse();
+    setSubmitQuestionScoreRecords(reverse);
   };
 
   useEffect(() => {
@@ -50,7 +52,7 @@ export const QuestionScoreRecordModal: FC<QuestionScoreRecordModalProps> = ({nav
     const getHeader = () => {
   
       return (
-        <RowView style={{height: hp(6), elevation: COMMON_ELEVATION, ...COMMON_SHADOW}}>
+        <RowView style={{height: hp(6), marginTop: hp(1), elevation: COMMON_ELEVATION, ...COMMON_SHADOW}}>
 
           <Text style={{fontSize: hp(2), color: theme.text}}>
             {T.QUESTION_RECORD[language]}
@@ -64,17 +66,17 @@ export const QuestionScoreRecordModal: FC<QuestionScoreRecordModalProps> = ({nav
       <NormalModal isVisible={isVisible}>
         <PlainTouchable style={{height: hp(100), width: wp(100)}} activeOpacity={1.0}
           onPress={() => setIsVisible(false)}>
-          <ContainerView style={{justifyContent: "flex-end", paddingBottom: hp(2)}}>
-
+          <ContainerView style={{justifyContent: "flex-end", backgroundColor: TRANSPARENT,
+            paddingHorizontal: wp(6), height: hp(100), paddingBottom: hp(3) }}>
             <View style={{borderRadius: COMMON_BORDER_RADIUS, backgroundColor: theme.onPrimary, paddingHorizontal: wp(5), 
-              paddingBottom: hp(2)}}>
+              paddingBottom: hp(1)}}>
 
               {getHeader()}
 
-              <View style={{height: hp(35)}}>
-                <ScrollView>
+              <View style={{maxHeight: hp(35), minHeight: hp(15)}}>
+                <ScrollView contentContainerStyle={{paddingHorizontal: wp(1), paddingBottom: hp(2)}}>
                   <QuestionScoreRecordDataList navigation={navigation} submitQuestionScoreRecords={submitQuestionScoreRecords}
-                    useUser={useUser} />
+                    useUser={useUser} setIsVisible={setIsVisible} />
                 </ScrollView>
               </View>
 

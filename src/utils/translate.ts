@@ -361,8 +361,8 @@ export const T: Translate = {
     zh: "BACK TO HOME",
   },
   BACK: {
-    en: "BACK",
-    zh: "BACK",
+    en: "Back",
+    zh: "Back",
   },
   CANCEL: {
     en: "Cancel",
@@ -421,8 +421,8 @@ export const T: Translate = {
     zh: "Notification",
   },
   SETTING_THEME: {
-    en: "Theme",
-    zh: "Theme",
+    en: "Dark Theme",
+    zh: "Dark Theme",
   },
   IS_TYPING: {
     en: "Typing...",

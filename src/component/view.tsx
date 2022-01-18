@@ -154,6 +154,15 @@ export const RoundInputContainer = styled.View.attrs(props => {
   border-width: 2px;
 `;
 
+export const RoundContainer = styled.View.attrs(props => {
+  return {
+  };
+})`
+  justify-content: center;
+  align-items: center;
+  border-radius: ${BORDER_RADIUS * 4};
+`;
+
 export const SlideTitleContainer = styled.View.attrs(props => {
   return {
     // width: (props as any).width,
@@ -230,4 +239,15 @@ export const CommonBlock = styled.View.attrs(props => {
   shadow-color: #000000;
   shadow-offset: 2px 2px;
   elevation: ${EXTRA_ELEVATION};
+`;
+
+export const DivideLineView = styled.View.attrs(props => {
+  return {
+  }
+})`
+  height: 60%;
+  width: 100%;
+  border-bottom-color: ${props => props.theme.subTitle};
+  border-bottom-width: 1;
+  opacity: 0.4;
 `;

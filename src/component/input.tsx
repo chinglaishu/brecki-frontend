@@ -66,7 +66,7 @@ export const NormalInput = ({iconSource, maxLength, extraStyle, placeHolder, the
   }
   const {content, formatError} = inputObj[useKey];
 
-  maxLength = maxLength || 10;
+  maxLength = maxLength || 16;
   return (
     <InputAndErrorContainer style={{...extraStyle}}>
       <InputContainer>
@@ -97,7 +97,7 @@ export const PhoneInput = ({iconSource, maxLength, extraStyle, placeHolder, them
     <InputAndErrorContainer style={{...extraStyle}}>
       <InputContainer>
         <Image style={{width: hp(2.5), height: hp(2.5), marginHorizontal: wp(2)}} source={iconSource} />
-        <BorderLeftTouchbale activeOpacity={0.9} style={{width: wp(10)}}
+        <BorderLeftTouchbale activeOpacity={0.9} style={{width: wp(10), alignItems: "center", justifyContent: "center"}}
           onPress={() => setIsModalVisible(true)}>
           <InputText>{phoneRegionCodeValue}</InputText>
         </BorderLeftTouchbale>

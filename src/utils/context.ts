@@ -12,6 +12,7 @@ const contextObj: ContextObj = {
   setTheme: defaultFn,
   changeStatusModal: defaultFn,
   logout: defaultFn,
+  loginAction: defaultFn,
   overlayColor: TRANSPARENT,
   setOverlayColor: defaultFn,
   useNavigation: null,

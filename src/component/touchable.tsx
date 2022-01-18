@@ -15,6 +15,7 @@ import * as FileSystem from "expo-file-system";
 import uuid from 'react-native-uuid';
 import { uploadProfilePicOne, uploadProfilePicTwo } from "../request/user";
 import { checkIsSwipe } from "../utils/utilFunction";
+import ImageView from "react-native-image-viewing";
 
 type ImageTouchableProps = {
   imageSource: any,
@@ -176,6 +177,7 @@ export const ProfileTouchable = styled.TouchableHighlight.attrs(props => {
 
 export const ProfileImageTouchable: FC<ProfileImageTouchableProps> = ({imageSource, extraStyle, isFront, swipeFunction, setProfilePic, isOthers}) => {
 
+  const [isImageVisible, setIsImageVisible] = useState(false);
 
   const swipe = (direction: string, state: any) => {
     if (!checkIsSwipe(state)) {return; }
@@ -196,6 +198,12 @@ export const ProfileImageTouchable: FC<ProfileImageTouchableProps> = ({imageSour
   }
 
   const onPress = async () => {
+
+    if (isOthers) {
+      setIsImageVisible(true);
+      return;
+    }
+
     if (!isFront) {
       swipeFunction();
       return;
@@ -212,7 +220,7 @@ export const ProfileImageTouchable: FC<ProfileImageTouchableProps> = ({imageSour
     setProfilePic(base64, fileType);
   };
 
-  const imageSizeRatio = (imageSource) ? 1.0 : 0.2;
+  const imageSizeRatio = (imageSource) ? 1.0 : 1.0;
   const useImageSource = (!!imageSource) ? {uri: imageSource} : imageLoader.plus;
 
   const width = wp(50);
@@ -224,11 +232,17 @@ export const ProfileImageTouchable: FC<ProfileImageTouchableProps> = ({imageSour
       <GestureRecognizer
         style={{...extraStyle}}
         onSwipe={(direction: string, state: any) => swipe(direction, state)}>
-        <ProfileTouchable activeOpacity={0.6}  onPress={() => onPress()} disabled={isOthers}
+        <ProfileTouchable activeOpacity={0.6}  onPress={() => onPress()}
           underlayColor={theme.activeEmpty}>
           <Image source={useImageSource} style={{width: (width - 6) * imageSizeRatio, height: (height - 6) * imageSizeRatio,
             borderTopRightRadius: borderRadius, borderBottomLeftRadius: borderRadius}} blurRadius={0} />
         </ProfileTouchable>
+        {isOthers && <ImageView
+          images={[{uri: imageSource}]}
+          imageIndex={0}
+          visible={isImageVisible}
+          onRequestClose={() => setIsImageVisible(false)}
+        />}
       </GestureRecognizer>
     );
   };

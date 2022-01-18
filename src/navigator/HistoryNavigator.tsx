@@ -2,7 +2,7 @@ import React, {FC, useState} from "react";
 import { Text, View, LayoutAnimation, NativeModules, Image, KeyboardAvoidingView } from "react-native";
 import { ButtonText, SlideText, SlideTitle, Title } from "../component/text";
 import { ContainerView, SlideTitleContainer } from "../component/view";
-import { ContextObj, Language, MultiLanguage, PageProps, StackPageProps } from "../type/common";
+import { ContextObj, Language, MultiLanguage, PageProps } from "../type/common";
 import { ContextConsumer } from "../utils/context";
 import { T } from "../utils/translate";
 import { NavigationContainer } from '@react-navigation/native';
@@ -23,6 +23,8 @@ import { Chat } from "../page/chat/Chat";
 import { QuestionRecord } from "../page/question/QuestionRecord";
 import { ChatList } from "../page/chat/ChatList";
 import { ScrollView } from "react-native-gesture-handler";
+import { Setting } from "../page/setting/Setting";
+import { Account } from "../page/setting/Account";
 
 const { UIManager } = NativeModules;
 
@@ -31,61 +33,19 @@ UIManager.setLayoutAnimationEnabledExperimental &&
 
 const Stack = createStackNavigator();
 
-
-
-export const ChatListContainer: FC<StackPageProps> = ({navigation}) => {
-
-  const getContent = (contextObj: ContextObj) => {
-    const {theme, user, changeStatusModal, matchs} = contextObj;
-    const {language} = user;
-    return (
-      <ChatList navigation={navigation} matchs={matchs} userId={user.id} />
-    );
-  };
-
-  return (
-    <ContextConsumer>
-      {(contextObj: ContextObj) => {
-        return getContent(contextObj);
-      }}
-    </ContextConsumer>
-  )
-};
-
-export const ChatContainer: FC<StackPageProps> = ({navigation}) => {
-
-  const getContent = (contextObj: ContextObj) => {
-    const {theme, user, changeStatusModal, changeMatchIsTyping} = contextObj;
-    const {language} = user;
-    return (
-      <Chat navigation={navigation} changeMatchIsTyping={changeMatchIsTyping}/>
-    );
-  };
-
-  return (
-    <ContextConsumer>
-      {(contextObj: ContextObj) => {
-        return getContent(contextObj);
-      }}
-    </ContextConsumer>
-  )
-};
-
-export const ChatStack: FC<PageProps> = ({navigation}) => {
+export const HistoryStack: FC<PageProps> = ({navigation}) => {
 
   // add matching history
   const getContent = (contextObj: ContextObj) => {
-    const {theme, user, changeStatusModal, changeMatchIsTyping} = contextObj;
+    const {theme, user, changeStatusModal} = contextObj;
     const {language} = user;
     return (
-      <Stack.Navigator initialRouteName={SCREEN.CHAT_LIST} screenOptions={{animationEnabled: true, header: (props) => null }}
+      <Stack.Navigator initialRouteName={SCREEN.HISTORY} screenOptions={{animationEnabled: true, header: (props) => null }}
         detachInactiveScreens={false}>
-        <Stack.Screen name={SCREEN.CHAT_LIST} component={ChatListContainer} initialParams={{changeStatusModal, userId: user.id, drawerNavigation: navigation}}/>
-        <Stack.Screen name={SCREEN.CHAT} component={ChatContainer} initialParams={{changeStatusModal, changeMatchIsTyping}}/>
-        <Stack.Screen name={SCREEN.PERSONAL_INFO} component={PersonalInfo} initialParams={{changeStatusModal}} />
         <Stack.Screen name={SCREEN.HISTORY} component={HistoryPage} initialParams={{changeStatusModal}}/>
         <Stack.Screen name={SCREEN.QUESTION} component={QuestionPage} initialParams={{changeStatusModal}}/>
         <Stack.Screen name={SCREEN.QUESTION_RECORD} component={QuestionRecord} initialParams={{changeStatusModal}}/>
+        <Stack.Screen name={SCREEN.SUBMIT_QUESTION_END} component={SubmitQuestionEnd} initialParams={{changeStatusModal}}/>
       </Stack.Navigator>
     );
   };

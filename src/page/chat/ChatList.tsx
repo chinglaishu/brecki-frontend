@@ -49,11 +49,24 @@ export const ChatList: FC<ChatListProps> = ({navigation, matchs, userId}) => {
     setChatDataList(useChatDataList);
   };
 
-  const updateChatDataList = async (matchId: string, updateMessageData: MessageData) => {
+  const updateChatDataList = async (matchId: string, updateMessageData: MessageData, isMessage?: boolean) => {
+    console.log("updatee");
+    console.log(updateMessageData);
+    console.log(isMessage);
     const useChatDataList: MessageData[] = JSON.parse(JSON.stringify(chatDataList));
     for (let i = 0 ; i < useChatDataList.length ; i++) {
       if (useChatDataList[i].matchId === matchId) {
-        useChatDataList[i] = {...useChatDataList[i], ...updateMessageData};
+
+        if (isMessage) {
+          if ((useChatDataList[i].lastMessage?.timestamp || 0) > (updateMessageData?.lastMessage?.timestamp || 0)) {return; }
+          console.log("userId");
+          console.log(userId);
+          const addNum = (updateMessageData?.lastMessage?.user?.id === userId) ? 0 : 1;
+          const unreadNum = useChatDataList[i].unreadNum || 0 + addNum;
+          useChatDataList[i] = {...useChatDataList[i], ...updateMessageData, unreadNum};
+        } else {
+          useChatDataList[i] = {...useChatDataList[i], ...updateMessageData};
+        }
       }
     }
     useChatDataList.sort((a, b) => {
@@ -76,13 +89,12 @@ export const ChatList: FC<ChatListProps> = ({navigation, matchs, userId}) => {
     const {theme, user, setUseNavigation, changeStatusModal} = contextObj;
 
     const toChat = (matchId: string, userId: string) => {
-      drawerNavigation.setParams({chatRoute: SCREEN.CHAT, matchId});
+      updateChatDataList(matchId, {matchId, unreadNum: 0}, false);
       setUseNavigation({navigation: navigation, backScreen: SCREEN.CHAT_LIST});
       navigation.navigate(SCREEN.CHAT, {matchId, userId, selfUserId: user.id});
     };
 
     const toPersonalInfo = (personalInfo: PersonalInfo, match: Match | any) => {
-      drawerNavigation.setParams({chatRoute: SCREEN.PERSONAL_INFO});
       setUseNavigation({navigation: navigation, backScreen: SCREEN.CHAT_LIST});
       navigation.navigate(SCREEN.PERSONAL_INFO, {personalInfo, matchId: match?.id});
     };
@@ -95,12 +107,8 @@ export const ChatList: FC<ChatListProps> = ({navigation, matchs, userId}) => {
       // const borderBottomWidth = (isBottom) ? 0 : useBorderWidth;
       // console.log(item.matchId);
       const match = matchs.find((match) => match.id === item.matchId);
-      // console.log("match");
-      // console.log(match);
       if (!match?.users) {return null; }
       const useUser = getUseUserById(match?.users, user.id) as User;
-      // console.log("useUser");
-      // console.log(useUser);
       if (!useUser) {return null; }
       return (
         <ChatListRow chatData={item} updateChatDataList={updateChatDataList} useUser={useUser}

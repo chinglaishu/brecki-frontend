@@ -16,11 +16,11 @@ import {RobotoMono_400Regular} from '@expo-google-fonts/roboto-mono';
 import {ThemeProvider} from "styled-components/native";
 import "./src/request/config";
 import { StatusModal, StatusModalProps } from './src/component/modal';
-import { changeStateObj, checkIfRequestError, checkIsIOS, getCurrentRouteName, getDefaultHandleTypeByStatus, getParamFromNavigation, getStoreData, removeStoreData } from './src/utils/utilFunction';
+import { changeStateObj, checkIfRequestError, checkIsIOS, clearTemporarayStorage, getCurrentRouteName, getDefaultHandleTypeByStatus, getParamFromNavigation, getStoreData, removeStoreData } from './src/utils/utilFunction';
 import { T } from './src/utils/translate';
 import { AUTH_SCREEN, MODAL_HANDLE_TYPE, SCREEN, STATUS_TYPE, STORE_KEY } from './src/constant/constant';
 import { getUserSelf } from './src/request/user';
-import { initAxiosHeader } from './src/request/config';
+import { initAxiosHeader, setAxiosAuthorization, setAxiosLanguage } from './src/request/config';
 import Progressbar from './src/utils/test';
 import { TRANSPARENT } from './src/utils/size';
 import { Canvas } from './src/page/question/Canvas';
@@ -32,6 +32,7 @@ import { Match } from './src/page/likeZone/type';
 import { getAllMatchs } from './src/request/match';
 import { User } from './src/type/common';
 import { ContainerView } from './src/component/view';
+import { PlainTouchable } from './src/component/touchable';
 
 const { UIManager } = NativeModules;
 
@@ -56,9 +57,9 @@ const Content = () => {
   }, []);
 
   const endTyping = async () => {
-    if (useNavigation) {
+    if (useNavigation?.navigation) {
       const matchId = getParamFromNavigation(useNavigation?.navigation as any, "matchId");
-      if (!matchId) {
+      if (matchId) {
         return fire.endTyping(matchId, user.id);
       }
     }
@@ -95,7 +96,7 @@ const Content = () => {
         useMatchs[i].isTyping = isTyping;
       }
     }
-    // LayoutAnimation.spring();
+    LayoutAnimation.spring();
     setMatchs(useMatchs);
   };
 
@@ -108,6 +109,7 @@ const Content = () => {
   };
 
   const logout = async () => {
+    console.log("call logout");
     await removeStoreData(STORE_KEY.ACCESS_TOKEN);
     await removeStoreData(STORE_KEY.REFRESH_TOKEN);
     await initAxiosHeader();
@@ -132,6 +134,17 @@ const Content = () => {
     setStatusModalObj({...statusModalObj, ...{statusType: useStatusType, isVisible: useIsVisible, message, title, handleType: useHandleType}});
   };
 
+  const loginAction = async (user: User) => {
+    console.log("login");
+    console.log("do login")
+    setUser({...user, isLoading: false, isGuest: false});
+    await fire.login(user);
+    await fire.startStatusChecker(user.id);
+    await refreshMatchs(user.id);
+    await clearTemporarayStorage();
+    changeStatusModal({statusType: STATUS_TYPE.SUCCESS, isVisible: false});
+  };
+
   const getInitialUser = async () => {
     await initAxiosHeader();
     const token = await getStoreData(STORE_KEY.ACCESS_TOKEN);
@@ -146,11 +159,7 @@ const Content = () => {
         changeStatusModal({statusType: STATUS_TYPE.ERROR, message: T.TOKEN_EXPIRE[language]});
       } else {
         const user = result.data.data;
-        setUser({...user, isLoading: false, isGuest: false});
-        await fire.login(user);
-        await fire.startStatusChecker(user.id);
-        await refreshMatchs(user.id);
-        changeStatusModal({statusType: STATUS_TYPE.SUCCESS, isVisible: false});
+        loginAction(user);
       }
     }
   };
@@ -178,12 +187,14 @@ const Content = () => {
   return (
     <>
       <ThemeProvider theme={theme}>
-        <ContextProvider value={{user, theme, setTheme, setUser, changeStatusModal, logout, overlayColor, setOverlayColor,
+        <ContextProvider value={{user, theme, setTheme, setUser, changeStatusModal, logout, loginAction, overlayColor, setOverlayColor,
             useNavigation, setUseNavigation, matchs, refreshMatchs, setMatchs, changeMatchIsTyping}}>
-          <View style={{flex: 1, minHeight: heightPercentageToDP(100)}}>
-            {!isLoading && isGuest && <AuthNavigator initialRoute={initialRoute} changeStatusModal={changeStatusModal} />}
-            {!isLoading && !isGuest && <MainNavigator initialRoute={appInitalRoute} changeStatusModal={changeStatusModal} />}
-          </View>
+          <PlainTouchable activeOpacity={1.0} onPress={() => Keyboard.dismiss()}>
+            <View style={{flex: 1, minHeight: heightPercentageToDP(100)}}>
+              {!isLoading && isGuest && <AuthNavigator initialRoute={initialRoute} changeStatusModal={changeStatusModal} />}
+              {!isLoading && !isGuest && <MainNavigator initialRoute={appInitalRoute} changeStatusModal={changeStatusModal} />}
+            </View>
+          </PlainTouchable>
           <StatusModal statusType={statusType} title={title} message={message} isVisible={isVisible} closeModal={closeStatusModal}
             handleType={handleType} />
         </ContextProvider>

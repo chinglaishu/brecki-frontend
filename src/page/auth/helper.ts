@@ -209,23 +209,27 @@ export const checkHaveFormatError = (formatError: any) => {
   return true;
 }
 
-export const loginAction = async (data: LoginResponse, setUser: (user: User) => any) => {
-  const {token, user} = data;
-  await setStoreData(STORE_KEY.ACCESS_TOKEN, token);
-  setAxiosAuthorization(token);
-  const useUser = await requestAddNotificationToken(user);
-  await fire.login(useUser);
-  await fire.startStatusChecker(useUser.id);
-  setAxiosLanguage(useUser.language);
-  setUser(useUser);
-};
+// export const loginAction = async (data: LoginResponse, setUser: (user: User) => any) => {
+//   const {token, user} = data;
+//   await setStoreData(STORE_KEY.ACCESS_TOKEN, token);
+//   setAxiosAuthorization(token);
+//   const useUser = await requestAddNotificationToken(user);
+//   await fire.login(useUser);
+//   await fire.startStatusChecker(useUser.id);
+//   setAxiosLanguage(useUser.language);
+//   setUser(useUser);
+// };
 
 export const requestAddNotificationToken = async (user: User) => {
+  console.log(1);
   const {notificationTokens} = user;
   const token = await getTokenForPushNotificationsAsync();
+  console.log(1);
   if (!token) {return user; }
   if (notificationTokens?.includes(token)) {return user; }
   const result = await addNotificationToken(token);
+  console.log(1);
   if (checkIfRequestError(result)) {return user; }
+  console.log(1);
   return result.data.data;
 };

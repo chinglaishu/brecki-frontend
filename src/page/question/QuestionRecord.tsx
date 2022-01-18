@@ -27,6 +27,7 @@ export const QuestionRecord: FC<StackPageProps> = ({navigation}) => {
   const changeStatusModal = getChangeStatusModalFromNavigation(navigation);
 
   const isManual = getParamFromNavigation(navigation, "isManual");
+  const isMatch = getParamFromNavigation(navigation, "isMatch");
   const changeUseUsers = getParamFromNavigation(navigation, "changeUseUsers");
 
   const isReadOnly = getParamFromNavigation(navigation, "isReadOnly");
@@ -40,10 +41,13 @@ export const QuestionRecord: FC<StackPageProps> = ({navigation}) => {
   const [submitQuestionRecord, setSubmitQuestionRecord] = useState(null as any);
 
   const [questionScoreRecords, setQuestionScoreRecords] = useState([] as QuestionScoreRecord[]);
-
+  const [isShow, setIsShow] = useState(true);
   // need?
   useEffect(() => {
     makeAllRequest();
+    navigation.addListener("focus", () => {
+      setIsShow(true);
+    });
   }, []);
 
   useEffect(() => {
@@ -51,16 +55,17 @@ export const QuestionRecord: FC<StackPageProps> = ({navigation}) => {
   }, [submitQuestionRecordId, submitQuestionScoreRecordId]);
 
   const makeAllRequest = async () => {
+    if (!submitQuestionRecordId) {return; }
     changeStatusModal({statusType: STATUS_TYPE.LOADING});
     const getSubmitQuestionRecordResult = await getSubmitQuestionRecord();
     if (!getSubmitQuestionRecordResult) {
-      changeStatusModal({statusType: STATUS_TYPE.LOADING, isVisible: false});
+      changeStatusModal({statusType: STATUS_TYPE.ERROR, message: "Can not get record"}); 
       return;
     }
     const getUseScoreResult = await getPersonalitiesAndScore(getSubmitQuestionRecordResult);
     const isError = !getSubmitQuestionRecordResult || !getUseScoreResult;
     if (isError) {
-      changeStatusModal({statusType: STATUS_TYPE.ERROR});
+      changeStatusModal({statusType: STATUS_TYPE.ERROR, message: "Can not get record"});
     } else {
       changeStatusModal({statusType: STATUS_TYPE.LOADING, isVisible: false});
     }
@@ -114,21 +119,28 @@ export const QuestionRecord: FC<StackPageProps> = ({navigation}) => {
     const {language} = user;
 
     const clickBackFunction = () => {
-      useNavigation?.navigation.navigate(useNavigation.backScreen);
-      setUseNavigation(null);
+      if (useNavigation?.navigation.canGoBack()) {
+        useNavigation.navigation.goBack();
+      }
     };
 
     const onAllSubmit = (isCancel: boolean) => {
-      if (isReadOnly) {return; }
+      if (isReadOnly) {
+        setIsShow(false);
+        navigation.navigate(SCREEN.HISTORY);
+        return;
+      }
 
       setQuestions([]);
       setQuestionChoiceRecords([] as QuestionChoiceRecord[]);
       if (isCancel) {
         clickBackFunction();
       } else {
-        navigation.navigate(SCREEN.SUBMIT_QUESTION_END, {userId: (submitQuestionRecord as SubmitQuestionRecord)?.userId, isManual, changeUseUsers}); 
+        navigation.navigate(SCREEN.SUBMIT_QUESTION_END, {userId: (submitQuestionRecord as SubmitQuestionRecord)?.userId, isManual, changeUseUsers, isMatch}); 
       }
     };
+
+    if (!isShow) {return null; }
 
     return (
       <ContainerView style={{}}>

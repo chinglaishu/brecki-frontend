@@ -90,6 +90,15 @@ const imageLoader = {
   pen: require("../../assets/icon/pen.png"),
   undo: require("../../assets/icon/undo.png"),
 
+  drawer_data: require("../../assets/icon/data.png"),
+  review: require("../../assets/icon/review.png"),
+
+  moon: require("../../assets/icon/moon.png"),
+  next: require("../../assets/icon/next.png"),
+  notification: require("../../assets/icon/notification.png"),
+  right_arrow: require("../../assets/icon/right-arrow.png"),
+  send: require("../../assets/icon/send.png"),
+  account: require("../../assets/icon/account.png"),
 };
 
 export default imageLoader;

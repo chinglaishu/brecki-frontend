@@ -5,16 +5,16 @@ import { NormalInput, PhoneInput } from "../../component/input";
 import { ButtonText, LineTextLine, Reminder, SubTitle } from "../../component/text";
 import { ButtonTouchable, ImageTouchable, SimpleTouchable } from "../../component/touchable";
 import { ContainerView, RowView } from "../../component/view";
-import { InputObj, InputObjKey, AuthProps, ContextObj, PageProps, R } from "../../type/common";
+import { InputObj, InputObjKey, AuthProps, ContextObj, PageProps, R, User } from "../../type/common";
 import { ContextConsumer } from "../../utils/context";
 import imageLoader from "../../utils/imageLoader";
 import { T } from "../../utils/translate";
 import { GoogleAuth, checkAuthFormatError } from "../../utils/auth";
 import { AUTH_SCREEN, STATUS_TYPE, STORE_KEY } from "../../constant/constant";
-import { checkIfRequestError, getCurrentRouteName, getLastScreenNavigationParam, getPhone, setStoreData } from "../../utils/utilFunction";
-import { checkHaveFormatError, getAuthContent, getAuthFormObjList, loginAction, makeRequestByAuthScreen } from "./helper";
-import { setAxiosAuthorization } from "../../request/config";
-import { requestToken, verifyPhone } from "../../request/auth";
+import { checkIfRequestError, checkIsIOS, getCurrentRouteName, getLastScreenNavigationParam, getPhone, setStoreData } from "../../utils/utilFunction";
+import { checkHaveFormatError, getAuthContent, getAuthFormObjList, makeRequestByAuthScreen, requestAddNotificationToken } from "./helper";
+import { setAxiosAuthorization, setAxiosLanguage } from "../../request/config";
+import { LoginResponse, requestToken, verifyPhone } from "../../request/auth";
 import { TITLE_IMAGE_HEIGHT } from "../../utils/size";
 import { Form, FormObj } from "../../component/form";
 
@@ -35,7 +35,7 @@ export const Auth: FC<AuthProps> = ({navigation}) => {
   const phoneNumberInputRef = useRef();
 
   const getContent = (contextObj: ContextObj) => {
-    const {user, theme, changeStatusModal, setUser, refreshMatchs} = contextObj;
+    const {user, theme, changeStatusModal, setUser, loginAction} = contextObj;
     const {language} = user;
 
     const currentRouteName = getCurrentRouteName(navigation) as AUTH_SCREEN;
@@ -67,8 +67,15 @@ export const Auth: FC<AuthProps> = ({navigation}) => {
       console.log(`current route: ${currentRouteName}`);
 
       if (currentRouteName === AUTH_SCREEN.LOGIN) {
-        await loginAction(result.data.data as any, setUser);
-        await refreshMatchs();
+        const data = result.data.data as LoginResponse;
+        const {user, token} = data;
+        setAxiosAuthorization(token);
+        await setStoreData(STORE_KEY.ACCESS_TOKEN, token);
+        console.log("request otken");
+        const useUser = await requestAddNotificationToken(user);
+        console.log(useUser);
+        setAxiosLanguage(useUser.language);
+        await loginAction(useUser);
       } else {
         const param = getLastScreenNavigationParam(currentRouteName);
         param.phone = getPhone(inputObj?.phoneRegionCode?.content, inputObj?.phoneNumber?.content);
@@ -83,6 +90,8 @@ export const Auth: FC<AuthProps> = ({navigation}) => {
     const onPressFooterButton = () => {
       navigation.navigate(footerButtonRoute as string);
     };
+
+    const bottomMarginBottom = (checkIsIOS()) ? hp(4) : hp(2);
 
     return (
       <ContainerView>
@@ -118,7 +127,7 @@ export const Auth: FC<AuthProps> = ({navigation}) => {
           </>}
         {!isHideFooter && <KeyboardAvoidingView behavior={"height"}>
           <SubTitle>{footerText}</SubTitle>
-          <ButtonTouchable activeOpacity={0.5} style={{marginBottom: hp(2), marginTop: hp(1), backgroundColor: theme.subText}}
+          <ButtonTouchable activeOpacity={0.5} style={{marginBottom: bottomMarginBottom, marginTop: hp(1), backgroundColor: theme.subText}}
             onPress={() => onPressFooterButton()}>
             <ButtonText>{footerButtonText}</ButtonText>
           </ButtonTouchable>
