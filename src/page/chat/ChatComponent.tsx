@@ -133,7 +133,7 @@ export const ChatMessage: FC<ChatMessageProps> = ({props, messageUser}) => {
       ? {backgroundColor: "#D1F0ED", elevation: 1, ...SLIGHT_SHADOW}
       : {backgroundColor: theme.onPrimary, elevation: 1, ...SLIGHT_SHADOW};
   
-    const useTimestamp = moment(timestamp).format("HH:mm");
+    const useTimestamp = moment(timestamp * 1000).format("HH:mm");
 
     const isRead = checkIfUserRead(messageUser, timestamp);
     const useImage = (isRead) ? imageLoader.double_tick : imageLoader.tick;

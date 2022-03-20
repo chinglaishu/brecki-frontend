@@ -109,7 +109,6 @@ const Content = () => {
   };
 
   const logout = async () => {
-    console.log("call logout");
     await removeStoreData(STORE_KEY.ACCESS_TOKEN);
     await removeStoreData(STORE_KEY.REFRESH_TOKEN);
     await initAxiosHeader();
@@ -135,8 +134,6 @@ const Content = () => {
   };
 
   const loginAction = async (user: User) => {
-    console.log("login");
-    console.log("do login")
     setUser({...user, isLoading: false, isGuest: false});
     await fire.login(user);
     await fire.startStatusChecker(user.id);
@@ -148,7 +145,6 @@ const Content = () => {
   const getInitialUser = async () => {
     await initAxiosHeader();
     const token = await getStoreData(STORE_KEY.ACCESS_TOKEN);
-    console.log(`get inital user, token: ${token}`);
     if (!token) {
       setUser({...user, isLoading: false});
     } else {
